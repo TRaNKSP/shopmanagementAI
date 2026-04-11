@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow AI — Shop Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-mark">SF</div>
+      <div class="logo-text">
+        <span class="logo-name">ShopFlow</span>
+        <span class="logo-sub">AI Shop Management</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item active" data-screen="dashboard" onclick="showScreen('dashboard')">
+      <span class="nav-icon">⬡</span>
+      <span>Command Center</span>
+    </a>
+    <a class="nav-item" data-screen="bays" onclick="showScreen('bays')">
+      <span class="nav-icon">⬜</span>
+      <span>Bay Management</span>
+    </a>
+    <a class="nav-item" data-screen="appointments" onclick="showScreen('appointments')">
+      <span class="nav-icon">◷</span>
+      <span>Appointments & Waitlist</span>
+    </a>
+    <a class="nav-item" data-screen="walkins" onclick="showScreen('walkins')">
+      <span class="nav-icon">↪</span>
+      <span>Walk-in Intake</span>
+    </a>
+    <a class="nav-item" data-screen="workorders" onclick="showScreen('workorders')">
+      <span class="nav-icon">◫</span>
+      <span>Work Orders</span>
+    </a>
+
+    <div class="nav-section-label">People</div>
+    <a class="nav-item" data-screen="staffing" onclick="showScreen('staffing')">
+      <span class="nav-icon">◎</span>
+      <span>Daily Staffing</span>
+    </a>
+    <a class="nav-item" data-screen="roles" onclick="showScreen('roles')">
+      <span class="nav-icon">◈</span>
+      <span>Roles & Permissions</span>
+    </a>
+
+    <div class="nav-section-label">Shop</div>
+    <a class="nav-item" data-screen="services" onclick="showScreen('services')">
+      <span class="nav-icon">◆</span>
+      <span>Services & Inventory</span>
+    </a>
+    <a class="nav-item" data-screen="notifications" onclick="showScreen('notifications')">
+      <span class="nav-icon">◉</span>
+      <span>Notifications</span>
+    </a>
+    <a class="nav-item" data-screen="hours" onclick="showScreen('hours')">
+      <span class="nav-icon">◑</span>
+      <span>Store Hours</span>
+    </a>
+
+    <div class="nav-section-label">Intelligence</div>
+    <a class="nav-item" data-screen="analytics" onclick="showScreen('analytics')">
+      <span class="nav-icon">◈</span>
+      <span>Analytics Dashboard</span>
+    </a>
+    <a class="nav-item" data-screen="ai" onclick="showScreen('ai')">
+      <span class="nav-icon">✦</span>
+      <span>AI Agents</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="store-info">
+      <div class="store-dot"></div>
+      <div>
+        <div class="store-name">ShopFlow Demo — Bentonville, AR</div>
+        <div class="store-status">20 Bays · Live</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="breadcrumb" id="breadcrumb">Command Center</div>
+  </div>
+  <div class="topbar-right">
+    <div class="live-badge">● LIVE</div>
+    <div class="time-display" id="timeDisplay">--:--</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span class="toggle-sun">☀</span>
+      <span class="toggle-moon">☽</span>
+    </button>
+    <div class="user-avatar">JR</div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ═══════════════════════════════════════ DASHBOARD ═══ -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Command Center</h1>
+        <p class="screen-subtitle">Real-time overview of all shop operations — bays, staff, revenue, and AI alerts in one place.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">⬡</div>
+          <div class="impact-body">
+            <div class="impact-title">Why this matters</div>
+            <div class="impact-text">A manager overseeing 20 bays cannot physically walk every lane every 15 minutes. The Command Center gives instant situational awareness — idle bays, overdue jobs, and revenue pacing — all before problems become visible on the floor.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue today</div>
+        <div class="kpi-value">$18,420</div>
+        <div class="kpi-trend up">↑ 12% vs last Sat</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Bay utilization</div>
+        <div class="kpi-value">74%</div>
+        <div class="kpi-trend warn">2 bays idle &gt;45 min</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cars completed</div>
+        <div class="kpi-value">31</div>
+        <div class="kpi-trend up">6 in progress now</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg cycle time</div>
+        <div class="kpi-value">52 min</div>
+        <div class="kpi-trend dn">+7 min vs 45-min target</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Appointments today</div>
+        <div class="kpi-value">47</div>
+        <div class="kpi-trend up">3 walk-ins pending</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Tech productivity</div>
+        <div class="kpi-value">1.04×</div>
+        <div class="kpi-trend warn">1 tech below 0.8×</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Bay overview</span>
+          <span class="panel-badge">20 bays</span>
+        </div>
+        <div class="mini-bay-grid" id="dashBayGrid"></div>
+        <div class="panel-legend">
+          <span class="legend-dot occupied"></span>Occupied
+          <span class="legend-dot reserved"></span>Reserved
+          <span class="legend-dot available"></span>Available
+          <span class="legend-dot turnover"></span>Turnover
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">AI alerts</span>
+          <span class="ai-pill">✦ Live AI</span>
+        </div>
+        <div class="alert-list">
+          <div class="alert-item alert-warn">
+            <div class="alert-dot warn"></div>
+            <div class="alert-body">
+              <div class="alert-title">Bay 14 bottleneck predicted</div>
+              <div class="alert-text">3 upcoming appointments require alignment rack. Backlog risk in 90 min. Suggest notifying next customer of potential delay.</div>
+            </div>
+          </div>
+          <div class="alert-item alert-info">
+            <div class="alert-dot info"></div>
+            <div class="alert-body">
+              <div class="alert-title">Marcus T. — low productivity flag</div>
+              <div class="alert-text">Tracking 0.68× book ratio — third consecutive day below 0.80×. AI suggests pairing with lead tech Rivera for afternoon queue.</div>
+            </div>
+          </div>
+          <div class="alert-item alert-danger">
+            <div class="alert-dot danger"></div>
+            <div class="alert-body">
+              <div class="alert-title">Parts reorder triggered</div>
+              <div class="alert-text">Brake pad PN-4402 at 4 units (below 6-unit threshold). Auto-order placed with AutoZone Pro. ETA 2:30 PM today.</div>
+            </div>
+          </div>
+          <div class="alert-item alert-info">
+            <div class="alert-dot info"></div>
+            <div class="alert-body">
+              <div class="alert-title">Walk-in spike predicted 11 AM</div>
+              <div class="alert-text">Based on 6 prior Saturdays in this weather pattern. Bay 8 pre-staging recommended for quick-lube.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="three-col">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Active work orders</span></div>
+        <div class="wo-list">
+          <div class="wo-row"><span class="wo-car">2022 Toyota Camry</span><span class="wo-bay">B3</span><span class="wo-status in-progress">In Progress</span></div>
+          <div class="wo-row"><span class="wo-car">2019 Ford F-150</span><span class="wo-bay">B7</span><span class="wo-status diag">Diagnosis</span></div>
+          <div class="wo-row"><span class="wo-car">2023 Honda CR-V</span><span class="wo-bay">B11</span><span class="wo-status in-progress">In Progress</span></div>
+          <div class="wo-row"><span class="wo-car">2020 Chevy Silverado</span><span class="wo-bay">B15</span><span class="wo-status qc">QC Check</span></div>
+          <div class="wo-row"><span class="wo-car">2021 BMW 3 Series</span><span class="wo-bay">B2</span><span class="wo-status ready">Ready</span></div>
+          <div class="wo-row"><span class="wo-car">2018 Nissan Altima</span><span class="wo-bay">B19</span><span class="wo-status in-progress">In Progress</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Upcoming appointments</span></div>
+        <div class="appt-list">
+          <div class="appt-row"><span class="appt-time">10:00</span><span class="appt-name">Sarah M.</span><span class="appt-svc">Oil Change</span></div>
+          <div class="appt-row"><span class="appt-time">10:30</span><span class="appt-name">James K.</span><span class="appt-svc">Alignment</span></div>
+          <div class="appt-row"><span class="appt-time">11:00</span><span class="appt-name">Maria L.</span><span class="appt-svc">Brake Service</span></div>
+          <div class="appt-row"><span class="appt-time">11:30</span><span class="appt-name">David R.</span><span class="appt-svc">Tire Rotation</span></div>
+          <div class="appt-row"><span class="appt-time">12:00</span><span class="appt-name">Chen W.</span><span class="appt-svc">Oil Change</span></div>
+          <div class="appt-row"><span class="appt-time">12:30</span><span class="appt-name">Anna B.</span><span class="appt-svc">Full Inspection</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Technician status</span></div>
+        <div class="tech-list">
+          <div class="tech-row"><div class="tech-avatar">JR</div><div class="tech-info"><div class="tech-name">J. Rivera</div><div class="tech-task">B1 · Oil Change</div></div><div class="tech-ratio high">1.31×</div></div>
+          <div class="tech-row"><div class="tech-avatar">AP</div><div class="tech-info"><div class="tech-name">A. Patel</div><div class="tech-task">B5 · Brakes</div></div><div class="tech-ratio high">1.18×</div></div>
+          <div class="tech-row"><div class="tech-avatar">DK</div><div class="tech-info"><div class="tech-name">D. Kim</div><div class="tech-task">B9 · Alignment</div></div><div class="tech-ratio mid">1.05×</div></div>
+          <div class="tech-row"><div class="tech-avatar">SJ</div><div class="tech-info"><div class="tech-name">S. Johnson</div><div class="tech-task">B13 · Tires</div></div><div class="tech-ratio mid">0.94×</div></div>
+          <div class="tech-row"><div class="tech-avatar">MT</div><div class="tech-info"><div class="tech-name">M. Torres</div><div class="tech-task">B17 · Oil Change</div></div><div class="tech-ratio low">0.68×</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ BAY MANAGEMENT ═══ -->
+  <div class="screen" id="screen-bays">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Bay Management</h1>
+        <p class="screen-subtitle">20 bays, always accounted for — real-time status, type profiles, and forward occupancy projection.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">⬡</div>
+          <div class="impact-body">
+            <div class="impact-title">Bay Management — 20 Bays, Always Accounted For</div>
+            <div class="impact-text">The bay board is the heartbeat of the entire system. Every bay carries a profile — chassis lift, drive-on lift, alignment rack, lube pit, tire mount — and whether it's currently occupied, reserved, cleaning, or open. The key intelligence is the <strong>daily occupancy projection</strong>: at any moment the system reads every appointment and projects forward hour by hour to show exactly which bays are spoken for and when they free up. If a customer calls at 10 AM asking for an alignment, it checks whether Bay 7 is clear in the 11 AM–12:30 PM window needed — preventing double-booking at the <em>resource level</em>, not just the calendar level. Bay types are granular: a chassis lift and drive-on lift are not interchangeable. Some bays support dual-purpose capability tags.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bay-controls">
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="filterBays('all', this)">All 20</button>
+        <button class="filter-btn" onclick="filterBays('occupied', this)">Occupied</button>
+        <button class="filter-btn" onclick="filterBays('available', this)">Available</button>
+        <button class="filter-btn" onclick="filterBays('reserved', this)">Reserved</button>
+        <button class="filter-btn" onclick="filterBays('turnover', this)">Turnover</button>
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn" onclick="filterBayType('chassis', this)">Chassis Lift</button>
+        <button class="filter-btn" onclick="filterBayType('driveon', this)">Drive-on</button>
+        <button class="filter-btn" onclick="filterBayType('alignment', this)">Alignment</button>
+        <button class="filter-btn" onclick="filterBayType('tire', this)">Tire Mount</button>
+        <button class="filter-btn" onclick="filterBayType('lube', this)">Lube Pit</button>
+      </div>
+    </div>
+
+    <div class="bay-full-grid" id="fullBayGrid"></div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="panel-header">
+        <span class="panel-title">Daily occupancy projection — forward 6 hours</span>
+        <span class="ai-pill">✦ AI projection</span>
+      </div>
+      <div class="projection-grid" id="projectionGrid"></div>
+      <div class="projection-legend">
+        <span class="legend-dot occupied"></span>Occupied &nbsp;
+        <span class="legend-dot reserved"></span>Reserved &nbsp;
+        <span class="legend-dot available"></span>Available
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ APPOINTMENTS ═══ -->
+  <div class="screen" id="screen-appointments">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Appointments & Waitlist</h1>
+        <p class="screen-subtitle">Full booking lifecycle — from online request through bay assignment and completion.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◷</div>
+          <div class="impact-body">
+            <div class="impact-title">Appointments on Book — Full Lifecycle System</div>
+            <div class="impact-text">Every appointment carries: customer identity, vehicle (VIN-linked for history), requested service, preferred tech, scheduled window, bay-type requirement, and parts pre-order status. The waitlist is a live priority queue ordered by arrival time, urgency, and service type. The system matches each appointment to the optimal bay + tech + parts bundle simultaneously — not just a calendar slot. When a job runs long, the ripple recalculates downstream automatically. Technicians see their personal queue with bay, car, service, and parts staging status. The no-show predictor scores every appointment in the next 48 hours and fires targeted reminders to high-risk slots, reducing no-shows by 25–35%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Today's appointment board</span>
+          <button class="btn-primary btn-sm">+ New Appointment</button>
+        </div>
+        <div class="appt-full-list">
+          <div class="appt-header-row"><span>Time</span><span>Customer</span><span>Vehicle</span><span>Service</span><span>Bay</span><span>Status</span></div>
+          <div class="appt-full-row confirmed"><span class="appt-t">8:00</span><span>Sarah Martinez</span><span>2022 Camry</span><span>Oil Change</span><span class="bay-tag">B3</span><span class="status-badge confirmed">Confirmed</span></div>
+          <div class="appt-full-row confirmed"><span class="appt-t">8:30</span><span>James Kim</span><span>2020 F-150</span><span>Alignment</span><span class="bay-tag">B7</span><span class="status-badge confirmed">Confirmed</span></div>
+          <div class="appt-full-row in-progress"><span class="appt-t">9:00</span><span>Maria Lopez</span><span>2023 CR-V</span><span>Brake Service</span><span class="bay-tag">B11</span><span class="status-badge in-bay">In Bay</span></div>
+          <div class="appt-full-row in-progress"><span class="appt-t">9:30</span><span>David Rowe</span><span>2021 Silverado</span><span>Tire Rotation</span><span class="bay-tag">B15</span><span class="status-badge in-bay">In Bay</span></div>
+          <div class="appt-full-row upcoming"><span class="appt-t">10:00</span><span>Chen Wei</span><span>2024 Accord</span><span>Oil Change</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
+          <div class="appt-full-row upcoming risk"><span class="appt-t">10:30</span><span>Anna Brewer</span><span>2019 Mustang</span><span>Full Inspection</span><span class="bay-tag">—</span><span class="status-badge risk">⚠ Risk</span></div>
+          <div class="appt-full-row upcoming"><span class="appt-t">11:00</span><span>Robert Clark</span><span>2022 Tacoma</span><span>Alignment</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
+          <div class="appt-full-row upcoming"><span class="appt-t">11:30</span><span>Lisa Turner</span><span>2020 Escape</span><span>Oil Change</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
+          <div class="appt-full-row upcoming"><span class="appt-t">12:00</span><span>Mike Davis</span><span>2023 Ram 1500</span><span>Brake Inspect</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
+          <div class="appt-full-row completed"><span class="appt-t">7:00</span><span>Tom Hansen</span><span>2018 Civic</span><span>Oil Change</span><span class="bay-tag">B1</span><span class="status-badge completed">Completed</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Waitlist</span>
+            <span class="count-badge">3 waiting</span>
+          </div>
+          <div class="waitlist">
+            <div class="wait-row"><span class="wait-pos">1</span><div class="wait-info"><div class="wait-name">Walk-in — Green Subaru Outback</div><div class="wait-detail">Tire rotation · Est. wait 25 min</div></div><span class="wait-eta">10:15</span></div>
+            <div class="wait-row"><span class="wait-pos">2</span><div class="wait-info"><div class="wait-name">Call-back — Mr. Johnson</div><div class="wait-detail">Oil change · Waiting for Bay 4</div></div><span class="wait-eta">10:45</span></div>
+            <div class="wait-row"><span class="wait-pos">3</span><div class="wait-info"><div class="wait-name">Walk-in — Black Dodge Charger</div><div class="wait-detail">Check engine light · Est. 30 min</div></div><span class="wait-eta">11:00</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">AI no-show risk monitor</span>
+            <span class="ai-pill">✦ AI</span>
+          </div>
+          <div class="risk-list">
+            <div class="risk-row high-risk">
+              <div class="risk-score">HIGH</div>
+              <div class="risk-info">
+                <div class="risk-name">Anna Brewer — 10:30 AM</div>
+                <div class="risk-detail">First visit · Booked 14 days ago · No confirmation</div>
+              </div>
+              <button class="btn-outline btn-sm">Send Reminder</button>
+            </div>
+            <div class="risk-row med-risk">
+              <div class="risk-score">MED</div>
+              <div class="risk-info">
+                <div class="risk-name">Chen Wei — 10:00 AM</div>
+                <div class="risk-detail">Prior no-show on record</div>
+              </div>
+              <button class="btn-outline btn-sm">Remind</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ WALK-INS ═══ -->
+  <div class="screen" id="screen-walkins">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Walk-in Intake</h1>
+        <p class="screen-subtitle">Smart bay assignment, real-time wait-time calculation, and automated customer notification.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">↪</div>
+          <div class="impact-body">
+            <div class="impact-title">Walk-in Accommodation — The Hardest Problem, Elegantly Solved</div>
+            <div class="impact-text">Walk-ins are the chaos variable. The system handles them with three-step intelligence: (1) scans all bays for current and near-term openings based on active work orders and appointments, (2) calculates a realistic wait-time estimate based on the service type and available bay, and (3) presents options to the advisor: take the walk-in now, add to waitlist with a time estimate, or offer the next open appointment slot. As soon as a bay of the right type clears, the system auto-triggers an SMS or email to the walk-in customer — "your bay is ready, arrive within 15 minutes." If they don't respond, the slot rolls to the next customer automatically.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">New walk-in intake</span></div>
+        <div class="intake-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Customer name</label>
+              <input type="text" placeholder="First Last" class="form-input" value="Mike Patterson">
+            </div>
+            <div class="form-group">
+              <label>Phone / SMS</label>
+              <input type="text" placeholder="(555) 000-0000" class="form-input" value="(479) 555-0182">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Vehicle</label>
+              <input type="text" placeholder="Year Make Model" class="form-input" value="2021 Ford Explorer">
+            </div>
+            <div class="form-group">
+              <label>Service requested</label>
+              <select class="form-input">
+                <option>Oil Change — Full Synthetic</option>
+                <option>Tire Rotation</option>
+                <option>Brake Inspection</option>
+                <option>Alignment Check</option>
+                <option>Battery Test</option>
+              </select>
+            </div>
+          </div>
+          <div class="ai-suggestion">
+            <div class="ai-suggestion-header">✦ AI Bay Finder</div>
+            <div class="ai-suggestion-body">
+              <div class="suggestion-result">
+                <div class="sug-title">Best match: Bay 4 (Drive-on lift)</div>
+                <div class="sug-detail">Available now · Oil change capable · Parts staged · Est. 35 minutes</div>
+              </div>
+              <div class="suggestion-result secondary">
+                <div class="sug-title">Alternate: Bay 12 — free in 22 min</div>
+                <div class="sug-detail">Currently finishing tire rotation · Same capability</div>
+              </div>
+              <div class="suggestion-result secondary">
+                <div class="sug-title">Waitlist option: Est. ready at 11:15 AM</div>
+                <div class="sug-detail">3 customers ahead · SMS notification when bay opens</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary">Assign Bay 4 — Start Now</button>
+            <button class="btn-outline">Add to Waitlist</button>
+            <button class="btn-ghost">Book Appointment</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Walk-in queue — live</span></div>
+          <div class="queue-list">
+            <div class="queue-row">
+              <div class="queue-num">1</div>
+              <div class="queue-info">
+                <div class="queue-name">Green Subaru Outback</div>
+                <div class="queue-svc">Tire rotation</div>
+              </div>
+              <div class="queue-right">
+                <div class="queue-wait">25 min</div>
+                <div class="queue-notify notified">SMS Sent</div>
+              </div>
+            </div>
+            <div class="queue-row">
+              <div class="queue-num">2</div>
+              <div class="queue-info">
+                <div class="queue-name">Black Dodge Charger</div>
+                <div class="queue-svc">Check engine</div>
+              </div>
+              <div class="queue-right">
+                <div class="queue-wait">40 min</div>
+                <div class="queue-notify pending">Waiting</div>
+              </div>
+            </div>
+            <div class="queue-row">
+              <div class="queue-num">3</div>
+              <div class="queue-info">
+                <div class="queue-name">Silver Honda Pilot</div>
+                <div class="queue-svc">Oil change</div>
+              </div>
+              <div class="queue-right">
+                <div class="queue-wait">55 min</div>
+                <div class="queue-notify pending">Waiting</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Notification center</span></div>
+          <div class="notif-timeline">
+            <div class="notif-event sent"><span class="notif-time">9:42 AM</span><span class="notif-msg">SMS → Green Subaru: "Bay opening in ~15 min"</span></div>
+            <div class="notif-event delivered"><span class="notif-time">9:38 AM</span><span class="notif-msg">SMS → James Kim: "Your car is ready for pickup"</span></div>
+            <div class="notif-event sent"><span class="notif-time">9:15 AM</span><span class="notif-msg">Push → Tech Rivera: "2022 Camry checked in, Bay 3 ready"</span></div>
+            <div class="notif-event delivered"><span class="notif-time">8:55 AM</span><span class="notif-msg">Email → Maria Lopez: "Service started — track progress"</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ WORK ORDERS ═══ -->
+  <div class="screen" id="screen-workorders">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Work Orders</h1>
+        <p class="screen-subtitle">Every car's visit tracked from intake to invoice — role-differentiated views for customer, tech, and manager.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◫</div>
+          <div class="impact-body">
+            <div class="impact-title">Work Orders — The Spine of Everything</div>
+            <div class="impact-text">A work order opens the moment an advisor creates it and doesn't close until the vehicle is out the door. It carries: customer and vehicle info, bay assignment, assigned tech(s), service line items (each with labor code, estimated and actual time, parts consumed), a live status progression (Waiting → In Bay → Diagnosis → In Progress → QC → Ready → Closed), tech notes, manager notes, and photo documentation. Critically, the work order presents differently by role — the customer sees a clean status tracker, the tech sees labor codes and a running timer, the advisor sees payment status, and the manager sees all open orders simultaneously with alerts for any job running past book time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wo-board">
+      <div class="wo-column">
+        <div class="wo-col-header waiting-h">Waiting <span class="col-count">3</span></div>
+        <div class="wo-card"><div class="wo-card-vehicle">2024 Honda Accord</div><div class="wo-card-svc">Oil Change · Full Synthetic</div><div class="wo-card-meta"><span>Chen Wei</span><span class="wo-eta">Est. 35 min</span></div></div>
+        <div class="wo-card"><div class="wo-card-vehicle">2021 Ford Explorer</div><div class="wo-card-svc">Tire Rotation + Inspect</div><div class="wo-card-meta"><span>Mike P.</span><span class="wo-eta">Est. 45 min</span></div></div>
+        <div class="wo-card"><div class="wo-card-vehicle">2019 Subaru Outback</div><div class="wo-card-svc">Tire Rotation</div><div class="wo-card-meta"><span>Walk-in</span><span class="wo-eta">Est. 30 min</span></div></div>
+      </div>
+      <div class="wo-column">
+        <div class="wo-col-header inbay-h">In Bay <span class="col-count">4</span></div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2022 Toyota Camry</div><div class="wo-card-svc">Oil Change · Bay 3</div><div class="wo-card-meta"><span>J. Rivera</span><span class="wo-timer">00:22</span></div></div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2023 Honda CR-V</div><div class="wo-card-svc">Brake Service · Bay 11</div><div class="wo-card-meta"><span>A. Patel</span><span class="wo-timer">00:48</span></div></div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2019 Ford F-150</div><div class="wo-card-svc">Alignment · Bay 7</div><div class="wo-card-meta"><span>D. Kim</span><span class="wo-timer">00:31</span></div></div>
+        <div class="wo-card inbay over"><div class="wo-card-vehicle">2020 BMW 3 Series</div><div class="wo-card-svc">Full Inspection · Bay 2</div><div class="wo-card-meta"><span>M. Torres</span><span class="wo-timer over-t">01:12 ⚠</span></div></div>
+      </div>
+      <div class="wo-column">
+        <div class="wo-col-header qc-h">QC / Ready <span class="col-count">2</span></div>
+        <div class="wo-card qccard"><div class="wo-card-vehicle">2020 Chevy Silverado</div><div class="wo-card-svc">Tire Rotation + Balance</div><div class="wo-card-meta"><span>S. Johnson</span><span class="wo-qc">QC Check</span></div></div>
+        <div class="wo-card readycard"><div class="wo-card-vehicle">2021 BMW 3 Series</div><div class="wo-card-svc">Oil Change + Filter</div><div class="wo-card-meta"><span>J. Rivera</span><span class="wo-ready">Ready ✓</span></div></div>
+      </div>
+      <div class="wo-column">
+        <div class="wo-col-header done-h">Completed <span class="col-count">6</span></div>
+        <div class="wo-card done"><div class="wo-card-vehicle">2018 Honda Civic</div><div class="wo-card-svc">Oil Change</div><div class="wo-card-meta"><span>Tom Hansen</span><span class="wo-done">$49</span></div></div>
+        <div class="wo-card done"><div class="wo-card-vehicle">2022 Nissan Rogue</div><div class="wo-card-svc">Brake Pads (4)</div><div class="wo-card-meta"><span>E. Adams</span><span class="wo-done">$280</span></div></div>
+        <div class="wo-card done"><div class="wo-card-vehicle">2017 Toyota RAV4</div><div class="wo-card-svc">Alignment</div><div class="wo-card-meta"><span>D. Kim</span><span class="wo-done">$120</span></div></div>
+        <div class="wo-card done"><div class="wo-card-vehicle">2020 Ford Escape</div><div class="wo-card-svc">Tires (4) + Alignment</div><div class="wo-card-meta"><span>A. Patel</span><span class="wo-done">$680</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ STAFFING ═══ -->
+  <div class="screen" id="screen-staffing">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Daily Staffing</h1>
+        <p class="screen-subtitle">Load-matched staffing from 7 AM to 8 PM — coverage heatmap, shift planning, and real-time productivity tracking.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◎</div>
+          <div class="impact-body">
+            <div class="impact-title">Daily Staffing — 7 AM to 8 PM, Load-Matched</div>
+            <div class="impact-text">Staffing is planned against the projected bay load. The system calculates required tech-hours by time block and skill level — alignments require certified alignment techs; oil changes can be handled by entry-level staff. The heatmap shows red blocks where projected demand exceeds capacity and green where staffing is ahead of demand. Starting productivity targets: entry-level tech 0.8–1.0× book hours, journeyman 1.0–1.2×, lead tech 1.2–1.4×. The AI staffing optimizer continuously compares projected demand vs current staffing and suggests calling in additional techs or releasing early based on live bay load and the remaining appointment queue.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="staffing-grid-wrap">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Coverage heatmap — today</span><span class="ai-pill">✦ AI optimized</span></div>
+        <div class="heatmap-container" id="heatmap"></div>
+        <div class="heatmap-legend">
+          <span class="hm-dot red"></span>Understaffed &nbsp;
+          <span class="hm-dot amber"></span>At capacity &nbsp;
+          <span class="hm-dot green"></span>Well covered &nbsp;
+          <span class="hm-dot gray"></span>Closed
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Staff roster — today</span></div>
+        <table class="data-table">
+          <thead><tr><th>Tech</th><th>Role</th><th>Shift</th><th>Certification</th><th>Productivity</th></tr></thead>
+          <tbody>
+            <tr><td>J. Rivera</td><td>Lead Tech</td><td>7am–4pm</td><td>All services</td><td class="high-p">1.31×</td></tr>
+            <tr><td>A. Patel</td><td>Journeyman</td><td>7am–4pm</td><td>Brakes, Tires</td><td class="high-p">1.18×</td></tr>
+            <tr><td>D. Kim</td><td>Alignment Spec.</td><td>8am–5pm</td><td>Alignment</td><td class="mid-p">1.05×</td></tr>
+            <tr><td>S. Johnson</td><td>Journeyman</td><td>9am–6pm</td><td>Oil, Tires, Brakes</td><td class="mid-p">0.94×</td></tr>
+            <tr><td>T. Williams</td><td>Lube Tech</td><td>10am–7pm</td><td>Oil change only</td><td class="warn-p">0.81×</td></tr>
+            <tr><td>M. Torres</td><td>Journeyman</td><td>11am–8pm</td><td>General</td><td class="low-p">0.68×</td></tr>
+            <tr><td>E. Adams</td><td>Tire Specialist</td><td>7am–3pm</td><td>Tires, Alignment</td><td class="high-p">1.22×</td></tr>
+            <tr><td>L. Cruz</td><td>Parts Associate</td><td>7am–4pm</td><td>Parts staging</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">AI staffing recommendations</span><span class="ai-pill">✦ AI</span></div>
+        <div class="staff-recs">
+          <div class="rec-item">
+            <div class="rec-icon warn-icon">!</div>
+            <div class="rec-text">
+              <div class="rec-title">Call in coverage for 11 AM–1 PM</div>
+              <div class="rec-detail">Demand projection shows 3 bays understaffed during lunch peak. On-call tech available: R. Green (confirmed available today).</div>
+            </div>
+            <button class="btn-outline btn-sm">Call In</button>
+          </div>
+          <div class="rec-item">
+            <div class="rec-icon info-icon">i</div>
+            <div class="rec-text">
+              <div class="rec-title">Pair Torres with Rivera 2–4 PM</div>
+              <div class="rec-detail">AI coaching recommendation — assign Torres to shadow Rivera on 2 oil changes to address 0.68× productivity gap.</div>
+            </div>
+            <button class="btn-outline btn-sm">Schedule</button>
+          </div>
+          <div class="rec-item">
+            <div class="rec-icon good-icon">✓</div>
+            <div class="rec-text">
+              <div class="rec-title">Release Williams at 6 PM (1 hr early)</div>
+              <div class="rec-detail">Appointment queue thins at 6 PM. Demand satisfied with 5 techs. Saves 1 labor hour.</div>
+            </div>
+            <button class="btn-outline btn-sm">Approve</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ ROLES ═══ -->
+  <div class="screen" id="screen-roles">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Roles & Permissions</h1>
+        <p class="screen-subtitle">Five differentiated role views — each person sees exactly what they need, nothing more.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◈</div>
+          <div class="impact-body">
+            <div class="impact-title">Role-Differentiated Access — Right Information, Right Person</div>
+            <div class="impact-text">Work orders and bay data present differently by role. The <strong>Customer</strong> sees a clean status tracker (like a UPS tracking page) via an SMS link — no account required. The <strong>Technician</strong> sees labor codes, parts needed, a timer running against book time, and dictation input for findings. The <strong>Service Advisor</strong> sees the full order with customer communication history and upsell recommendations. The <strong>Store Manager</strong> sees all open work orders across all bays simultaneously with alerts for anything running past book time. The <strong>Parts Associate</strong> sees the staging queue and incoming reorder alerts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roles-grid">
+      <div class="role-card" onclick="showRoleDetail('customer')">
+        <div class="role-icon customer-r">C</div>
+        <div class="role-name">Customer</div>
+        <div class="role-access">Status tracking · Invoice · Survey</div>
+        <div class="role-perms"><span class="perm yes">View status</span><span class="perm yes">Approve work</span><span class="perm no">Edit order</span><span class="perm no">Bay data</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('tech')">
+        <div class="role-icon tech-r">T</div>
+        <div class="role-name">Technician</div>
+        <div class="role-access">Work orders · Bay status · Parts</div>
+        <div class="role-perms"><span class="perm yes">Own queue</span><span class="perm yes">Log findings</span><span class="perm yes">Parts request</span><span class="perm no">Financials</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('advisor')">
+        <div class="role-icon advisor-r">SA</div>
+        <div class="role-name">Service Advisor</div>
+        <div class="role-access">Appointments · WO creation · Comms</div>
+        <div class="role-perms"><span class="perm yes">Create WO</span><span class="perm yes">Customer comms</span><span class="perm yes">Upsell AI</span><span class="perm no">Payroll</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('manager')">
+        <div class="role-icon manager-r">M</div>
+        <div class="role-name">Store Manager</div>
+        <div class="role-access">Full access · Analytics · Staffing</div>
+        <div class="role-perms"><span class="perm yes">All bays</span><span class="perm yes">All WOs</span><span class="perm yes">Analytics</span><span class="perm yes">Staffing</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('parts')">
+        <div class="role-icon parts-r">PA</div>
+        <div class="role-name">Parts Associate</div>
+        <div class="role-access">Inventory · Staging · Orders</div>
+        <div class="role-perms"><span class="perm yes">Inventory</span><span class="perm yes">Stage parts</span><span class="perm yes">Reorders</span><span class="perm no">Scheduling</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ SERVICES ═══ -->
+  <div class="screen" id="screen-services">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Services & Inventory</h1>
+        <p class="screen-subtitle">Service catalog with bay and tech requirements, book time, and real-time parts on-hand tracking.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◆</div>
+          <div class="impact-body">
+            <div class="impact-title">Services & Inventory — Tied Together at the Line Item</div>
+            <div class="impact-text">Every service in the catalog carries: required bay type(s), required tech skill level, default book time, flagged parts with standard quantities, and price. When a service is added to a work order, it auto-suggests the necessary parts from inventory and alerts the parts associate to stage them. If a part is at or below the reorder threshold, it flags immediately — before the appointment, not during the job. Inventory tracks on-hand quantity, reorder point, preferred vendor, and cost. Parts consumption is deducted automatically when a work order closes. Integration with AutoZone Pro, NAPA, and O'Reilly provides real-time availability lookup and same-day ordering directly from the work order screen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Service catalog</span></div>
+        <table class="data-table">
+          <thead><tr><th>Service</th><th>Bay type</th><th>Tech level</th><th>Book time</th><th>Price</th></tr></thead>
+          <tbody>
+            <tr><td>Oil Change — Conventional</td><td>Drive-on</td><td>Entry</td><td>25 min</td><td>$39</td></tr>
+            <tr><td>Oil Change — Full Synthetic</td><td>Drive-on</td><td>Entry</td><td>30 min</td><td>$69</td></tr>
+            <tr><td>Tire Rotation</td><td>Chassis / Drive-on</td><td>Entry</td><td>20 min</td><td>$25</td></tr>
+            <tr><td>Brake Pad Replace (axle)</td><td>Chassis lift</td><td>Journeyman</td><td>75 min</td><td>$180</td></tr>
+            <tr><td>Wheel Alignment — 2-wheel</td><td>Alignment rack</td><td>Certified</td><td>60 min</td><td>$99</td></tr>
+            <tr><td>Wheel Alignment — 4-wheel</td><td>Alignment rack</td><td>Certified</td><td>90 min</td><td>$149</td></tr>
+            <tr><td>Tire Mount & Balance (ea)</td><td>Tire mount bay</td><td>Tire spec.</td><td>15 min</td><td>$25</td></tr>
+            <tr><td>Battery Test & Replace</td><td>Drive-on</td><td>Entry</td><td>30 min</td><td>$40 + parts</td></tr>
+            <tr><td>Full Inspection (150-pt)</td><td>Chassis lift</td><td>Lead tech</td><td>90 min</td><td>$79</td></tr>
+            <tr><td>Cabin Air Filter Replace</td><td>Drive-on</td><td>Entry</td><td>15 min</td><td>$35 + parts</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Inventory — critical parts</span><span class="ai-pill">✦ Auto-reorder</span></div>
+        <div class="inv-list">
+          <div class="inv-row ok"><div class="inv-part"><div class="inv-name">Oil Filter — Toyota 2.5L</div><div class="inv-sku">PN-2201</div></div><div class="inv-count">42</div><div class="inv-reorder">Min: 10</div><div class="inv-status ok-s">OK</div></div>
+          <div class="inv-row ok"><div class="inv-part"><div class="inv-name">Synthetic Oil 5W-30 (qt)</div><div class="inv-sku">PN-1102</div></div><div class="inv-count">88</div><div class="inv-reorder">Min: 20</div><div class="inv-status ok-s">OK</div></div>
+          <div class="inv-row warn"><div class="inv-part"><div class="inv-name">Brake Pad Set — Front</div><div class="inv-sku">PN-4401</div></div><div class="inv-count">8</div><div class="inv-reorder">Min: 6</div><div class="inv-status warn-s">Low</div></div>
+          <div class="inv-row danger"><div class="inv-part"><div class="inv-name">Brake Pad Set — Rear</div><div class="inv-sku">PN-4402</div></div><div class="inv-count">4</div><div class="inv-reorder">Min: 6</div><div class="inv-status danger-s">⚠ Reordering</div></div>
+          <div class="inv-row ok"><div class="inv-part"><div class="inv-name">Air Filter — Universal</div><div class="inv-sku">PN-3301</div></div><div class="inv-count">24</div><div class="inv-reorder">Min: 8</div><div class="inv-status ok-s">OK</div></div>
+          <div class="inv-row warn"><div class="inv-part"><div class="inv-name">Cabin Air Filter — Honda</div><div class="inv-sku">PN-3310</div></div><div class="inv-count">5</div><div class="inv-reorder">Min: 4</div><div class="inv-status warn-s">Low</div></div>
+          <div class="inv-row ok"><div class="inv-part"><div class="inv-name">Wiper Blades — 22"</div><div class="inv-sku">PN-5501</div></div><div class="inv-count">30</div><div class="inv-reorder">Min: 10</div><div class="inv-status ok-s">OK</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ NOTIFICATIONS ═══ -->
+  <div class="screen" id="screen-notifications">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Notifications Engine</h1>
+        <p class="screen-subtitle">Event-driven alerts for customers and technicians — SMS, email, and push at every critical touchpoint.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◉</div>
+          <div class="impact-body">
+            <div class="impact-title">Closing the Loop on Every Touchpoint</div>
+            <div class="impact-text">The notification engine is fully event-driven: every state change in a work order or bay fires the appropriate rule automatically. For customers: appointment confirmation (instant), reminder (24hr and 2hr prior), bay-ready alert, service-started notification, service-completed with invoice preview, and post-visit satisfaction survey. For technicians: new car assigned, customer checked in, car in bay, parts staged, manager notes added. Templates are per-service-type so tone and content are relevant. Twilio handles SMS; SendGrid handles email. Zero manual steps — the engine fires on its own.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Notification log — today</span></div>
+        <div class="notif-log">
+          <div class="nl-row"><span class="nl-time">9:42</span><span class="nl-type sms">SMS</span><span class="nl-to">Sarah M.</span><span class="nl-msg">Bay ready — arrive within 15 min</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">9:38</span><span class="nl-type push">Push</span><span class="nl-to">Tech Rivera</span><span class="nl-msg">2022 Camry checked in — Bay 3 ready</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">9:15</span><span class="nl-type email">Email</span><span class="nl-to">James K.</span><span class="nl-msg">Service started — track your vehicle</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">9:02</span><span class="nl-type sms">SMS</span><span class="nl-to">Maria L.</span><span class="nl-msg">Your car is ready for pickup!</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">8:50</span><span class="nl-type push">Push</span><span class="nl-to">Tech Patel</span><span class="nl-msg">New job: 2023 CR-V brake service, Bay 11</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">8:30</span><span class="nl-type email">Email</span><span class="nl-to">Anna B.</span><span class="nl-msg">Reminder: appointment at 10:30 AM today</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">8:00</span><span class="nl-type sms">SMS</span><span class="nl-to">Chen W.</span><span class="nl-msg">Reminder: your 10 AM oil change today</span><span class="nl-status sent">→</span></div>
+          <div class="nl-row"><span class="nl-time">7:55</span><span class="nl-type push">Push</span><span class="nl-to">Manager</span><span class="nl-msg">Brake pad PN-4402 below threshold — auto-reorder triggered</span><span class="nl-status delivered">✓</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Trigger rules</span></div>
+        <div class="trigger-list">
+          <div class="trigger-row"><div class="trigger-event">Appointment confirmed</div><div class="trigger-action">Email confirmation + SMS reminder (24hr + 2hr)</div></div>
+          <div class="trigger-row"><div class="trigger-event">Customer checked in</div><div class="trigger-action">Push → assigned tech · SMS → customer ETA</div></div>
+          <div class="trigger-row"><div class="trigger-event">Bay assigned</div><div class="trigger-action">Push → tech · Update customer tracker</div></div>
+          <div class="trigger-row"><div class="trigger-event">Service started</div><div class="trigger-action">Email → customer with live tracking link</div></div>
+          <div class="trigger-row"><div class="trigger-event">Parts staged</div><div class="trigger-action">Push → tech · Log timestamp</div></div>
+          <div class="trigger-row"><div class="trigger-event">Work order closed</div><div class="trigger-action">SMS → customer "car ready" · Invoice email</div></div>
+          <div class="trigger-row"><div class="trigger-event">Bay becomes free</div><div class="trigger-action">SMS → waitlist customer #1 "bay opening"</div></div>
+          <div class="trigger-row"><div class="trigger-event">Job overdue &gt;20%</div><div class="trigger-action">Push → manager alert · Update customer ETA</div></div>
+          <div class="trigger-row"><div class="trigger-event">Survey (1–3 stars)</div><div class="trigger-action">Alert → manager · AI drafts recovery message</div></div>
+          <div class="trigger-row"><div class="trigger-event">Part below threshold</div><div class="trigger-action">Auto-reorder + Push → parts associate</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ HOURS ═══ -->
+  <div class="screen" id="screen-hours">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Store Hours of Operation</h1>
+        <p class="screen-subtitle">Hours drive every scheduling rule — all booking, bay availability, and staffing is bounded by this config.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◑</div>
+          <div class="impact-body">
+            <div class="impact-title">Store Hours — The Foundation of All Scheduling</div>
+            <div class="impact-text">Store hours drive every scheduling rule: no appointments outside operating hours, walk-in intake ends 90 minutes before close, bay turnover cleaning is blocked against the last slot of the day. For a national chain, the system supports per-location hour configurations, holiday schedules, and seasonal hours — managed centrally with local overrides. Hours changes propagate instantly to all booking channels (website, phone, app) and to all scheduling algorithms. The system automatically blocks appointment booking windows when hours are reduced and notifies affected customers with reschedule options.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Weekly hours — Bentonville, AR</span></div>
+        <div class="hours-grid">
+          <div class="hours-row open"><span class="day">Monday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:65%"></div></div><span class="hours-time">7:00 AM – 8:00 PM</span></div>
+          <div class="hours-row open"><span class="day">Tuesday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:65%"></div></div><span class="hours-time">7:00 AM – 8:00 PM</span></div>
+          <div class="hours-row open"><span class="day">Wednesday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:65%"></div></div><span class="hours-time">7:00 AM – 8:00 PM</span></div>
+          <div class="hours-row open"><span class="day">Thursday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:65%"></div></div><span class="hours-time">7:00 AM – 8:00 PM</span></div>
+          <div class="hours-row open"><span class="day">Friday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:65%"></div></div><span class="hours-time">7:00 AM – 8:00 PM</span></div>
+          <div class="hours-row open accent"><span class="day">Saturday</span><div class="hours-bar"><div class="hours-fill" style="left:0%;width:55%"></div></div><span class="hours-time">8:00 AM – 6:00 PM</span></div>
+          <div class="hours-row closed"><span class="day">Sunday</span><div class="hours-bar closed-bar"></div><span class="hours-time closed-t">Closed</span></div>
+        </div>
+        <div class="hours-rules">
+          <div class="rule-item"><span class="rule-label">Walk-in cutoff</span><span class="rule-val">90 min before close</span></div>
+          <div class="rule-item"><span class="rule-label">Last appointment</span><span class="rule-val">60 min before close</span></div>
+          <div class="rule-item"><span class="rule-label">Bay turnover window</span><span class="rule-val">Final 30 min</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Holiday & special hours</span></div>
+        <div class="holiday-list">
+          <div class="holiday-row"><span class="hol-date">Apr 21</span><span class="hol-name">Easter Sunday</span><span class="hol-hours closed-t">Closed</span></div>
+          <div class="holiday-row"><span class="hol-date">May 26</span><span class="hol-name">Memorial Day</span><span class="hol-hours">9 AM – 4 PM</span></div>
+          <div class="holiday-row"><span class="hol-date">Jul 4</span><span class="hol-name">Independence Day</span><span class="hol-hours closed-t">Closed</span></div>
+          <div class="holiday-row"><span class="hol-date">Sep 1</span><span class="hol-name">Labor Day</span><span class="hol-hours">9 AM – 5 PM</span></div>
+          <div class="holiday-row"><span class="hol-date">Nov 27</span><span class="hol-name">Thanksgiving</span><span class="hol-hours closed-t">Closed</span></div>
+          <div class="holiday-row"><span class="hol-date">Dec 25</span><span class="hol-name">Christmas Day</span><span class="hol-hours closed-t">Closed</span></div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div class="panel-title" style="margin-bottom:10px">Multi-location management</div>
+          <div class="loc-item">Bentonville, AR · <span style="color:var(--accent-green)">Active</span></div>
+          <div class="loc-item">Fayetteville, AR · <span style="color:var(--accent-green)">Active</span></div>
+          <div class="loc-item">Rogers, AR · <span style="color:var(--accent-amber)">Setup pending</span></div>
+          <div class="loc-item">Springdale, AR · <span style="color:var(--accent-amber)">Setup pending</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ ANALYTICS ═══ -->
+  <div class="screen" id="screen-analytics">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">Analytics Dashboard</h1>
+        <p class="screen-subtitle">Revenue pacing, bay utilization, technician productivity, service mix, and national roll-up — all in one view.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">◈</div>
+          <div class="impact-body">
+            <div class="impact-title">Analytics — What the Manager Sees Every Morning</div>
+            <div class="impact-text">The analytics dashboard is the store manager's war room. Every KPI is benchmarked against the same day last week and the store's own targets — so green/yellow/red is instantly meaningful. The bay status board gives spatial overview at a glance. The technician productivity chart (book-hours ratio) drives coaching decisions: when a tech shows 0.68× for the third consecutive day, the system queues a coaching recommendation. Service mix analysis reveals whether revenue is diversified or fragile. For a national chain, the AI layer compounds: every store feeds the same training pipeline, and patterns discovered at one location propagate across the network automatically — making each store smarter because of every other store.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Revenue today</div><div class="kpi-value">$18,420</div><div class="kpi-trend up">↑ 12% vs last Sat</div></div>
+      <div class="kpi-card"><div class="kpi-label">Bay utilization</div><div class="kpi-value">74%</div><div class="kpi-trend warn">2 idle &gt;45 min</div></div>
+      <div class="kpi-card"><div class="kpi-label">Cars completed</div><div class="kpi-value">31</div><div class="kpi-trend up">+4 vs target</div></div>
+      <div class="kpi-card"><div class="kpi-label">Avg cycle time</div><div class="kpi-value">52 min</div><div class="kpi-trend dn">+7 min vs 45 target</div></div>
+      <div class="kpi-card"><div class="kpi-label">No-show rate</div><div class="kpi-value">8%</div><div class="kpi-trend up">↓ 3pts AI reminder</div></div>
+      <div class="kpi-card"><div class="kpi-label">Customer sat.</div><div class="kpi-value">4.7/5</div><div class="kpi-trend up">↑ 0.2 this month</div></div>
+    </div>
+
+    <div class="three-col">
+      <div class="panel" style="grid-column:span 2">
+        <div class="panel-header"><span class="panel-title">Hourly revenue vs target — today</span></div>
+        <div class="revenue-chart" id="revenueChart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Service mix</span></div>
+        <div class="donut-chart" id="donutChart"></div>
+        <div class="donut-legend">
+          <div class="dl-row"><span class="dl-dot" style="background:#4ade80"></span>Oil change <span class="dl-pct">38%</span></div>
+          <div class="dl-row"><span class="dl-dot" style="background:#60a5fa"></span>Tires <span class="dl-pct">24%</span></div>
+          <div class="dl-row"><span class="dl-dot" style="background:#f59e0b"></span>Brakes <span class="dl-pct">18%</span></div>
+          <div class="dl-row"><span class="dl-dot" style="background:#a78bfa"></span>Alignment <span class="dl-pct">10%</span></div>
+          <div class="dl-row"><span class="dl-dot" style="background:#94a3b8"></span>Other <span class="dl-pct">10%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Technician productivity — book hour ratio</span></div>
+        <div class="tech-perf-list">
+          <div class="tp-row"><span class="tp-name">J. Rivera</span><div class="tp-bar-bg"><div class="tp-bar" style="width:93%;background:#4ade80"></div></div><span class="tp-val high-p">1.31×</span></div>
+          <div class="tp-row"><span class="tp-name">A. Patel</span><div class="tp-bar-bg"><div class="tp-bar" style="width:84%;background:#4ade80"></div></div><span class="tp-val high-p">1.18×</span></div>
+          <div class="tp-row"><span class="tp-name">E. Adams</span><div class="tp-bar-bg"><div class="tp-bar" style="width:87%;background:#4ade80"></div></div><span class="tp-val high-p">1.22×</span></div>
+          <div class="tp-row"><span class="tp-name">D. Kim</span><div class="tp-bar-bg"><div class="tp-bar" style="width:75%;background:#60a5fa"></div></div><span class="tp-val mid-p">1.05×</span></div>
+          <div class="tp-row"><span class="tp-name">S. Johnson</span><div class="tp-bar-bg"><div class="tp-bar" style="width:67%;background:#60a5fa"></div></div><span class="tp-val mid-p">0.94×</span></div>
+          <div class="tp-row"><span class="tp-name">T. Williams</span><div class="tp-bar-bg"><div class="tp-bar" style="width:58%;background:#f59e0b"></div></div><span class="tp-val warn-p">0.81×</span></div>
+          <div class="tp-row"><span class="tp-name">M. Torres</span><div class="tp-bar-bg"><div class="tp-bar" style="width:49%;background:#f87171"></div></div><span class="tp-val low-p">0.68×</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">No-shows & cancellations — this week</span></div>
+        <div class="noshow-chart" id="noShowChart"></div>
+        <div class="noshow-legend">
+          <span class="nl-dot" style="background:#f87171"></span>No-show &nbsp;
+          <span class="nl-dot" style="background:#60a5fa"></span>Cancellation
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-header"><span class="panel-title">Weekly revenue trend — last 8 weeks</span><span class="ai-pill">✦ AI forecast included</span></div>
+      <div class="weekly-chart" id="weeklyChart"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ AI AGENTS ═══ -->
+  <div class="screen" id="screen-ai">
+    <div class="screen-hero">
+      <div class="hero-text">
+        <h1 class="screen-title">AI Agents</h1>
+        <p class="screen-subtitle">12 specialized agents — predictive, autonomous, generative, and real-time — operating across the entire shop.</p>
+      </div>
+      <div class="hero-impact">
+        <div class="impact-card">
+          <div class="impact-icon">✦</div>
+          <div class="impact-body">
+            <div class="impact-title">AI + Agentic Intelligence — The Unbeatable Competitive Moat</div>
+            <div class="impact-text">Every other shop management system records what happened. ShopFlow's AI acts on what's about to happen — before the bay goes idle, before the part runs out, before the customer no-shows, before the tech falls behind book time. At national scale, the network effect compounds: every location feeds the same training pipeline, patterns discovered at one store propagate to all stores automatically. The shift from reactive to proactive is the entire competitive moat. The agents operate in four layers: Predictive (see what's coming), Autonomous (act without human steps), Generative (language and documentation), and Real-time (optimize the live floor).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-zones">
+      <div class="ai-zone pred">
+        <div class="ai-zone-label">Predictive intelligence</div>
+        <div class="ai-agent-grid">
+          <div class="ai-agent-card"><div class="agent-badge pred-b">Predictive</div><div class="agent-title">Demand forecasting</div><div class="agent-desc">Predicts hourly walk-in volume and service mix using historical patterns, weather, local events, and seasonal signals. Drives staffing and promotional decisions 7 days out.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge pred-b">Predictive</div><div class="agent-title">Bay utilization predictor</div><div class="agent-desc">Projects 6-hour forward occupancy per bay type. Alerts when alignment or specialty bays will bottleneck upcoming appointments before the bottleneck occurs.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge pred-b">Predictive</div><div class="agent-title">No-show predictor</div><div class="agent-desc">Scores every appointment for cancellation risk. Fires targeted reminders to high-risk slots automatically, reducing no-shows by 25–35%.</div></div>
+        </div>
+      </div>
+
+      <div class="ai-zone auto">
+        <div class="ai-zone-label">Autonomous agents</div>
+        <div class="ai-agent-grid">
+          <div class="ai-agent-card"><div class="agent-badge auto-b">Autonomous</div><div class="agent-title">Parts reorder agent</div><div class="agent-desc">Monitors inventory in real time. When any part crosses the reorder threshold, it places the order with the preferred vendor and logs the PO — zero human steps required.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge auto-b">Autonomous</div><div class="agent-title">Smart scheduling agent</div><div class="agent-desc">Matches incoming appointments to optimal bay + tech + parts combinations simultaneously. Prevents double-booking at the resource level, not just the calendar level.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge auto-b">Autonomous</div><div class="agent-title">Notification orchestrator</div><div class="agent-desc">Monitors every work order state change and bay status. Fires the right message to the right person at precisely the right trigger — no manual steps ever required.</div></div>
+        </div>
+      </div>
+
+      <div class="ai-zone gen">
+        <div class="ai-zone-label">Generative AI</div>
+        <div class="ai-agent-grid">
+          <div class="ai-agent-card"><div class="agent-badge gen-b">Generative</div><div class="agent-title">Service advisor AI</div><div class="agent-desc">Assists front desk staff in real time — surfaces upsell services based on vehicle history and mileage, drafts plain-language explanations of found issues for customers.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge gen-b">Generative</div><div class="agent-title">Work order documentation AI</div><div class="agent-desc">Lets technicians dictate findings verbally. AI transcribes, classifies into labor codes, and attaches to the work order — cutting documentation time from 15 min to under 60 seconds.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge gen-b">Generative</div><div class="agent-title">Customer comms AI</div><div class="agent-desc">Drafts personalized post-visit follow-ups, service due reminders by mileage, and satisfaction recovery messages for low survey scores — all in the brand's voice.</div></div>
+        </div>
+      </div>
+
+      <div class="ai-zone rt">
+        <div class="ai-zone-label">Real-time operations AI</div>
+        <div class="ai-agent-grid ai-agent-grid-4">
+          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Dynamic staffing optimizer</div><div class="agent-desc">Continuously compares projected demand vs staffing. Suggests calling in additional techs or releasing early based on live bay load and the remaining appointment queue.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Cycle time watchdog</div><div class="agent-desc">Alerts when a job exceeds book time by &gt;20%. Identifies the root cause pattern (parts delay, skill gap, complexity) and surfaces the right intervention to the manager.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Walk-in slot optimizer</div><div class="agent-desc">When a walk-in arrives, scans all 20 bays and calculates the exact insertion point that minimizes disruption to committed appointments while maximizing throughput.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Revenue pacing agent</div><div class="agent-desc">Compares revenue trajectory vs target every 30 minutes. If pacing behind, surfaces specific actions: push a promotion, offer a service upsell, or fill an open bay.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
