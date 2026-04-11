@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow — Multi-Location Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--font-ui:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--font-cond:'Barlow Condensed',sans-serif}
+[data-theme="dark"]{--bg:#0b0d10;--bg2:#111418;--bg3:#181c24;--bg4:#1e2330;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--t1:#e8eaf0;--t2:#8b90a8;--t3:#4a5068;--blue:#4d8de8;--green:#3ccf7e;--amber:#f0b232;--red:#f06060;--purple:#a78bfa;--teal:#2dd4bf;--sidebar-bg:#0d0f12;--sidebar-border:rgba(255,255,255,0.05);--topbar-bg:rgba(13,15,18,0.95)}
+[data-theme="light"]{--bg:#f4f5f8;--bg2:#ffffff;--bg3:#f8f9fc;--bg4:#eef0f8;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--t1:#1a1d2e;--t2:#5a6075;--t3:#a8b0c8;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--teal:#0891b2;--sidebar-bg:#1a1d2e;--sidebar-border:rgba(255,255,255,0.07);--topbar-bg:rgba(244,245,248,0.95)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--t1);display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:238px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;transition:background .3s,transform .28s cubic-bezier(.4,0,.2,1)}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--sidebar-border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.logo-name{display:block;font-weight:600;font-size:14px;color:#fff}
+.logo-sub{display:block;font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.nav-section-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.55);transition:background .15s,color .15s;cursor:pointer;margin-bottom:1px;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--blue);color:#fff;font-weight:500}
+.nav-icon{font-size:13px;opacity:.6;width:16px;text-align:center}
+.new-badge{margin-left:auto;font-size:9px;background:rgba(60,207,126,.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--sidebar-border)}
+.store-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190}
+.sidebar-overlay.active{display:block}
+
+/* Topbar */
+.topbar{position:fixed;top:0;left:238px;right:0;height:52px;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:90}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-title{font-family:var(--font-cond);font-size:17px;font-weight:600;letter-spacing:.4px}
+.region-select{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:6px 12px;font-size:12px;color:var(--t1);font-family:var(--font-ui);cursor:pointer;outline:none}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:8px 6px;background:none;border:none;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:transform .25s,opacity .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Main */
+.main-content{margin-left:238px;padding-top:52px;flex:1}
+.page{padding:20px}
+
+/* Network KPIs */
+.network-hero{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.nh-title{font-family:var(--font-cond);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:14px}
+.nh-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.nh-kpi{text-align:center}
+.nh-val{font-family:var(--font-mono);font-size:22px;font-weight:500;color:var(--t1);line-height:1}
+.nh-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:5px}
+.nh-sub{font-size:10.5px;margin-top:3px}
+.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.divider{width:1px;background:var(--border)}
+
+/* Main layout */
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel-inner{padding:16px 18px}
+.panel-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2)}
+.ai-pill{font-size:10px;font-weight:600;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);border-radius:12px;padding:2px 9px}
+
+/* Store cards grid */
+.stores-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}
+.store-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px;cursor:pointer;transition:all .2s}
+.store-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.store-card.top-performer{border-color:rgba(60,207,126,.3)}
+.store-card.needs-attention{border-color:rgba(240,96,96,.25)}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sc-name{font-size:13px;font-weight:600;color:var(--t1)}
+.sc-city{font-size:10.5px;color:var(--t2);margin-top:1px}
+.sc-grade{font-family:var(--font-cond);font-size:22px;font-weight:700;line-height:1}
+.sc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.sc-metric{text-align:center;background:var(--bg4);border-radius:6px;padding:6px 4px}
+.sc-m-val{font-family:var(--font-mono);font-size:13px;font-weight:500;line-height:1}
+.sc-m-label{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-top:3px}
+.sc-bar{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:8px}
+.sc-bar-fill{height:100%;border-radius:2px}
+.sc-status{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10.5px}
+.sc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Leaderboard */
+.lb-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);font-size:12.5px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:var(--font-cond);font-size:16px;font-weight:700;width:24px;text-align:center;flex-shrink:0}
+.lb-name{flex:1}
+.lb-store{font-weight:600;color:var(--t1)}
+.lb-city{font-size:11px;color:var(--t2)}
+.lb-bar-bg{width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.lb-bar{height:100%;border-radius:3px;background:var(--blue)}
+.lb-val{font-family:var(--font-mono);font-size:12px;min-width:48px;text-align:right}
+
+/* Alert feed */
+.alert-item{display:flex;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.ad-warn{background:var(--amber)}.ad-info{background:var(--blue)}.ad-danger{background:var(--red)}.ad-good{background:var(--green)}
+.alert-body{}
+.alert-title{font-weight:600;color:var(--t1);margin-bottom:2px}
+.alert-text{color:var(--t2);line-height:1.5}
+.alert-loc{font-size:10.5px;color:var(--t3);margin-top:2px}
+
+/* Charts */
+.chart-wrap{padding:14px 16px}
+
+/* Mobile */
+@media(max-width:1100px){.three-col{grid-template-columns:1fr 1fr}.nh-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{left:0;padding:0 12px}
+  .main-content{margin-left:0}
+  .three-col,.two-col{grid-template-columns:1fr}
+  .nh-kpis{grid-template-columns:repeat(3,1fr);gap:8px}
+  .stores-grid{grid-template-columns:1fr}
+  .page{padding:12px}
+  .region-select{display:none}
+}
+@media(max-width:480px){
+  .nh-kpis{grid-template-columns:repeat(2,1fr)}
+  .nh-val{font-size:18px}
+  .page{padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="logo"><div class="logo-mark">SF</div><div><span class="logo-name">ShopFlow</span><span class="logo-sub">AI Shop Management</span></div></div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="index.html"><span class="nav-icon">⬡</span><span>Command Center</span></a>
+    <a class="nav-item" href="shopfloor.html"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="new-badge">LIVE</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments & Waitlist</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
+    <div class="nav-section-label">People</div>
+    <a class="nav-item" href="techproductivity.html"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <div class="nav-section-label">Shop</div>
+    <a class="nav-item" href="parts.html"><span class="nav-icon">◆</span><span>Parts & Inventory</span></a>
+    <a class="nav-item" href="customer.html" target="_blank"><span class="nav-icon">◎</span><span>Customer View</span><span class="new-badge">NEW</span></a>
+    <div class="nav-section-label">Intelligence</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
+    <a class="nav-item active" href="multilocation.html"><span class="nav-icon">⬡</span><span>Multi-location</span></a>
+  </nav>
+  <div class="sidebar-footer"><div style="display:flex;align-items:center;gap:8px"><div class="store-dot" style="display:inline-block"></div><div><div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:500">ShopFlow Network</div><div style="font-size:10px;color:rgba(255,255,255,.3)">8 Locations · National View</div></div></div></div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="tb-title">Multi-Location Network</div>
+    <span style="font-size:11px;color:var(--t3)">8 stores · National view</span>
+  </div>
+  <div class="topbar-right">
+    <select class="region-select" onchange="filterRegion(this.value)">
+      <option value="all">All regions</option>
+      <option value="ar">Arkansas</option>
+      <option value="mo">Missouri</option>
+      <option value="ok">Oklahoma</option>
+      <option value="tx">Texas</option>
+    </select>
+    <span style="font-size:11px;color:var(--green);font-weight:600"><span style="animation:pulse 2s infinite;display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:4px;vertical-align:middle"></span>Live</span>
+    <button class="theme-btn" onclick="toggleTheme()">☀</button>
+  </div>
+</header>
+
+<div class="main-content"><div class="page">
+
+  <!-- Network hero KPIs -->
+  <div class="network-hero">
+    <div class="nh-title">Network performance — today · Sat Apr 11, 2026</div>
+    <div class="nh-kpis">
+      <div class="nh-kpi">
+        <div class="nh-val good">$142k</div>
+        <div class="nh-label">Network revenue</div>
+        <div class="nh-sub good">↑ 9% vs last Sat</div>
+      </div>
+      <div class="nh-kpi">
+        <div class="nh-val">248</div>
+        <div class="nh-label">Cars completed</div>
+        <div class="nh-sub" style="color:var(--t2)">31 avg per store</div>
+      </div>
+      <div class="nh-kpi">
+        <div class="nh-val warn">71%</div>
+        <div class="nh-label">Bay utilization</div>
+        <div class="nh-sub warn">Target: 80%</div>
+      </div>
+      <div class="nh-kpi">
+        <div class="nh-val good">1.06×</div>
+        <div class="nh-label">Avg tech ratio</div>
+        <div class="nh-sub good">Above 1.0× target</div>
+      </div>
+      <div class="nh-kpi">
+        <div class="nh-val good">4.7</div>
+        <div class="nh-label">Avg customer sat</div>
+        <div class="nh-sub good">↑ 0.2 this month</div>
+      </div>
+      <div class="nh-kpi">
+        <div class="nh-val bad">2</div>
+        <div class="nh-label">Stores need attention</div>
+        <div class="nh-sub bad">Action required</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store cards + chart row -->
+  <div class="two-col" style="grid-template-columns:1.5fr 1fr">
+
+    <!-- Store cards -->
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">All locations — live status</span></div>
+      <div class="stores-grid" id="storesGrid"></div>
+    </div>
+
+    <!-- Right: leaderboard + alerts -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Revenue leaderboard -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Revenue leaderboard — today</span></div>
+        <div id="leaderboard"></div>
+      </div>
+
+      <!-- Network alerts -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Network alerts</span><span class="ai-pill">✦ AI</span></div>
+        <div class="alert-item">
+          <div class="alert-dot ad-danger"></div>
+          <div class="alert-body">
+            <div class="alert-title">Rogers AR — bay utilization at 42%</div>
+            <div class="alert-text">8 bays active but only 3–4 occupied all morning. Demand forecaster suggests a local promotion push.</div>
+            <div class="alert-loc">Rogers, AR · 9:38 AM</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot ad-warn"></div>
+          <div class="alert-body">
+            <div class="alert-title">Fayetteville — alignment rack down</div>
+            <div class="alert-text">Bay 7 alignment rack offline for calibration. 4 alignment appointments rerouted to Bentonville.</div>
+            <div class="alert-loc">Fayetteville, AR · 8:15 AM</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot ad-good"></div>
+          <div class="alert-body">
+            <div class="alert-title">Springdale — record Saturday revenue</div>
+            <div class="alert-text">Pacing $22,400 — highest Saturday on record for this location. Walk-in volume +35% vs average.</div>
+            <div class="alert-loc">Springdale, AR · 10:05 AM</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot ad-info"></div>
+          <div class="alert-body">
+            <div class="alert-title">AI: Bentonville → Rogers demand transfer</div>
+            <div class="alert-text">Bentonville appointment queue is full for next 3 hours. AI routing 6 walk-in inquiries to Rogers (12 min drive).</div>
+            <div class="alert-loc">Network AI · 10:12 AM</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="three-col" style="margin-bottom:0">
+
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">Weekly revenue by location</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="weeklyRevChart" role="img" aria-label="Weekly revenue by location bar chart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">Bay utilization — all stores</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="bayUtilChart" role="img" aria-label="Bay utilization across stores"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">Customer satisfaction trend</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="satChart" role="img" aria-label="Customer satisfaction trend line chart"></canvas></div>
+    </div>
+
+  </div>
+
+</div></div>
+
+<script>
+const STORES = [
+  {id:'bvl',name:'Bentonville',city:'AR',rev:18420,cars:31,util:74,ratio:1.04,sat:4.7,grade:'B',gradeColor:'#4d8de8',status:'good',statusText:'On target',bays:8,topPerformer:false,alert:false},
+  {id:'fvl',name:'Fayetteville',city:'AR',rev:21200,cars:36,util:82,ratio:1.18,sat:4.8,grade:'A',gradeColor:'#3ccf7e',status:'good',statusText:'Top performer',bays:8,topPerformer:true,alert:false},
+  {id:'spd',name:'Springdale',city:'AR',rev:22400,cars:38,util:88,ratio:1.22,sat:4.9,grade:'A',gradeColor:'#3ccf7e',status:'good',statusText:'Record day',bays:8,topPerformer:true,alert:false},
+  {id:'rog',name:'Rogers',city:'AR',rev:9800,cars:17,util:42,ratio:0.78,sat:4.4,grade:'D',gradeColor:'#f06060',status:'bad',statusText:'Needs attention',bays:8,topPerformer:false,alert:true},
+  {id:'jln',name:'Joplin',city:'MO',rev:16400,cars:28,util:68,ratio:0.98,sat:4.6,grade:'C',gradeColor:'#f0b232',status:'warn',statusText:'Below target',bays:8,topPerformer:false,alert:false},
+  {id:'spr',name:'Springfield',city:'MO',rev:19600,cars:33,util:76,ratio:1.08,sat:4.7,grade:'B',gradeColor:'#4d8de8',status:'good',statusText:'Solid',bays:8,topPerformer:false,alert:false},
+  {id:'tul',name:'Tulsa',city:'OK',rev:17800,cars:30,util:71,ratio:1.02,sat:4.6,grade:'B',gradeColor:'#4d8de8',status:'good',statusText:'On target',bays:8,topPerformer:false,alert:false},
+  {id:'okc',name:'Okl. City',city:'OK',rev:16800,cars:29,util:70,ratio:0.99,sat:4.5,grade:'C',gradeColor:'#f0b232',status:'warn',statusText:'Near target',bays:8,topPerformer:false,alert:false},
+];
+
+function renderStores(){
+  const g=document.getElementById('storesGrid');
+  g.innerHTML=STORES.map(s=>`
+    <div class="store-card ${s.topPerformer?'top-performer':s.alert?'needs-attention':''}">
+      <div class="sc-top">
+        <div><div class="sc-name">${s.name}</div><div class="sc-city">${s.city} · ${s.bays} bays</div></div>
+        <div class="sc-grade" style="color:${s.gradeColor}">${s.grade}</div>
+      </div>
+      <div class="sc-metrics">
+        <div class="sc-metric"><div class="sc-m-val good">$${Math.round(s.rev/1000)}k</div><div class="sc-m-label">Revenue</div></div>
+        <div class="sc-metric"><div class="sc-m-val">${s.cars}</div><div class="sc-m-label">Cars</div></div>
+        <div class="sc-metric"><div class="sc-m-val" style="color:${s.util>=75?'var(--green)':s.util>=60?'var(--amber)':'var(--red)'}">${s.util}%</div><div class="sc-m-label">Util.</div></div>
+      </div>
+      <div class="sc-bar"><div class="sc-bar-fill" style="width:${s.util}%;background:${s.util>=75?'var(--green)':s.util>=60?'var(--amber)':'var(--red)'}"></div></div>
+      <div class="sc-status">
+        <div class="sc-dot" style="background:${s.status==='good'?'var(--green)':s.status==='warn'?'var(--amber)':'var(--red)'}"></div>
+        <span style="color:var(--t2);font-size:11px">${s.statusText}</span>
+        <span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--t3)">${s.ratio}×</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLeaderboard(){
+  const sorted=[...STORES].sort((a,b)=>b.rev-a.rev);
+  const maxRev=sorted[0].rev;
+  const rankColors=['#f0b232','#8b90a8','#cd7f32'];
+  document.getElementById('leaderboard').innerHTML=sorted.map((s,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank" style="color:${rankColors[i]||'var(--t3)'}">${i+1}</div>
+      <div class="lb-name"><div class="lb-store">${s.name}</div><div class="lb-city">${s.city}</div></div>
+      <div class="lb-bar-bg"><div class="lb-bar" style="width:${Math.round((s.rev/maxRev)*100)}%;background:${s.gradeColor}"></div></div>
+      <div class="lb-val" style="color:${s.gradeColor}">$${Math.round(s.rev/1000)}k</div>
+    </div>
+  `).join('');
+}
+
+function buildCharts(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gc=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)';
+  const tc=isDark?'#8b90a8':'#5a6075';
+  const names=STORES.map(s=>s.name);
+  const colors=STORES.map(s=>s.gradeColor+'cc');
+
+  new Chart(document.getElementById('weeklyRevChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:names,datasets:[{label:'Revenue today',data:STORES.map(s=>s.rev),backgroundColor:colors,borderWidth:0,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString()}}},scales:{y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'k',color:tc,font:{size:10}},grid:{color:gc}},x:{ticks:{color:tc,font:{size:10}},grid:{display:false}}}}
+  });
+
+  new Chart(document.getElementById('bayUtilChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:names,datasets:[
+      {label:'Utilization %',data:STORES.map(s=>s.util),backgroundColor:STORES.map(s=>s.util>=75?'rgba(60,207,126,0.65)':s.util>=60?'rgba(240,178,50,0.65)':'rgba(240,96,96,0.65)'),borderWidth:0,borderRadius:4},
+      {label:'Target 80%',data:STORES.map(()=>80),type:'line',borderColor:'rgba(255,255,255,0.25)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',color:tc,font:{size:10}},grid:{color:gc}},x:{ticks:{color:tc,font:{size:10}},grid:{display:false}}}}
+  });
+
+  // Satisfaction trend (8 weeks, 3 stores highlighted)
+  const weeks=['W1','W2','W3','W4','W5','W6','W7','W8'];
+  new Chart(document.getElementById('satChart').getContext('2d'),{
+    type:'line',
+    data:{labels:weeks,datasets:[
+      {label:'Springdale',data:[4.5,4.6,4.7,4.7,4.8,4.8,4.9,4.9],borderColor:'#3ccf7e',borderWidth:2,pointRadius:0,fill:false,tension:.4},
+      {label:'Network avg',data:[4.3,4.4,4.4,4.5,4.5,4.6,4.6,4.7],borderColor:'#4d8de8',borderWidth:2,pointRadius:0,fill:false,tension:.4},
+      {label:'Rogers',data:[4.5,4.4,4.3,4.4,4.3,4.4,4.4,4.4],borderColor:'#f06060',borderWidth:1.5,pointRadius:0,fill:false,tension:.4,borderDash:[4,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tc,font:{size:10},usePointStyle:true,boxWidth:8}}},scales:{y:{min:4.0,max:5.0,ticks:{color:tc,font:{size:10}},grid:{color:gc}},x:{ticks:{color:tc,font:{size:10}},grid:{display:false}}}}
+  });
+}
+
+function filterRegion(r){
+  // In a real app this would filter — demo just re-renders all
+  renderStores();
+}
+
+function toggleTheme(){const h=document.documentElement;h.getAttribute('data-theme')==='dark'?h.setAttribute('data-theme','light'):h.setAttribute('data-theme','dark');setTimeout(()=>{document.querySelectorAll('canvas').forEach(c=>{if(c._chartInstance)c._chartInstance.destroy()});buildCharts()},60)}
+function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay'),h=document.getElementById('hamburger');const open=s.classList.contains('open');s.classList.toggle('open',!open);o.classList.toggle('active',!open);h.classList.toggle('open',!open)}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('active');document.getElementById('hamburger').classList.remove('open')}
+
+renderStores();
+renderLeaderboard();
+buildCharts();
+</script>
+</body>
+</html>

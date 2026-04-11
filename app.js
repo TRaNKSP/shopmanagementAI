@@ -77,26 +77,14 @@ updateClock();
 //  BAY DATA
 // ══════════════════════════════════════════
 const BAYS = [
-  { id:'B1',  type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2022 Camry',       tech:'Rivera',   services:['Oil','Brakes','Inspection'] },
-  { id:'B2',  type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2020 BMW 3-Series',tech:'Torres',   services:['Oil','Brakes','Inspection'] },
-  { id:'B3',  type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2023 CR-V',        tech:'Patel',    services:['Oil','Tires','Brakes'] },
-  { id:'B4',  type:'Drive-on Lift',  cap:'Class 1–3', status:'available', car:'',                 tech:'',         services:['Oil','Tires','Brakes'] },
-  { id:'B5',  type:'Tire Mount Bay', cap:'Class 1–3', status:'occupied',  car:'2021 Explorer',    tech:'Adams',    services:['Tires','Mount & Balance'] },
-  { id:'B6',  type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2019 Silverado',   tech:'Johnson',  services:['Oil','Brakes','Inspection'] },
-  { id:'B7',  type:'Alignment Rack', cap:'Class 1–3', status:'occupied',  car:'2020 F-150',       tech:'Kim',      services:['Alignment','Inspection'] },
-  { id:'B8',  type:'Drive-on Lift',  cap:'Class 1–3', status:'turnover',  car:'',                 tech:'',         services:['Oil','Tires','Brakes'] },
-  { id:'B9',  type:'Chassis Lift',   cap:'Class 1–4', status:'reserved',  car:'James K. 10:30',   tech:'',         services:['Oil','Brakes','Inspection'] },
-  { id:'B10', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2017 RAV4',        tech:'Rivera',   services:['Oil','Tires','Brakes'] },
-  { id:'B11', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2023 Tacoma',      tech:'Patel',    services:['Oil','Brakes','Inspection'] },
-  { id:'B12', type:'Drive-on Lift',  cap:'Class 1–3', status:'available', car:'',                 tech:'',         services:['Oil','Tires','Brakes'] },
-  { id:'B13', type:'Alignment Rack', cap:'Class 1–3', status:'occupied',  car:'2022 Accord',      tech:'Kim',      services:['Alignment','Inspection'] },
-  { id:'B14', type:'Chassis Lift',   cap:'Class 1–4', status:'reserved',  car:'Chen W. 10:00',    tech:'',         services:['Oil','Brakes','Inspection'] },
-  { id:'B15', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2020 Silverado',   tech:'Johnson',  services:['Oil','Tires','Brakes'] },
-  { id:'B16', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2021 Mustang',     tech:'Torres',   services:['Oil','Brakes','Inspection'] },
-  { id:'B17', type:'Tire Mount Bay', cap:'Class 1–3', status:'available', car:'',                 tech:'',         services:['Tires','Mount & Balance'] },
-  { id:'B18', type:'Drive-on Lift',  cap:'Class 1–3', status:'turnover',  car:'',                 tech:'',         services:['Oil','Tires','Brakes'] },
-  { id:'B19', type:'Lube Pit',       cap:'Class 1–2', status:'occupied',  car:'2018 Civic',       tech:'Williams', services:['Oil Change Only'] },
-  { id:'B20', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2024 Tucson',      tech:'Adams',    services:['Oil','Tires','Brakes'] },
+  { id:'B1', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2022 Camry',        tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
+  { id:'B2', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2020 BMW 3-Series', tech:'Torres',  services:['Oil','Tires','Brakes'] },
+  { id:'B3', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2023 CR-V',         tech:'Patel',   services:['Oil','Tires','Brakes'] },
+  { id:'B4', type:'Drive-on Lift',  cap:'Class 1–3', status:'reserved',  car:'Next: Explorer',    tech:'Torres',  services:['Oil','Tires','Brakes'] },
+  { id:'B5', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2020 Silverado',    tech:'Johnson', services:['Oil','Brakes','Inspection'] },
+  { id:'B6', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2021 Explorer',     tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
+  { id:'B7', type:'Alignment Rack', cap:'Class 1–3', status:'occupied',  car:'2020 F-150',        tech:'Kim',     services:['Alignment','Inspection'] },
+  { id:'B8', type:'Drive-on Lift',  cap:'Class 1–3', status:'turnover',  car:'',                  tech:'',        services:['Oil','Tires','Brakes'] },
 ];
 
 // Build mini bay grid (dashboard)
@@ -167,18 +155,16 @@ function buildProjection() {
   const grid = document.getElementById('projectionGrid');
   if (!grid) return;
   const hours = ['Now','10:30','11:00','11:30','12:00','12:30'];
-  const bayRows = BAYS.slice(0, 10);
+  const bayRows = BAYS; // now 8 bays
   const statuses = {
-    'B1':  ['occ','occ','avail','avail','avail','avail'],
-    'B2':  ['occ','occ','occ','avail','avail','avail'],
-    'B3':  ['occ','avail','avail','occ','occ','avail'],
-    'B4':  ['avail','avail','occ','occ','avail','avail'],
-    'B5':  ['occ','occ','avail','avail','occ','occ'],
-    'B6':  ['occ','avail','avail','occ','occ','occ'],
-    'B7':  ['occ','occ','occ','avail','res','res'],
-    'B8':  ['avail','avail','avail','avail','occ','occ'],
-    'B9':  ['res','res','occ','occ','avail','avail'],
-    'B10': ['occ','avail','avail','avail','occ','occ'],
+    'B1': ['occ','occ','avail','avail','avail','avail'],
+    'B2': ['occ','occ','occ','avail','avail','avail'],
+    'B3': ['occ','avail','avail','occ','occ','avail'],
+    'B4': ['res','occ','occ','avail','avail','avail'],
+    'B5': ['occ','occ','avail','avail','occ','occ'],
+    'B6': ['occ','avail','avail','occ','occ','occ'],
+    'B7': ['occ','occ','occ','avail','res','res'],
+    'B8': ['avail','avail','avail','occ','occ','occ'],
   };
   let html = '<table class="proj-table"><thead><tr><th>Bay</th>';
   hours.forEach(h => { html += `<th>${h}</th>`; });
@@ -186,9 +172,7 @@ function buildProjection() {
   bayRows.forEach(bay => {
     html += `<tr><td>${bay.id} — ${bay.type}</td>`;
     const row = statuses[bay.id] || Array(6).fill('avail');
-    row.forEach(s => {
-      html += `<td><div class="proj-cell ${s}"></div></td>`;
-    });
+    row.forEach(s => { html += `<td><div class="proj-cell ${s}"></div></td>`; });
     html += '</tr>';
   });
   html += '</tbody></table>';
@@ -341,7 +325,7 @@ const ROLE_DETAILS = {
   },
   manager: {
     title: 'Store manager view',
-    desc: 'The manager sees all open work orders across all 20 bays simultaneously, with AI alerts for any job running past book time, staffing coverage gaps, parts shortages, and revenue pacing. They have full access to analytics, staffing, and override any AI recommendation with one click.'
+    desc: 'The manager sees all open work orders across all 8 bays simultaneously, with AI alerts for any job running past book time, staffing coverage gaps, parts shortages, and revenue pacing. They have full access to analytics, staffing, and override any AI recommendation with one click.'
   },
   parts: {
     title: 'Parts associate view',

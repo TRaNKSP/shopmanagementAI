@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow — Your Vehicle Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 60px}
+
+/* ── Header bar ── */
+.header{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.shop-logo{display:flex;align-items:center;gap:9px}
+.shop-mark{width:32px;height:32px;background:#4d8de8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff}
+.shop-name{font-size:13px;font-weight:600;color:#e8eaf0}
+.shop-addr{font-size:10.5px;color:#8b90a8;margin-top:1px}
+.header-time{font-family:'DM Mono',monospace;font-size:11px;color:#8b90a8;text-align:right}
+.live-dot{display:inline-block;width:6px;height:6px;background:#3ccf7e;border-radius:50%;margin-right:4px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Status hero ── */
+.status-hero{width:100%;max-width:480px;padding:28px 20px 24px;text-align:center}
+.vehicle-name{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:#e8eaf0;letter-spacing:-.3px;margin-bottom:4px}
+.vehicle-plate{font-family:'DM Mono',monospace;font-size:12px;color:#8b90a8;letter-spacing:.1em;margin-bottom:20px}
+
+/* ── Status ring ── */
+.status-ring-wrap{position:relative;width:140px;height:140px;margin:0 auto 20px}
+.status-ring-svg{width:140px;height:140px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:8}
+.ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1),stroke .3s}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
+.ring-label{font-size:10px;color:#8b90a8;text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:8px}
+.status-in-progress{background:rgba(77,141,232,0.15);border:1px solid rgba(77,141,232,0.3);color:#4d8de8}
+.status-ready{background:rgba(60,207,126,0.15);border:1px solid rgba(60,207,126,0.3);color:#3ccf7e}
+.status-waiting{background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.25);color:#f0b232}
+.status-done{background:rgba(60,207,126,0.1);border:1px solid rgba(60,207,126,0.2);color:#3ccf7e}
+.promised-time{font-size:13px;color:#8b90a8}
+.promised-time strong{color:#e8eaf0}
+
+/* ── Progress timeline ── */
+.timeline{width:100%;max-width:480px;padding:0 20px 24px}
+.tl-step{display:flex;gap:14px;padding-bottom:0;position:relative}
+.tl-step:not(:last-child)::after{content:'';position:absolute;left:17px;top:34px;bottom:0;width:2px;background:rgba(255,255,255,0.06);z-index:0}
+.tl-step.done::after{background:rgba(77,141,232,0.3)}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:4px;z-index:1}
+.tl-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tl-dot.done{background:rgba(77,141,232,0.2);border:2px solid #4d8de8}
+.tl-dot.active{background:rgba(77,141,232,0.15);border:2px solid #4d8de8;box-shadow:0 0 0 4px rgba(77,141,232,0.1);animation:activePulse 2s infinite}
+@keyframes activePulse{0%,100%{box-shadow:0 0 0 4px rgba(77,141,232,.1)}50%{box-shadow:0 0 0 8px rgba(77,141,232,.05)}}
+.tl-dot.pending{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1)}
+.tl-body{padding:6px 0 24px;flex:1}
+.tl-name{font-size:14px;font-weight:600;color:#e8eaf0;margin-bottom:3px}
+.tl-name.pending{color:#8b90a8;font-weight:400}
+.tl-detail{font-size:12px;color:#8b90a8;line-height:1.5}
+.tl-time{font-family:'DM Mono',monospace;font-size:11px;color:#4a5068;margin-top:3px}
+.tl-time.done-time{color:#4d8de8}
+.tl-time.active-time{color:#3ccf7e}
+
+/* ── Service details card ── */
+.card{width:100%;max-width:480px;margin:0 20px 16px;padding:16px 18px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:14px}
+.card-title{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#4a5068;margin-bottom:12px}
+.card.mx{margin-left:20px;margin-right:20px;width:calc(100% - 40px);max-width:440px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.dr-label{color:#8b90a8}
+.dr-val{color:#e8eaf0;font-weight:500;text-align:right}
+.dr-val.green{color:#3ccf7e}
+.dr-val.amber{color:#f0b232}
+.service-line{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.service-line:last-child{border-bottom:none}
+.svc-icon{width:28px;height:28px;border-radius:7px;background:rgba(77,141,232,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.svc-info{flex:1}
+.svc-name{font-size:13px;color:#e8eaf0;font-weight:500}
+.svc-detail{font-size:11px;color:#8b90a8;margin-top:1px}
+.svc-price{font-family:'DM Mono',monospace;font-size:13px;color:#e8eaf0}
+
+/* ── Technician card ── */
+.tech-card{display:flex;align-items:center;gap:12px}
+.tech-av{width:42px;height:42px;border-radius:50%;background:#4d8de8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.tech-name{font-size:14px;font-weight:600;color:#e8eaf0}
+.tech-role{font-size:11.5px;color:#8b90a8;margin-top:2px}
+.tech-stars{color:#f0b232;font-size:13px;margin-top:3px;letter-spacing:1px}
+.tech-badge{margin-left:auto;font-size:10px;font-weight:600;background:rgba(77,141,232,0.15);color:#4d8de8;border:1px solid rgba(77,141,232,0.25);border-radius:5px;padding:3px 9px}
+
+/* ── Findings alert ── */
+.findings-card{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:14px 16px;background:rgba(240,178,50,0.06);border:1px solid rgba(240,178,50,0.2);border-radius:12px}
+.fc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.fc-icon{font-size:16px}
+.fc-title{font-size:12px;font-weight:600;color:#f0b232;text-transform:uppercase;letter-spacing:.06em}
+.finding-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(240,178,50,0.1);font-size:12.5px}
+.finding-item:last-child{border-bottom:none}
+.fi-dot{width:6px;height:6px;border-radius:50%;background:#f0b232;flex-shrink:0;margin-top:5px}
+.fi-text{color:#e8eaf0;line-height:1.5}
+.fi-text span{color:#8b90a8;font-size:11.5px;display:block;margin-top:2px}
+.approve-btns{display:flex;gap:8px;margin-top:12px}
+.btn-approve{flex:1;padding:10px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-yes{background:#3ccf7e;color:#0a2010}
+.btn-no{background:rgba(255,255,255,0.08);color:#8b90a8;border:1px solid rgba(255,255,255,0.1)}
+.btn-yes:hover,.btn-no:hover{opacity:.85}
+
+/* ── Invoice preview ── */
+.invoice-total{display:flex;align-items:baseline;justify-content:space-between;padding:12px 0 0;margin-top:4px;border-top:1px solid rgba(255,255,255,0.08)}
+.inv-label{font-size:13px;color:#8b90a8}
+.inv-amount{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:#3ccf7e}
+
+/* ── Notification CTA ── */
+.notif-cta{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:14px 16px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:12px;display:flex;align-items:center;gap:12px}
+.nc-icon{width:36px;height:36px;border-radius:9px;background:rgba(60,207,126,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nc-text{flex:1;font-size:12.5px;color:#8b90a8;line-height:1.5}
+.nc-text strong{color:#e8eaf0;display:block;margin-bottom:2px;font-size:13px}
+.nc-toggle{width:40px;height:24px;background:#4d8de8;border-radius:12px;position:relative;cursor:pointer;flex-shrink:0}
+.nc-toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:right .2s}
+
+/* ── Rate / Survey ── */
+.survey-card{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:16px 18px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:14px;text-align:center}
+.survey-title{font-size:14px;font-weight:600;color:#e8eaf0;margin-bottom:4px}
+.survey-sub{font-size:12px;color:#8b90a8;margin-bottom:16px}
+.star-row{display:flex;justify-content:center;gap:10px}
+.star{font-size:32px;cursor:pointer;transition:transform .15s;color:#2a3040;line-height:1}
+.star:hover,.star.lit{color:#f0b232;transform:scale(1.15)}
+
+/* ── Footer ── */
+.page-footer{width:100%;max-width:480px;padding:16px 20px;text-align:center;font-size:11px;color:#4a5068;border-top:1px solid rgba(255,255,255,0.05)}
+
+/* ── Demo switcher ── */
+.demo-bar{width:100%;max-width:480px;display:flex;gap:4px;padding:12px 20px 0;flex-wrap:wrap}
+.demo-btn{flex:1;min-width:100px;padding:8px 10px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#8b90a8;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
+.demo-btn.active{background:rgba(77,141,232,0.15);border-color:rgba(77,141,232,0.35);color:#4d8de8}
+</style>
+</head>
+<body>
+
+<!-- Demo state switcher (simulates different vehicle states) -->
+<div class="demo-bar">
+  <button class="demo-btn active" onclick="setState('inprogress',this)">In Progress</button>
+  <button class="demo-btn" onclick="setState('waitingapproval',this)">Needs Approval</button>
+  <button class="demo-btn" onclick="setState('ready',this)">Ready for Pickup</button>
+  <button class="demo-btn" onclick="setState('complete',this)">Completed</button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="shop-logo">
+    <div class="shop-mark">SF</div>
+    <div>
+      <div class="shop-name">ShopFlow Auto Care</div>
+      <div class="shop-addr">Bentonville, AR · (479) 555-0100</div>
+    </div>
+  </div>
+  <div class="header-time">
+    <div><span class="live-dot"></span>Live update</div>
+    <div id="clockDisplay">--:--</div>
+  </div>
+</div>
+
+<!-- Status hero -->
+<div class="status-hero">
+  <div class="vehicle-name" id="vehicleName">2022 Toyota Camry</div>
+  <div class="vehicle-plate">ARK · ABC-1234</div>
+  <div class="status-ring-wrap">
+    <svg class="status-ring-svg" viewBox="0 0 140 140">
+      <circle class="ring-bg" cx="70" cy="70" r="58"/>
+      <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="58" stroke="#4d8de8"
+        stroke-dasharray="364.4" stroke-dashoffset="182"/>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-pct" id="ringPct" style="color:#4d8de8">50%</div>
+      <div class="ring-label">Complete</div>
+    </div>
+  </div>
+  <div class="status-badge status-in-progress" id="statusBadge">
+    <span>●</span><span id="statusText">Service in progress</span>
+  </div>
+  <div class="promised-time" id="promisedTime">Ready by <strong>11:00 AM today</strong></div>
+</div>
+
+<!-- Progress timeline -->
+<div class="timeline">
+  <div class="tl-step done">
+    <div class="tl-left"><div class="tl-dot done">✓</div></div>
+    <div class="tl-body">
+      <div class="tl-name">Checked in</div>
+      <div class="tl-detail">Vehicle received at front desk</div>
+      <div class="tl-time done-time">9:02 AM</div>
+    </div>
+  </div>
+  <div class="tl-step done">
+    <div class="tl-left"><div class="tl-dot done">✓</div></div>
+    <div class="tl-body">
+      <div class="tl-name">Bay assigned</div>
+      <div class="tl-detail">Bay 1 — Chassis lift · Tech Rivera assigned</div>
+      <div class="tl-time done-time">9:04 AM</div>
+    </div>
+  </div>
+  <div class="tl-step" id="step-service">
+    <div class="tl-left"><div class="tl-dot active" id="dot-service">⚙</div></div>
+    <div class="tl-body">
+      <div class="tl-name" id="step-service-name">Service in progress</div>
+      <div class="tl-detail" id="step-service-detail">Oil change underway — approx. 8 min remaining</div>
+      <div class="tl-time active-time" id="step-service-time">Started 9:08 AM</div>
+    </div>
+  </div>
+  <div class="tl-step" id="step-qc">
+    <div class="tl-left"><div class="tl-dot pending" id="dot-qc">◉</div></div>
+    <div class="tl-body">
+      <div class="tl-name pending" id="step-qc-name">Quality check</div>
+      <div class="tl-detail">Final inspection before handoff</div>
+      <div class="tl-time" id="step-qc-time">Upcoming</div>
+    </div>
+  </div>
+  <div class="tl-step" id="step-ready">
+    <div class="tl-left"><div class="tl-dot pending" id="dot-ready">🔑</div></div>
+    <div class="tl-body">
+      <div class="tl-name pending" id="step-ready-name">Ready for pickup</div>
+      <div class="tl-detail">We'll text you when your car is ready</div>
+      <div class="tl-time" id="step-ready-time">Est. 11:00 AM</div>
+    </div>
+  </div>
+</div>
+
+<!-- Service details -->
+<div class="card mx">
+  <div class="card-title">Services today</div>
+  <div class="service-line">
+    <div class="svc-icon">🛢</div>
+    <div class="svc-info">
+      <div class="svc-name">Full synthetic oil change</div>
+      <div class="svc-detail">5W-30 · 6 qt · Filter included</div>
+    </div>
+    <div class="svc-price">$69</div>
+  </div>
+  <div class="service-line">
+    <div class="svc-icon">🔄</div>
+    <div class="svc-info">
+      <div class="svc-name">Tire rotation</div>
+      <div class="svc-detail">4-wheel rotation · Torque check</div>
+    </div>
+    <div class="svc-price">$25</div>
+  </div>
+  <div class="invoice-total">
+    <div class="inv-label">Estimated total</div>
+    <div class="inv-amount">$94</div>
+  </div>
+</div>
+
+<!-- Findings approval card (hidden initially) -->
+<div class="findings-card" id="findingsCard" style="display:none">
+  <div class="fc-header">
+    <div class="fc-icon">⚠</div>
+    <div class="fc-title">Tech found — your approval needed</div>
+  </div>
+  <div class="finding-item">
+    <div class="fi-dot"></div>
+    <div class="fi-text">
+      Cabin air filter — heavily soiled, recommend replacement
+      <span>PN-3310 Honda · +$35 · 15 min · Extends A/C efficiency</span>
+    </div>
+  </div>
+  <div class="finding-item">
+    <div class="fi-dot"></div>
+    <div class="fi-text">
+      Rear wiper blade — cracked rubber, smearing
+      <span>22" standard · +$18 · 5 min · Visibility safety item</span>
+    </div>
+  </div>
+  <div class="approve-btns">
+    <button class="btn-approve btn-yes" onclick="approveFinding()">Approve both — $53 added</button>
+    <button class="btn-approve btn-no">Decline</button>
+  </div>
+</div>
+
+<!-- Technician -->
+<div class="card mx">
+  <div class="card-title">Your technician</div>
+  <div class="tech-card">
+    <div class="tech-av">JR</div>
+    <div>
+      <div class="tech-name">Jesse Rivera</div>
+      <div class="tech-role">Lead Technician · 8 yrs experience</div>
+      <div class="tech-stars">★★★★★</div>
+    </div>
+    <div class="tech-badge">4.9 / 5</div>
+  </div>
+</div>
+
+<!-- Notification opt-in -->
+<div class="notif-cta">
+  <div class="nc-icon">📱</div>
+  <div class="nc-text">
+    <strong>Text me when ready</strong>
+    We'll send you a text the moment your car is done
+  </div>
+  <div class="nc-toggle" id="smsToggle" onclick="toggleSMS(this)"></div>
+</div>
+
+<!-- Survey (shown when complete) -->
+<div class="survey-card" id="surveyCard" style="display:none">
+  <div class="survey-title">How was your visit?</div>
+  <div class="survey-sub">Your feedback helps us improve</div>
+  <div class="star-row" id="starRow">
+    <span class="star" onclick="rateStar(1)">★</span>
+    <span class="star" onclick="rateStar(2)">★</span>
+    <span class="star" onclick="rateStar(3)">★</span>
+    <span class="star" onclick="rateStar(4)">★</span>
+    <span class="star" onclick="rateStar(5)">★</span>
+  </div>
+</div>
+
+<div class="page-footer">
+  ShopFlow Auto Care · Bentonville, AR<br>
+  Questions? Call <a href="tel:4795550100" style="color:#4d8de8">(479) 555-0100</a>
+</div>
+
+<script>
+// Clock
+function tick(){const n=new Date();document.getElementById('clockDisplay').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+setInterval(tick,1000);tick();
+
+// States
+const STATES = {
+  inprogress:{pct:50,ringColor:'#4d8de8',badgeClass:'status-in-progress',badgeText:'Service in progress',promised:'Ready by <strong>11:00 AM today</strong>',showFindings:false,showSurvey:false,serviceStep:'active',qcStep:'pending',readyStep:'pending'},
+  waitingapproval:{pct:65,ringColor:'#f0b232',badgeClass:'status-waiting',badgeText:'Awaiting your approval',promised:'Ready by <strong>11:30 AM</strong> after approval',showFindings:true,showSurvey:false,serviceStep:'active',qcStep:'pending',readyStep:'pending'},
+  ready:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-ready',badgeText:'Your car is ready!',promised:'Pick up at <strong>Bay 1 entrance</strong>',showFindings:false,showSurvey:false,serviceStep:'done',qcStep:'done',readyStep:'active'},
+  complete:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-done',badgeText:'Service complete — thank you!',promised:'Invoice sent to <strong>sarah@email.com</strong>',showFindings:false,showSurvey:true,serviceStep:'done',qcStep:'done',readyStep:'done'},
+};
+
+const CIRCUMFERENCE = 2 * Math.PI * 58;
+
+function setState(key, btn){
+  const s = STATES[key];
+  document.querySelectorAll('.demo-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Ring
+  const offset = CIRCUMFERENCE - (s.pct / 100) * CIRCUMFERENCE;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+  document.getElementById('ringFill').style.stroke = s.ringColor;
+  document.getElementById('ringPct').style.color = s.ringColor;
+  document.getElementById('ringPct').textContent = s.pct + '%';
+
+  // Badge
+  const badge = document.getElementById('statusBadge');
+  badge.className = 'status-badge ' + s.badgeClass;
+  document.getElementById('statusText').textContent = s.badgeText;
+  document.getElementById('promisedTime').innerHTML = s.promised;
+
+  // Findings & survey
+  document.getElementById('findingsCard').style.display = s.showFindings ? 'block' : 'none';
+  document.getElementById('surveyCard').style.display = s.showSurvey ? 'flex' : 'none';
+  if(s.showSurvey) document.getElementById('surveyCard').style.flexDirection='column';
+
+  // Steps
+  setStep('service', s.serviceStep);
+  setStep('qc', s.qcStep);
+  setStep('ready', s.readyStep);
+
+  if(key==='ready'){
+    document.getElementById('step-ready-name').textContent='Car is ready — come pick up';
+    document.getElementById('step-ready-name').classList.remove('pending');
+    document.getElementById('step-ready-time').textContent='Now · Bay 1 entrance';
+    document.getElementById('step-ready-time').className='tl-time active-time';
+  } else {
+    document.getElementById('step-ready-name').textContent='Ready for pickup';
+    document.getElementById('step-ready-name').className='tl-name pending';
+    document.getElementById('step-ready-time').textContent='Est. 11:00 AM';
+    document.getElementById('step-ready-time').className='tl-time';
+  }
+}
+
+function setStep(name, state){
+  const dot = document.getElementById('dot-'+name);
+  const nameEl = document.getElementById('step-'+name+'-name');
+  dot.className = 'tl-dot ' + (state==='active'?'active':state==='done'?'done':'pending');
+  if(nameEl) nameEl.className = 'tl-name' + (state==='pending'?' pending':'');
+  const step = document.getElementById('step-'+name);
+  if(step){
+    const prev = step.previousElementSibling;
+    if(prev && prev.classList.contains('tl-step')){
+      if(state!=='pending') prev.classList.add('done');
+      else prev.classList.remove('done');
+    }
+  }
+}
+
+function approveFinding(){
+  document.getElementById('findingsCard').innerHTML='<div style="text-align:center;padding:8px 0;color:#3ccf7e;font-weight:600;font-size:13px">✓ Approved — tech notified. Est. +20 min added.</div>';
+}
+
+function toggleSMS(el){el.style.background=el.style.background==='rgb(60, 207, 126)'?'rgba(77,141,232,1)':'rgb(60,207,126)'}
+
+function rateStar(n){
+  document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('lit',i<n)});
+  setTimeout(()=>{
+    document.getElementById('surveyCard').innerHTML='<div style="padding:8px 0;color:#3ccf7e;font-size:14px;font-weight:600">Thank you for your feedback!</div><div style="font-size:12px;color:#8b90a8;margin-top:4px">We appreciate you choosing ShopFlow.</div>';
+  },600);
+}
+
+// Init ring
+document.addEventListener('DOMContentLoaded',()=>{
+  const c=2*Math.PI*58;
+  document.getElementById('ringFill').style.strokeDasharray=c;
+  document.getElementById('ringFill').style.strokeDashoffset=c-(0.5*c);
+});
+document.getElementById('ringFill').setAttribute('stroke-dasharray', CIRCUMFERENCE);
+document.getElementById('ringFill').setAttribute('stroke-dashoffset', CIRCUMFERENCE * 0.5);
+</script>
+</body>
+</html>

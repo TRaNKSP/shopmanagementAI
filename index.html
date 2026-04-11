@@ -29,6 +29,11 @@
       <span class="nav-icon">⬡</span>
       <span>Command Center</span>
     </a>
+    <a class="nav-item" href="shopfloor.html" style="text-decoration:none">
+      <span class="nav-icon">▦</span>
+      <span>Shop Floor Live</span>
+      <span style="margin-left:auto;font-size:9px;background:rgba(60,207,126,0.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600">LIVE</span>
+    </a>
     <a class="nav-item" data-screen="bays" onclick="showScreen('bays')">
       <span class="nav-icon">⬜</span>
       <span>Bay Management</span>
@@ -51,6 +56,10 @@
       <span class="nav-icon">◎</span>
       <span>Daily Staffing</span>
     </a>
+    <a class="nav-item" href="techproductivity.html" style="text-decoration:none">
+      <span class="nav-icon">◈</span>
+      <span>Tech Productivity</span>
+    </a>
     <a class="nav-item" data-screen="roles" onclick="showScreen('roles')">
       <span class="nav-icon">◈</span>
       <span>Roles & Permissions</span>
@@ -60,6 +69,16 @@
     <a class="nav-item" data-screen="services" onclick="showScreen('services')">
       <span class="nav-icon">◆</span>
       <span>Services & Inventory</span>
+    </a>
+    <a class="nav-item" href="parts.html" style="text-decoration:none">
+      <span class="nav-icon">◈</span>
+      <span>Parts & Inventory</span>
+      <span style="margin-left:auto;font-size:9px;background:rgba(60,207,126,0.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600">NEW</span>
+    </a>
+    <a class="nav-item" href="customer.html" target="_blank" style="text-decoration:none">
+      <span class="nav-icon">◎</span>
+      <span>Customer View</span>
+      <span style="margin-left:auto;font-size:9px;background:rgba(60,207,126,0.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600">NEW</span>
     </a>
     <a class="nav-item" data-screen="notifications" onclick="showScreen('notifications')">
       <span class="nav-icon">◉</span>
@@ -75,6 +94,11 @@
       <span class="nav-icon">◈</span>
       <span>Analytics Dashboard</span>
     </a>
+    <a class="nav-item" href="multilocation.html" style="text-decoration:none">
+      <span class="nav-icon">⬡</span>
+      <span>Multi-location</span>
+      <span style="margin-left:auto;font-size:9px;background:rgba(60,207,126,0.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600">NEW</span>
+    </a>
     <a class="nav-item" data-screen="ai" onclick="showScreen('ai')">
       <span class="nav-icon">✦</span>
       <span>AI Agents</span>
@@ -86,7 +110,7 @@
       <div class="store-dot"></div>
       <div>
         <div class="store-name">ShopFlow Demo — Bentonville, AR</div>
-        <div class="store-status">20 Bays · Live</div>
+        <div class="store-status">8 Bays · Live</div>
       </div>
     </div>
   </div>
@@ -129,7 +153,7 @@
           <div class="impact-icon">⬡</div>
           <div class="impact-body">
             <div class="impact-title">Why this matters</div>
-            <div class="impact-text">A manager overseeing 20 bays cannot physically walk every lane every 15 minutes. The Command Center gives instant situational awareness — idle bays, overdue jobs, and revenue pacing — all before problems become visible on the floor.</div>
+            <div class="impact-text">A manager overseeing 8 bays cannot check every lane every 15 minutes. The Command Center gives instant situational awareness — idle bays, overdue jobs, and revenue pacing — all before problems become visible on the floor.</div>
           </div>
         </div>
       </div>
@@ -172,7 +196,7 @@
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Bay overview</span>
-          <span class="panel-badge">20 bays</span>
+          <span class="panel-badge">8 bays</span>
         </div>
         <div class="mini-bay-grid" id="dashBayGrid"></div>
         <div class="panel-legend">
@@ -226,10 +250,10 @@
         <div class="wo-list">
           <div class="wo-row"><span class="wo-car">2022 Toyota Camry</span><span class="wo-bay">B3</span><span class="wo-status in-progress">In Progress</span></div>
           <div class="wo-row"><span class="wo-car">2019 Ford F-150</span><span class="wo-bay">B7</span><span class="wo-status diag">Diagnosis</span></div>
-          <div class="wo-row"><span class="wo-car">2023 Honda CR-V</span><span class="wo-bay">B11</span><span class="wo-status in-progress">In Progress</span></div>
-          <div class="wo-row"><span class="wo-car">2020 Chevy Silverado</span><span class="wo-bay">B15</span><span class="wo-status qc">QC Check</span></div>
+          <div class="wo-row"><span class="wo-car">2023 Honda CR-V</span><span class="wo-bay">B3</span><span class="wo-status in-progress">In Progress</span></div>
+          <div class="wo-row"><span class="wo-car">2020 Chevy Silverado</span><span class="wo-bay">B5</span><span class="wo-status qc">QC Check</span></div>
           <div class="wo-row"><span class="wo-car">2021 BMW 3 Series</span><span class="wo-bay">B2</span><span class="wo-status ready">Ready</span></div>
-          <div class="wo-row"><span class="wo-car">2018 Nissan Altima</span><span class="wo-bay">B19</span><span class="wo-status in-progress">In Progress</span></div>
+          <div class="wo-row"><span class="wo-car">2018 Nissan Altima</span><span class="wo-bay">B6</span><span class="wo-status in-progress">In Progress</span></div>
         </div>
       </div>
       <div class="panel">
@@ -248,9 +272,9 @@
         <div class="tech-list">
           <div class="tech-row"><div class="tech-avatar">JR</div><div class="tech-info"><div class="tech-name">J. Rivera</div><div class="tech-task">B1 · Oil Change</div></div><div class="tech-ratio high">1.31×</div></div>
           <div class="tech-row"><div class="tech-avatar">AP</div><div class="tech-info"><div class="tech-name">A. Patel</div><div class="tech-task">B5 · Brakes</div></div><div class="tech-ratio high">1.18×</div></div>
-          <div class="tech-row"><div class="tech-avatar">DK</div><div class="tech-info"><div class="tech-name">D. Kim</div><div class="tech-task">B9 · Alignment</div></div><div class="tech-ratio mid">1.05×</div></div>
-          <div class="tech-row"><div class="tech-avatar">SJ</div><div class="tech-info"><div class="tech-name">S. Johnson</div><div class="tech-task">B13 · Tires</div></div><div class="tech-ratio mid">0.94×</div></div>
-          <div class="tech-row"><div class="tech-avatar">MT</div><div class="tech-info"><div class="tech-name">M. Torres</div><div class="tech-task">B17 · Oil Change</div></div><div class="tech-ratio low">0.68×</div></div>
+          <div class="tech-row"><div class="tech-avatar">DK</div><div class="tech-info"><div class="tech-name">D. Kim</div><div class="tech-task">B7 · Alignment</div></div><div class="tech-ratio mid">1.05×</div></div>
+          <div class="tech-row"><div class="tech-avatar">SJ</div><div class="tech-info"><div class="tech-name">S. Johnson</div><div class="tech-task">B5 · Tires</div></div><div class="tech-ratio mid">0.94×</div></div>
+          <div class="tech-row"><div class="tech-avatar">MT</div><div class="tech-info"><div class="tech-name">M. Torres</div><div class="tech-task">B8 · Oil Change</div></div><div class="tech-ratio low">0.68×</div></div>
         </div>
       </div>
     </div>
@@ -261,13 +285,13 @@
     <div class="screen-hero">
       <div class="hero-text">
         <h1 class="screen-title">Bay Management</h1>
-        <p class="screen-subtitle">20 bays, always accounted for — real-time status, type profiles, and forward occupancy projection.</p>
+        <p class="screen-subtitle">8 bays, always accounted for — real-time status, type profiles, and forward occupancy projection.</p>
       </div>
       <div class="hero-impact">
         <div class="impact-card">
           <div class="impact-icon">⬡</div>
           <div class="impact-body">
-            <div class="impact-title">Bay Management — 20 Bays, Always Accounted For</div>
+            <div class="impact-title">Bay Management — 8 Bays, Always Accounted For</div>
             <div class="impact-text">The bay board is the heartbeat of the entire system. Every bay carries a profile — chassis lift, drive-on lift, alignment rack, lube pit, tire mount — and whether it's currently occupied, reserved, cleaning, or open. The key intelligence is the <strong>daily occupancy projection</strong>: at any moment the system reads every appointment and projects forward hour by hour to show exactly which bays are spoken for and when they free up. If a customer calls at 10 AM asking for an alignment, it checks whether Bay 7 is clear in the 11 AM–12:30 PM window needed — preventing double-booking at the <em>resource level</em>, not just the calendar level. Bay types are granular: a chassis lift and drive-on lift are not interchangeable. Some bays support dual-purpose capability tags.</div>
           </div>
         </div>
@@ -276,7 +300,7 @@
 
     <div class="bay-controls">
       <div class="filter-group">
-        <button class="filter-btn active" onclick="filterBays('all', this)">All 20</button>
+        <button class="filter-btn active" onclick="filterBays('all', this)">All 8</button>
         <button class="filter-btn" onclick="filterBays('occupied', this)">Occupied</button>
         <button class="filter-btn" onclick="filterBays('available', this)">Available</button>
         <button class="filter-btn" onclick="filterBays('reserved', this)">Reserved</button>
@@ -335,8 +359,8 @@
           <div class="appt-header-row"><span>Time</span><span>Customer</span><span>Vehicle</span><span>Service</span><span>Bay</span><span>Status</span></div>
           <div class="appt-full-row confirmed"><span class="appt-t">8:00</span><span>Sarah Martinez</span><span>2022 Camry</span><span>Oil Change</span><span class="bay-tag">B3</span><span class="status-badge confirmed">Confirmed</span></div>
           <div class="appt-full-row confirmed"><span class="appt-t">8:30</span><span>James Kim</span><span>2020 F-150</span><span>Alignment</span><span class="bay-tag">B7</span><span class="status-badge confirmed">Confirmed</span></div>
-          <div class="appt-full-row in-progress"><span class="appt-t">9:00</span><span>Maria Lopez</span><span>2023 CR-V</span><span>Brake Service</span><span class="bay-tag">B11</span><span class="status-badge in-bay">In Bay</span></div>
-          <div class="appt-full-row in-progress"><span class="appt-t">9:30</span><span>David Rowe</span><span>2021 Silverado</span><span>Tire Rotation</span><span class="bay-tag">B15</span><span class="status-badge in-bay">In Bay</span></div>
+          <div class="appt-full-row in-progress"><span class="appt-t">9:00</span><span>Maria Lopez</span><span>2023 CR-V</span><span>Brake Service</span><span class="bay-tag">B3</span><span class="status-badge in-bay">In Bay</span></div>
+          <div class="appt-full-row in-progress"><span class="appt-t">9:30</span><span>David Rowe</span><span>2021 Silverado</span><span>Tire Rotation</span><span class="bay-tag">B5</span><span class="status-badge in-bay">In Bay</span></div>
           <div class="appt-full-row upcoming"><span class="appt-t">10:00</span><span>Chen Wei</span><span>2024 Accord</span><span>Oil Change</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
           <div class="appt-full-row upcoming risk"><span class="appt-t">10:30</span><span>Anna Brewer</span><span>2019 Mustang</span><span>Full Inspection</span><span class="bay-tag">—</span><span class="status-badge risk">⚠ Risk</span></div>
           <div class="appt-full-row upcoming"><span class="appt-t">11:00</span><span>Robert Clark</span><span>2022 Tacoma</span><span>Alignment</span><span class="bay-tag">—</span><span class="status-badge upcoming">Upcoming</span></div>
@@ -537,7 +561,7 @@
       <div class="wo-column">
         <div class="wo-col-header inbay-h">In Bay <span class="col-count">4</span></div>
         <div class="wo-card inbay"><div class="wo-card-vehicle">2022 Toyota Camry</div><div class="wo-card-svc">Oil Change · Bay 3</div><div class="wo-card-meta"><span>J. Rivera</span><span class="wo-timer">00:22</span></div></div>
-        <div class="wo-card inbay"><div class="wo-card-vehicle">2023 Honda CR-V</div><div class="wo-card-svc">Brake Service · Bay 11</div><div class="wo-card-meta"><span>A. Patel</span><span class="wo-timer">00:48</span></div></div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2023 Honda CR-V</div><div class="wo-card-svc">Brake Service · Bay 3</div><div class="wo-card-meta"><span>A. Patel</span><span class="wo-timer">00:48</span></div></div>
         <div class="wo-card inbay"><div class="wo-card-vehicle">2019 Ford F-150</div><div class="wo-card-svc">Alignment · Bay 7</div><div class="wo-card-meta"><span>D. Kim</span><span class="wo-timer">00:31</span></div></div>
         <div class="wo-card inbay over"><div class="wo-card-vehicle">2020 BMW 3 Series</div><div class="wo-card-svc">Full Inspection · Bay 2</div><div class="wo-card-meta"><span>M. Torres</span><span class="wo-timer over-t">01:12 ⚠</span></div></div>
       </div>
@@ -766,7 +790,7 @@
           <div class="nl-row"><span class="nl-time">9:38</span><span class="nl-type push">Push</span><span class="nl-to">Tech Rivera</span><span class="nl-msg">2022 Camry checked in — Bay 3 ready</span><span class="nl-status delivered">✓</span></div>
           <div class="nl-row"><span class="nl-time">9:15</span><span class="nl-type email">Email</span><span class="nl-to">James K.</span><span class="nl-msg">Service started — track your vehicle</span><span class="nl-status delivered">✓</span></div>
           <div class="nl-row"><span class="nl-time">9:02</span><span class="nl-type sms">SMS</span><span class="nl-to">Maria L.</span><span class="nl-msg">Your car is ready for pickup!</span><span class="nl-status delivered">✓</span></div>
-          <div class="nl-row"><span class="nl-time">8:50</span><span class="nl-type push">Push</span><span class="nl-to">Tech Patel</span><span class="nl-msg">New job: 2023 CR-V brake service, Bay 11</span><span class="nl-status delivered">✓</span></div>
+          <div class="nl-row"><span class="nl-time">8:50</span><span class="nl-type push">Push</span><span class="nl-to">Tech Patel</span><span class="nl-msg">New job: 2023 CR-V brake service, Bay 3</span><span class="nl-status delivered">✓</span></div>
           <div class="nl-row"><span class="nl-time">8:30</span><span class="nl-type email">Email</span><span class="nl-to">Anna B.</span><span class="nl-msg">Reminder: appointment at 10:30 AM today</span><span class="nl-status delivered">✓</span></div>
           <div class="nl-row"><span class="nl-time">8:00</span><span class="nl-type sms">SMS</span><span class="nl-to">Chen W.</span><span class="nl-msg">Reminder: your 10 AM oil change today</span><span class="nl-status sent">→</span></div>
           <div class="nl-row"><span class="nl-time">7:55</span><span class="nl-type push">Push</span><span class="nl-to">Manager</span><span class="nl-msg">Brake pad PN-4402 below threshold — auto-reorder triggered</span><span class="nl-status delivered">✓</span></div>
@@ -972,7 +996,7 @@
         <div class="ai-agent-grid ai-agent-grid-4">
           <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Dynamic staffing optimizer</div><div class="agent-desc">Continuously compares projected demand vs staffing. Suggests calling in additional techs or releasing early based on live bay load and the remaining appointment queue.</div></div>
           <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Cycle time watchdog</div><div class="agent-desc">Alerts when a job exceeds book time by &gt;20%. Identifies the root cause pattern (parts delay, skill gap, complexity) and surfaces the right intervention to the manager.</div></div>
-          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Walk-in slot optimizer</div><div class="agent-desc">When a walk-in arrives, scans all 20 bays and calculates the exact insertion point that minimizes disruption to committed appointments while maximizing throughput.</div></div>
+          <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Walk-in slot optimizer</div><div class="agent-desc">When a walk-in arrives, scans all 8 bays and calculates the exact insertion point that minimizes disruption to committed appointments while maximizing throughput.</div></div>
           <div class="ai-agent-card"><div class="agent-badge rt-b">Real-time</div><div class="agent-title">Revenue pacing agent</div><div class="agent-desc">Compares revenue trajectory vs target every 30 minutes. If pacing behind, surfaces specific actions: push a promotion, offer a service upsell, or fill an open bay.</div></div>
         </div>
       </div>

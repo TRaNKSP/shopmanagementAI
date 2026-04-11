@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow — Technician Productivity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--font-ui:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--font-cond:'Barlow Condensed',sans-serif}
+[data-theme="dark"]{
+  --bg:#0b0d10;--bg2:#111418;--bg3:#181c24;--bg4:#1e2330;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --t1:#e8eaf0;--t2:#8b90a8;--t3:#4a5068;
+  --blue:#4d8de8;--green:#3ccf7e;--amber:#f0b232;--red:#f06060;--purple:#a78bfa;--teal:#2dd4bf;
+  --sidebar-bg:#0d0f12;--sidebar-border:rgba(255,255,255,0.05);
+  --topbar-bg:rgba(13,15,18,0.95);
+  --chart-grid:rgba(255,255,255,0.05);--chart-text:#8b90a8;
+}
+[data-theme="light"]{
+  --bg:#f4f5f8;--bg2:#ffffff;--bg3:#f8f9fc;--bg4:#eef0f8;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --t1:#1a1d2e;--t2:#5a6075;--t3:#a8b0c8;
+  --blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--teal:#0891b2;
+  --sidebar-bg:#1a1d2e;--sidebar-border:rgba(255,255,255,0.07);
+  --topbar-bg:rgba(244,245,248,0.95);
+  --chart-grid:rgba(0,0,0,0.06);--chart-text:#5a6075;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--t1);display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{width:238px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;transition:background .3s,transform .28s cubic-bezier(.4,0,.2,1)}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--sidebar-border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.logo-name{display:block;font-weight:600;font-size:14px;color:#fff;letter-spacing:-.3px}
+.logo-sub{display:block;font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.nav-section-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.55);transition:background .15s,color .15s;cursor:pointer;margin-bottom:1px;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--blue);color:#fff;font-weight:500}
+.nav-icon{font-size:13px;opacity:.6;width:16px;text-align:center}
+.new-badge{margin-left:auto;font-size:9px;background:rgba(60,207,126,.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--sidebar-border)}
+.store-info{display:flex;align-items:center;gap:8px}
+.store-dot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.store-name{font-size:11px;color:rgba(255,255,255,.6);font-weight:500}
+.store-status{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190}
+.sidebar-overlay.active{display:block}
+
+/* ── Topbar ── */
+.topbar{position:fixed;top:0;left:238px;right:0;height:52px;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:90}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.tb-title{font-family:var(--font-cond);font-size:17px;font-weight:600;letter-spacing:.4px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:8px 6px;background:none;border:none;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:transform .25s,opacity .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── Main ── */
+.main-content{margin-left:238px;padding-top:52px;flex:1}
+.page{padding:24px}
+
+/* ── Time range tabs ── */
+.time-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+.time-tab{padding:7px 16px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--t2);transition:all .15s;border:none;background:transparent;font-family:var(--font-ui)}
+.time-tab.active{background:var(--blue);color:#fff}
+.time-tab:hover:not(.active){background:var(--bg4);color:var(--t1)}
+
+/* ── Tech selector ── */
+.tech-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tech-btn{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--t2);transition:all .15s;font-family:var(--font-ui)}
+.tech-btn.active{border-color:currentColor}
+.tech-btn .av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:15px 16px}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px}
+.kpi-value{font-family:var(--font-mono);font-size:22px;font-weight:500;line-height:1}
+.kpi-sub{font-size:10.5px;margin-top:5px}
+.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.kpi-bench{font-size:10px;color:var(--t3);margin-top:3px}
+
+/* ── Chart panels ── */
+.charts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}
+.chart-panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.chart-panel.wide{grid-column:span 2}
+.chart-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--t3);margin-bottom:14px}
+.chart-wrap{position:relative}
+
+/* ── Industry benchmark bar ── */
+.bench-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+.bench-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.bench-card{background:var(--bg3);border-radius:8px;padding:12px 14px;border:1px solid var(--border)}
+.bench-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px}
+.bench-compare{display:flex;flex-direction:column;gap:5px}
+.bench-row{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.bench-name{color:var(--t2);width:100px;flex-shrink:0}
+.bench-bar-bg{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.bench-bar{height:100%;border-radius:4px}
+.bench-val{font-family:var(--font-mono);font-size:11px;width:36px;text-align:right;flex-shrink:0}
+
+/* ── Tech detail table ── */
+.detail-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.detail-table th{text-align:left;padding:9px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);border-bottom:1px solid var(--border);font-weight:600}
+.detail-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--t1)}
+.detail-table tr:last-child td{border-bottom:none}
+.detail-table tr:hover td{background:var(--bg3)}
+.rank-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.trend-up{color:var(--green)} .trend-dn{color:var(--red)} .trend-flat{color:var(--t3)}
+
+/* ── Scorecard panel ── */
+.scorecard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+.sc-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sc-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.sc-name{font-size:15px;font-weight:600;color:var(--t1)}
+.sc-role{font-size:11.5px;color:var(--t2)}
+.sc-grade{font-family:var(--font-cond);font-size:32px;font-weight:700;margin-left:auto;line-height:1}
+.sc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sc-metric{text-align:center;padding:10px;background:var(--bg3);border-radius:8px}
+.sc-m-val{font-family:var(--font-mono);font-size:18px;font-weight:500;line-height:1}
+.sc-m-label{font-size:10px;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── Industry context box ── */
+.industry-box{background:rgba(77,141,232,.06);border:1px solid rgba(77,141,232,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.ib-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);margin-bottom:8px}
+.ib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ib-item{font-size:12px;color:var(--t2);line-height:1.5}
+.ib-item strong{color:var(--t1);font-weight:600;display:block;font-size:13px;margin-bottom:2px}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{left:0;padding:0 12px}
+  .main-content{margin-left:0}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi-value{font-size:18px}
+  .charts-grid{grid-template-columns:1fr;gap:10px}
+  .chart-panel.wide{grid-column:span 1}
+  .bench-grid{grid-template-columns:1fr;gap:8px}
+  .sc-metrics{grid-template-columns:repeat(2,1fr)}
+  .ib-grid{grid-template-columns:1fr;gap:8px}
+  .ib-item{font-size:11.5px}
+  .time-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .page{padding:12px}
+  .industry-box{padding:12px}
+  .bench-section{padding:12px}
+  .chart-panel{padding:12px}
+  /* Detail table: scroll on mobile */
+  .detail-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .detail-table{min-width:620px;font-size:11.5px}
+  .detail-table th,.detail-table td{padding:8px 8px}
+  /* Hide less critical columns on mobile */
+  .detail-table .col-hide{display:none}
+  .topbar-right .desktop-only{display:none}
+}
+@media(max-width:480px){
+  .kpi-row{grid-template-columns:1fr 1fr;gap:6px}
+  .kpi-value{font-size:16px}
+  .time-tab{padding:6px 10px;font-size:11px}
+  .tech-btn{padding:5px 10px;font-size:11px}
+  .page{padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-mark">SF</div>
+      <div><span class="logo-name">ShopFlow</span><span class="logo-sub">AI Shop Management</span></div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="index.html"><span class="nav-icon">⬡</span><span>Command Center</span></a>
+    <a class="nav-item" href="shopfloor.html"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="new-badge">LIVE</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments & Waitlist</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
+    <div class="nav-section-label">People</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','staffing')"><span class="nav-icon">◎</span><span>Daily Staffing</span></a>
+    <a class="nav-item active" href="techproductivity.html"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','roles')"><span class="nav-icon">◈</span><span>Roles & Permissions</span></a>
+    <div class="nav-section-label">Shop</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','services')"><span class="nav-icon">◆</span><span>Services & Inventory</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','notifications')"><span class="nav-icon">◉</span><span>Notifications</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','hours')"><span class="nav-icon">◑</span><span>Store Hours</span></a>
+    <div class="nav-section-label">Intelligence</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','ai')"><span class="nav-icon">✦</span><span>AI Agents</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="store-info">
+      <div class="store-dot"></div>
+      <div><div class="store-name">ShopFlow Demo — Bentonville, AR</div><div class="store-status">8 Bays · Live</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="tb-title">Technician Productivity</div>
+  </div>
+  <div class="topbar-right">
+    <div style="font-size:11px;color:var(--t2)">Industry benchmarks included</div>
+    <button class="theme-btn" onclick="toggleTheme()">☀</button>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JR</div>
+  </div>
+</header>
+
+<div class="main-content">
+<div class="page">
+
+  <!-- Industry context -->
+  <div class="industry-box">
+    <div class="ib-title">Industry Standards — Automotive Service Technician Benchmarks (ASE / NADA / ATI)</div>
+    <div class="ib-grid">
+      <div class="ib-item"><strong>4–8 cars/day</strong>Industry average per tech for general service. Entry-level: 4–5. Journeyman: 6–7. Lead/Master: 7–10 (multi-bay).</div>
+      <div class="ib-item"><strong>1.0–1.4× book hours</strong>Efficiency ratio (billed ÷ clocked). Top techs hit 1.2–1.4×. Under 0.8× triggers coaching. Under 0.6× is a performance concern.</div>
+      <div class="ib-item"><strong>$180–$280K revenue/year</strong>Per-tech revenue generation benchmark for a fully productive journeyman at standard labor rates (~$110/hr). Lead techs can exceed $350K.</div>
+    </div>
+  </div>
+
+  <!-- Time range tabs -->
+  <div class="time-tabs" id="timeTabs">
+    <button class="time-tab active" onclick="setRange('day',this)">Day</button>
+    <button class="time-tab" onclick="setRange('week',this)">Week</button>
+    <button class="time-tab" onclick="setRange('month',this)">Month</button>
+    <button class="time-tab" onclick="setRange('quarter',this)">Quarter</button>
+    <button class="time-tab" onclick="setRange('annual',this)">Annual</button>
+  </div>
+
+  <!-- Tech selector -->
+  <div class="tech-selector" id="techSelector"></div>
+
+  <!-- KPI cards (dynamic) -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- Main productivity chart + sparklines -->
+  <div class="charts-grid">
+    <div class="chart-panel wide">
+      <div class="chart-title" id="mainChartTitle">Book hour ratio — today</div>
+      <div class="chart-sub" id="mainChartSub">Billed hours ÷ clocked hours per technician vs industry benchmark (1.0×)</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="mainChart" role="img" aria-label="Technician productivity ratio chart"></canvas></div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-title">Cars completed</div>
+      <div class="chart-sub" id="carsChartSub">Per tech · industry avg 6/day</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="carsChart" role="img" aria-label="Cars completed per technician"></canvas></div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-title">Revenue generated</div>
+      <div class="chart-sub" id="revChartSub">Billed labor revenue per tech</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="revenueChart" role="img" aria-label="Revenue per technician"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Trend line: productivity over time -->
+  <div class="chart-panel wide" style="margin-bottom:16px">
+    <div class="chart-title">Productivity trend — all techs over time</div>
+    <div class="chart-sub" id="trendChartSub">Book hour ratio tracked over selected period</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="trendChart" role="img" aria-label="Productivity trend over time"></canvas></div>
+  </div>
+
+  <!-- Benchmark comparison -->
+  <div class="bench-section">
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2)">Benchmark comparison — your shop vs industry tiers</div>
+    <div class="bench-grid">
+      <div class="bench-card">
+        <div class="bench-label">Book hour ratio</div>
+        <div class="bench-compare">
+          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:93%;background:#4d8de8"></div></div><span class="bench-val good">1.31×</span></div>
+          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:84%;background:#4d8de8"></div></div><span class="bench-val good">1.18×</span></div>
+          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:87%;background:#4d8de8"></div></div><span class="bench-val good">1.22×</span></div>
+          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:75%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">1.05×</span></div>
+          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:67%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">0.94×</span></div>
+          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:58%;background:#f0b232"></div></div><span class="bench-val warn">0.81×</span></div>
+          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:49%;background:#f06060"></div></div><span class="bench-val bad">0.68×</span></div>
+          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Industry avg</span><div class="bench-bar-bg"><div class="bench-bar" style="width:71%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">1.00×</span></div>
+        </div>
+      </div>
+      <div class="bench-card">
+        <div class="bench-label">Cars per day (8-hr shift)</div>
+        <div class="bench-compare">
+          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:90%;background:#4d8de8"></div></div><span class="bench-val good">9</span></div>
+          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:80%;background:#4d8de8"></div></div><span class="bench-val good">8</span></div>
+          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:85%;background:#4d8de8"></div></div><span class="bench-val good">8</span></div>
+          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">6</span></div>
+          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">6</span></div>
+          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:50%;background:#f0b232"></div></div><span class="bench-val warn">5</span></div>
+          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:40%;background:#f06060"></div></div><span class="bench-val bad">4</span></div>
+          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Industry avg</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">6</span></div>
+        </div>
+      </div>
+      <div class="bench-card">
+        <div class="bench-label">Annual revenue per tech</div>
+        <div class="bench-compare">
+          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:95%;background:#4d8de8"></div></div><span class="bench-val good">$342k</span></div>
+          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:82%;background:#4d8de8"></div></div><span class="bench-val good">$296k</span></div>
+          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:86%;background:#4d8de8"></div></div><span class="bench-val good">$310k</span></div>
+          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:70%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">$252k</span></div>
+          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:65%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">$234k</span></div>
+          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:52%;background:#f0b232"></div></div><span class="bench-val warn">$188k</span></div>
+          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:44%;background:#f06060"></div></div><span class="bench-val bad">$158k</span></div>
+          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Industry avg</span><div class="bench-bar-bg"><div class="bench-bar" style="width:67%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">$240k</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail table -->
+  <div class="chart-panel wide" style="margin-bottom:0">
+    <div class="chart-title" style="margin-bottom:14px">All technicians — <span id="tableRangeLabel">today</span></div>
+    <div class="detail-table-wrap">
+    <table class="detail-table">
+      <thead>
+        <tr>
+          <th>Rank</th><th>Technician</th><th>Role</th><th>Cars</th><th>Book ratio</th>
+          <th>Billed hrs</th><th>Revenue</th><th>On-time %</th><th>Trend</th><th>Grade</th>
+        </tr>
+      </thead>
+      <tbody id="detailTableBody"></tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ── Sidebar / theme ──
+function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay'),h=document.getElementById('hamburger');const open=s.classList.contains('open');s.classList.toggle('open',!open);o.classList.toggle('active',!open);h.classList.toggle('open',!open)}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('active');document.getElementById('hamburger').classList.remove('open')}
+function toggleTheme(){const h=document.documentElement;h.getAttribute('data-theme')==='dark'?h.setAttribute('data-theme','light'):h.setAttribute('data-theme','dark');setTimeout(()=>buildCharts(),60)}
+
+// ── Tech data ──
+const TECHS = [
+  { id:'JR', name:'J. Rivera',   role:'Lead Tech',       color:'#4d8de8', bg:'#4d8de8' },
+  { id:'AP', name:'A. Patel',    role:'Journeyman',      color:'#3ccf7e', bg:'#2d9e5a' },
+  { id:'EA', name:'E. Adams',    role:'Tire Specialist', color:'#2dd4bf', bg:'#0e7a80' },
+  { id:'DK', name:'D. Kim',      role:'Alignment Spec.', color:'#a78bfa', bg:'#6d28d9' },
+  { id:'SJ', name:'S. Johnson',  role:'Journeyman',      color:'#f0b232', bg:'#b45309' },
+  { id:'TW', name:'T. Williams', role:'Lube Tech',       color:'#fb923c', bg:'#c2410c' },
+  { id:'MT', name:'M. Torres',   role:'Journeyman',      color:'#f06060', bg:'#b91c1c' },
+];
+
+// Data by range: [ratio, cars, revenue($), ontime%]
+const DATA = {
+  day: {
+    JR:[1.31,9,740,96], AP:[1.18,8,620,100], EA:[1.22,8,580,98],
+    DK:[1.05,6,660,95], SJ:[0.94,6,480,88], TW:[0.81,5,310,82], MT:[0.68,4,280,71]
+  },
+  week: {
+    JR:[1.28,44,3680,94], AP:[1.16,39,3100,97], EA:[1.20,40,2900,96],
+    DK:[1.03,28,3080,93], SJ:[0.92,29,2300,87], TW:[0.80,24,1480,80], MT:[0.71,20,1340,73]
+  },
+  month: {
+    JR:[1.30,186,15400,95], AP:[1.17,168,12800,96], EA:[1.21,170,12200,97],
+    DK:[1.04,118,13000,93], SJ:[0.93,122,9600,88], TW:[0.81,100,6200,81], MT:[0.70,84,5700,74]
+  },
+  quarter: {
+    JR:[1.29,558,46000,95], AP:[1.16,504,38400,96], EA:[1.20,510,36600,97],
+    DK:[1.03,354,38800,93], SJ:[0.92,366,28900,88], TW:[0.80,300,18600,81], MT:[0.69,252,17100,73]
+  },
+  annual: {
+    JR:[1.31,2228,342000,96], AP:[1.18,2016,296000,97], EA:[1.22,2040,310000,97],
+    DK:[1.05,1416,252000,94], SJ:[0.94,1464,234000,89], TW:[0.81,1200,188000,82], MT:[0.68,1008,158000,74]
+  }
+};
+
+const TREND_LABELS = {
+  day:     ['7am','8am','9am','10am','11am','12pm','1pm','2pm'],
+  week:    ['Mon','Tue','Wed','Thu','Fri','Sat'],
+  month:   ['Wk1','Wk2','Wk3','Wk4'],
+  quarter: ['Jan','Feb','Mar'],
+  annual:  ['Q1','Q2','Q3','Q4']
+};
+
+const TREND_DATA = {
+  JR: { day:[1.2,1.3,1.35,1.28,1.32,1.31,1.34,1.31], week:[1.25,1.28,1.32,1.29,1.31,1.28], month:[1.27,1.29,1.31,1.30], quarter:[1.28,1.30,1.29], annual:[1.28,1.30,1.29,1.31] },
+  AP: { day:[1.1,1.15,1.2,1.18,1.16,1.19,1.17,1.18], week:[1.12,1.14,1.18,1.16,1.17,1.15], month:[1.14,1.16,1.18,1.17], quarter:[1.15,1.17,1.16], annual:[1.15,1.17,1.16,1.18] },
+  EA: { day:[1.15,1.2,1.22,1.24,1.21,1.23,1.2,1.22], week:[1.18,1.20,1.22,1.21,1.20,1.19], month:[1.19,1.20,1.21,1.21], quarter:[1.20,1.21,1.20], annual:[1.19,1.20,1.21,1.22] },
+  DK: { day:[1.0,1.05,1.08,1.04,1.06,1.05,1.03,1.05], week:[1.01,1.03,1.05,1.04,1.03,1.02], month:[1.02,1.03,1.04,1.04], quarter:[1.02,1.04,1.03], annual:[1.02,1.03,1.04,1.05] },
+  SJ: { day:[0.88,0.92,0.94,0.96,0.93,0.92,0.94,0.94], week:[0.89,0.91,0.93,0.92,0.93,0.91], month:[0.90,0.92,0.93,0.93], quarter:[0.91,0.92,0.92], annual:[0.91,0.92,0.93,0.94] },
+  TW: { day:[0.78,0.80,0.82,0.80,0.81,0.80,0.82,0.81], week:[0.78,0.79,0.81,0.80,0.81,0.79], month:[0.79,0.80,0.81,0.81], quarter:[0.79,0.80,0.80], annual:[0.79,0.80,0.80,0.81] },
+  MT: { day:[0.62,0.65,0.68,0.70,0.68,0.67,0.68,0.68], week:[0.64,0.66,0.70,0.71,0.72,0.69], month:[0.67,0.69,0.70,0.70], quarter:[0.68,0.70,0.69], annual:[0.66,0.68,0.69,0.70] }
+};
+
+const RANGE_LABELS = { day:'today', week:'this week', month:'this month', quarter:'this quarter', annual:'this year' };
+const CARS_BENCH = { day:6, week:30, month:130, quarter:390, annual:1560 };
+const REV_BENCH_SUFFIX = { day:'$440', week:'$2,200', month:'$9,600', quarter:'$28,800', annual:'$240k' };
+
+let currentRange = 'day';
+let charts = {};
+
+// ── Tech selector ──
+function buildTechSelector(){
+  const el=document.getElementById('techSelector');
+  el.innerHTML='';
+  TECHS.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='tech-btn active';
+    btn.setAttribute('data-id',t.id);
+    btn.style.color=t.color;
+    btn.style.borderColor=t.color;
+    btn.innerHTML=`<div class="av" style="background:${t.bg}">${t.id}</div>${t.name}`;
+    btn.onclick=()=>{btn.classList.toggle('active');buildCharts()};
+    el.appendChild(btn);
+  });
+}
+
+function getActiveTechs(){
+  return [...document.querySelectorAll('.tech-btn.active')].map(b=>b.getAttribute('data-id'));
+}
+
+// ── KPI cards ──
+function buildKPIs(){
+  const r=currentRange; const d=DATA[r];
+  const active=getActiveTechs();
+  const vals=active.map(id=>d[id]);
+  const avgRatio=(vals.reduce((a,v)=>a+v[0],0)/vals.length).toFixed(2);
+  const totalCars=vals.reduce((a,v)=>a+v[1],0);
+  const totalRev=vals.reduce((a,v)=>a+v[2],0);
+  const avgOT=Math.round(vals.reduce((a,v)=>a+v[3],0)/vals.length);
+  const best=active[vals.map(v=>v[0]).indexOf(Math.max(...vals.map(v=>v[0])))];
+  const bestTech=TECHS.find(t=>t.id===best);
+
+  const labels={day:['Today','Today','Today','Today','Today'],week:['This week','This week','This week','This week','This week'],month:['This month','This month','This month','This month','This month'],quarter:['This quarter','This quarter','This quarter','This quarter','This quarter'],annual:['This year','This year','This year','This year','This year']};
+  const carsBench=CARS_BENCH[r];
+
+  document.getElementById('kpiRow').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Team avg ratio</div><div class="kpi-value ${parseFloat(avgRatio)>=1?'good':parseFloat(avgRatio)>=0.8?'warn':'bad'}">${avgRatio}×</div><div class="kpi-sub ${parseFloat(avgRatio)>=1?'good':'warn'}">Target: 1.0×+</div><div class="kpi-bench">Industry avg: 1.00×</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total cars</div><div class="kpi-value good">${totalCars.toLocaleString()}</div><div class="kpi-sub" style="color:var(--t2)">Bench: ${(carsBench*active.length).toLocaleString()}</div><div class="kpi-bench">${active.length} techs active</div></div>
+    <div class="kpi-card"><div class="kpi-label">Labor revenue</div><div class="kpi-value good">$${totalRev.toLocaleString()}</div><div class="kpi-sub" style="color:var(--t2)">${labels[r][2]}</div><div class="kpi-bench">Labor at ~$110/hr</div></div>
+    <div class="kpi-card"><div class="kpi-label">On-time rate</div><div class="kpi-value ${avgOT>=90?'good':avgOT>=80?'warn':'bad'}">${avgOT}%</div><div class="kpi-sub ${avgOT>=90?'good':'warn'}">Target: 90%+</div><div class="kpi-bench">Promised-by met</div></div>
+    <div class="kpi-card"><div class="kpi-label">Top performer</div><div class="kpi-value" style="font-size:18px;color:${bestTech?.color||'var(--t1)'}">${bestTech?.name||'—'}</div><div class="kpi-sub good">${DATA[r][best]?.[0]}× ratio</div><div class="kpi-bench">${DATA[r][best]?.[1]} cars</div></div>
+  `;
+}
+
+// ── Charts ──
+function getColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim()||'#8b90a8'}
+function getGridColor(){return getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim()||'rgba(255,255,255,0.05)'}
+
+function destroyChart(id){if(charts[id]){charts[id].destroy();charts[id]=null}}
+
+function buildCharts(){
+  buildKPIs();
+  buildMainChart();
+  buildCarsChart();
+  buildRevenueChart();
+  buildTrendChart();
+  buildTable();
+  document.getElementById('mainChartTitle').textContent=`Book hour ratio — ${RANGE_LABELS[currentRange]}`;
+  document.getElementById('carsChartSub').textContent=`Per tech · industry avg ${CARS_BENCH[currentRange]} ${currentRange==='day'?'cars/day':currentRange==='week'?'cars/wk':currentRange==='month'?'cars/mo':currentRange==='quarter'?'cars/qtr':'cars/yr'}`;
+  document.getElementById('tableRangeLabel').textContent=RANGE_LABELS[currentRange];
+}
+
+function buildMainChart(){
+  destroyChart('main');
+  const active=getActiveTechs();
+  const d=DATA[currentRange];
+  const tc=document.getElementById('mainChart').getContext('2d');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  charts['main']=new Chart(tc,{
+    type:'bar',
+    data:{
+      labels:active.map(id=>TECHS.find(t=>t.id===id)?.name||id),
+      datasets:[
+        {label:'Book hour ratio',data:active.map(id=>d[id][0]),
+          backgroundColor:active.map(id=>{const v=d[id][0];return v>=1.1?'rgba(77,141,232,0.75)':v>=0.8?'rgba(60,207,126,0.7)':v>=0.7?'rgba(240,178,50,0.7)':'rgba(240,96,96,0.7)'}),
+          borderWidth:0,borderRadius:5},
+        {label:'Industry target (1.0×)',data:active.map(()=>1.0),type:'line',borderColor:'rgba(255,255,255,0.3)',borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw}×`}}},
+      scales:{y:{min:0,max:1.6,ticks:{callback:v=>v.toFixed(1)+'×',color:getColor(),font:{size:10}},grid:{color:getGridColor()}},x:{ticks:{color:getColor(),font:{size:11}},grid:{display:false}}}}
+  });
+}
+
+function buildCarsChart(){
+  destroyChart('cars');
+  const active=getActiveTechs();
+  const d=DATA[currentRange];
+  const tc=document.getElementById('carsChart').getContext('2d');
+  charts['cars']=new Chart(tc,{
+    type:'bar',
+    data:{
+      labels:active.map(id=>TECHS.find(t=>t.id===id)?.id||id),
+      datasets:[
+        {label:'Cars',data:active.map(id=>d[id][1]),
+          backgroundColor:active.map(id=>TECHS.find(t=>t.id===id)?.color+'bb'||'#4d8de8bb'),
+          borderWidth:0,borderRadius:4},
+        {label:'Benchmark',data:active.map(()=>CARS_BENCH[currentRange]),type:'line',borderColor:'rgba(255,255,255,0.3)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{ticks:{color:getColor(),font:{size:10}},grid:{color:getGridColor()}},x:{ticks:{color:getColor(),font:{size:10}},grid:{display:false}}}}
+  });
+}
+
+function buildRevenueChart(){
+  destroyChart('rev');
+  const active=getActiveTechs();
+  const d=DATA[currentRange];
+  const tc=document.getElementById('revenueChart').getContext('2d');
+  charts['rev']=new Chart(tc,{
+    type:'bar',
+    data:{
+      labels:active.map(id=>TECHS.find(t=>t.id===id)?.id||id),
+      datasets:[{label:'Revenue',data:active.map(id=>d[id][2]),
+        backgroundColor:active.map(id=>TECHS.find(t=>t.id===id)?.color+'99'||'#3ccf7e99'),
+        borderWidth:0,borderRadius:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>' $'+ctx.raw.toLocaleString()}}},
+      scales:{y:{ticks:{callback:v=>v>=1000?'$'+Math.round(v/1000)+'k':'$'+v,color:getColor(),font:{size:10}},grid:{color:getGridColor()}},x:{ticks:{color:getColor(),font:{size:10}},grid:{display:false}}}}
+  });
+}
+
+function buildTrendChart(){
+  destroyChart('trend');
+  const active=getActiveTechs();
+  const labels=TREND_LABELS[currentRange];
+  const tc=document.getElementById('trendChart').getContext('2d');
+  const datasets=active.map(id=>{
+    const t=TECHS.find(t2=>t2.id===id);
+    const td=TREND_DATA[id][currentRange]||[];
+    return{label:t?.name||id,data:td.slice(0,labels.length),borderColor:t?.color||'#4d8de8',borderWidth:2,pointRadius:3,pointHoverRadius:5,fill:false,tension:0.35};
+  });
+  datasets.push({label:'Target (1.0×)',data:labels.map(()=>1.0),borderColor:'rgba(255,255,255,0.2)',borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false});
+  charts['trend']=new Chart(tc,{
+    type:'line',
+    data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:getColor(),font:{size:10},usePointStyle:true,boxWidth:8}}},
+      scales:{y:{min:0.5,max:1.5,ticks:{callback:v=>v.toFixed(1)+'×',color:getColor(),font:{size:10}},grid:{color:getGridColor()}},
+        x:{ticks:{color:getColor(),font:{size:10}},grid:{display:false}}}}
+  });
+  document.getElementById('trendChartSub').textContent=`Book hour ratio over ${RANGE_LABELS[currentRange]} · target line at 1.0×`;
+}
+
+function buildTable(){
+  const active=getActiveTechs();
+  const d=DATA[currentRange];
+  const rows=active.map((id,i)=>{
+    const t=TECHS.find(t=>t.id===id);
+    const v=d[id];
+    const ratio=v[0]; const grade=ratio>=1.2?'A':ratio>=1.0?'B':ratio>=0.8?'C':'D';
+    const gradeColor=ratio>=1.2?'#4d8de8':ratio>=1.0?'#3ccf7e':ratio>=0.8?'#f0b232':'#f06060';
+    const trend=ratio>=1.1?'↑':'↓';
+    const trendClass=ratio>=1.0?'trend-up':'trend-dn';
+    return {id,name:t?.name||id,role:t?.role||'—',color:t?.color||'#fff',bg:t?.bg||'#4d8de8',ratio,cars:v[1],rev:v[2],ot:v[3],grade,gradeColor,trend,trendClass,rank:i+1};
+  }).sort((a,b)=>b.ratio-a.ratio).map((r,i)=>({...r,rank:i+1}));
+
+  document.getElementById('detailTableBody').innerHTML=rows.map(r=>`
+    <tr>
+      <td><div class="rank-badge" style="background:${r.rank===1?'#f0b232':r.rank===2?'#8b90a8':r.rank===3?'#cd7f32':'var(--bg4)'};color:${r.rank<=3?'#000':'var(--t2)'}">${r.rank}</div></td>
+      <td style="display:flex;align-items:center;gap:8px;padding:10px 12px"><div style="width:28px;height:28px;border-radius:50%;background:${r.bg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${r.id}</div>${r.name}</td>
+      <td style="color:var(--t2)">${r.role}</td>
+      <td style="font-family:var(--font-mono)">${r.cars.toLocaleString()}</td>
+      <td><span style="font-family:var(--font-mono);font-weight:600;color:${r.ratio>=1.0?'var(--green)':r.ratio>=0.8?'var(--amber)':'var(--red)'}">${r.ratio}×</span></td>
+      <td style="font-family:var(--font-mono)">${(r.cars*0.55).toFixed(0)} hrs</td>
+      <td style="font-family:var(--font-mono);color:var(--green)">$${r.rev.toLocaleString()}</td>
+      <td><span style="color:${r.ot>=90?'var(--green)':r.ot>=80?'var(--amber)':'var(--red)'};font-weight:600">${r.ot}%</span></td>
+      <td class="${r.trendClass}" style="font-size:16px">${r.trend}</td>
+      <td><span style="font-family:var(--font-cond);font-size:18px;font-weight:700;color:${r.gradeColor}">${r.grade}</span></td>
+    </tr>
+  `).join('');
+}
+
+function setRange(r,btn){
+  currentRange=r;
+  document.querySelectorAll('.time-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  buildCharts();
+}
+
+// ── Init ──
+buildTechSelector();
+buildCharts();
+</script>
+
+</body>
+</html>

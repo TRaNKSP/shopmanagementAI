@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow — Shop Floor Live View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-ui:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--font-cond:'Barlow Condensed',sans-serif}
+[data-theme="dark"]{
+  --bg:#0b0d10;--bg2:#111418;--bg3:#181c24;--bg4:#1e2330;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --t1:#e8eaf0;--t2:#8b90a8;--t3:#4a5068;
+  --blue:#4d8de8;--green:#3ccf7e;--amber:#f0b232;--red:#f06060;--purple:#a78bfa;--teal:#2dd4bf;
+  --floor:#0e1115;--sidebar-bg:#0d0f12;--sidebar-border:rgba(255,255,255,0.05);
+  --topbar-bg:rgba(13,15,18,0.95);
+}
+[data-theme="light"]{
+  --bg:#f4f5f8;--bg2:#ffffff;--bg3:#f8f9fc;--bg4:#eef0f8;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --t1:#1a1d2e;--t2:#5a6075;--t3:#a8b0c8;
+  --blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--teal:#0891b2;
+  --floor:#e8eaf0;--sidebar-bg:#1a1d2e;--sidebar-border:rgba(255,255,255,0.07);
+  --topbar-bg:rgba(244,245,248,0.95);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--t1);display:flex;min-height:100vh}
+
+/* ── Sidebar (same as main app) ── */
+.sidebar{width:238px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;transition:background .3s,transform .28s cubic-bezier(.4,0,.2,1)}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--sidebar-border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.logo-name{display:block;font-weight:600;font-size:14px;color:#fff;letter-spacing:-.3px}
+.logo-sub{display:block;font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.nav-section-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.55);transition:background .15s,color .15s;cursor:pointer;margin-bottom:1px;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--blue);color:#fff;font-weight:500}
+.nav-icon{font-size:13px;opacity:.6;width:16px;text-align:center}
+.new-badge{margin-left:auto;font-size:9px;background:rgba(60,207,126,.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--sidebar-border)}
+.store-info{display:flex;align-items:center;gap:8px}
+.store-dot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.store-name{font-size:11px;color:rgba(255,255,255,.6);font-weight:500}
+.store-status{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+
+/* ── Sidebar overlay ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190}
+.sidebar-overlay.active{display:block}
+
+/* ── Topbar ── */
+.topbar{position:fixed;top:0;left:238px;right:0;height:52px;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:90;transition:background .3s}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.tb-title{font-family:var(--font-cond);font-size:16px;font-weight:600;letter-spacing:.4px;color:var(--t1)}
+.tb-sub{font-size:11px;color:var(--t2)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--green);font-weight:600;letter-spacing:.06em}
+.live-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.clock-display{font-family:var(--font-mono);font-size:12px;color:var(--t2)}
+
+/* ── Hamburger (mobile) ── */
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:8px 6px;background:none;border:none;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:transform .25s,opacity .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── Main content ── */
+.main-content{margin-left:238px;padding-top:52px;flex:1;min-height:100vh;overflow:hidden}
+.page-inner{display:flex;flex-direction:row;min-height:calc(100vh - 52px);overflow:hidden}
+
+/* ── Floor panel — takes all remaining space ── */
+.floor-panel{flex:1;min-width:0;background:var(--bg);padding:16px;overflow:auto}
+
+/* ── Efficiency strip ── */
+.eff-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.eff-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.eff-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.eff-val{font-family:var(--font-mono);font-size:20px;font-weight:500;line-height:1}
+.eff-sub{font-size:10.5px;margin-top:4px}
+.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+
+/* ── Floor card ── */
+.floor-wrap{background:var(--floor);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative}
+.floor-title-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.floor-name{font-family:var(--font-cond);font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--t1)}
+.floor-stats{display:flex;gap:12px;flex-wrap:wrap}
+.fstat{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2)}
+.fstat-dot{width:8px;height:8px;border-radius:2px}
+#shopSVG{width:100%;display:block}
+
+/* ── Bay tooltip ── */
+.bay-tooltip{position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;min-width:210px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.bay-tooltip.visible{opacity:1}
+.tt-bay{font-family:var(--font-cond);font-size:13px;font-weight:700;color:var(--t1);margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.tt-row{display:flex;justify-content:space-between;font-size:11.5px;padding:2px 0}
+.tt-label{color:var(--t2)}.tt-val{color:var(--t1);font-weight:500}
+
+/* ── Legend ── */
+.legend-bar{display:flex;gap:14px;flex-wrap:wrap;padding:10px 0;font-size:11px;color:var(--t2)}
+.leg-item{display:flex;align-items:center;gap:5px}
+.leg-swatch{width:10px;height:10px;border-radius:2px}
+
+/* ── Right panel ── */
+.right-panel{width:300px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border)}
+.rp-tab{flex:1;padding:11px 6px;text-align:center;font-size:11px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.rp-tab.active{color:var(--blue);border-bottom-color:var(--blue);background:rgba(77,141,232,.04)}
+.rp-content{flex:1;overflow-y:auto;padding:14px}
+.rp-section{display:none}
+.rp-section.active{display:block}
+
+/* ── Tech cards ── */
+.tech-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;transition:border-color .2s}
+.tech-card:hover{border-color:var(--border2)}
+.tc-header{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.tc-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.tc-name{font-size:13px;font-weight:600;color:var(--t1)}
+.tc-role{font-size:10.5px;color:var(--t2);margin-top:1px}
+.tc-ratio{font-family:var(--font-mono);font-size:13px;font-weight:600;margin-left:auto}
+.tc-bay-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.tc-bay-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.tc-bay-pill{display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.tc-bay-pill:hover{opacity:.8}
+.pill-active{background:rgba(77,141,232,.18);border:1px solid rgba(77,141,232,.3);color:var(--blue)}
+.pill-waiting{background:rgba(240,178,50,.15);border:1px solid rgba(240,178,50,.25);color:var(--amber)}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.tc-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:8px}
+.tc-bar-fill{height:100%;border-radius:2px}
+
+/* ── Efficiency detail ── */
+.eff-detail-list{display:flex;flex-direction:column;gap:10px}
+.eff-row{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px}
+.er-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px}
+.er-bay{font-family:var(--font-cond);font-size:13px;font-weight:700;color:var(--t1)}
+.er-car{font-size:11px;color:var(--t2);margin-top:1px}
+.er-status{font-size:10px;font-weight:700;border-radius:5px;padding:2px 8px;flex-shrink:0}
+.er-timeline{display:flex;flex-direction:column;gap:5px}
+.er-trow{display:flex;align-items:center;gap:8px;font-size:11px}
+.er-trow-label{color:var(--t2);width:88px;flex-shrink:0}
+.er-bar-bg{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
+.er-bar-fill{height:100%;border-radius:3px;position:absolute;left:0;top:0}
+.er-trow-val{font-family:var(--font-mono);font-size:10.5px;width:44px;text-align:right;flex-shrink:0}
+.er-promised{border-top:1px solid var(--border);margin-top:8px;padding-top:7px;display:flex;justify-content:space-between;align-items:center}
+.er-prom-label{font-size:11px;color:var(--t2)}
+.er-prom-val{font-size:11.5px;font-weight:600}
+
+/* ── Work order cards ── */
+.wo-detail-list{display:flex;flex-direction:column;gap:10px}
+.wo-detail-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s}
+.wo-detail-card:hover{border-color:var(--border2)}
+.wod-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.wod-bay{font-family:var(--font-cond);font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--bg4);color:var(--t2)}
+.wod-car{font-size:13px;font-weight:600;color:var(--t1);flex:1}
+.wod-status{font-size:10px;font-weight:700;border-radius:5px;padding:2px 8px}
+.wod-svc{font-size:11px;color:var(--t2);margin-bottom:7px}
+.wod-tech{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.wod-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+.progress-bar{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:2px}
+
+/* Status */
+.s-inprog{background:rgba(77,141,232,.18);color:var(--blue)}
+.s-waiting{background:rgba(240,178,50,.15);color:var(--amber)}
+.s-qc{background:rgba(167,139,250,.15);color:var(--purple)}
+.s-ready{background:rgba(60,207,126,.15);color:var(--green)}
+.s-over{background:rgba(240,96,96,.18);color:var(--red)}
+
+/* ── Mobile ── */
+.hamburger{display:none}
+
+/* Tablet — shrink right panel */
+@media(max-width:1100px){
+  .right-col{width:280px}
+}
+
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{left:0 !important;padding:0 12px}
+  .main-content{margin-left:0 !important}
+  /* Stack floor above right panel on mobile */
+  .page-inner{flex-direction:column}
+  .floor-col{width:100%}
+  .right-col{width:100%;border-top:1px solid var(--border);border-left:none}
+  .right-panel{border-left:none}
+  .eff-strip{grid-template-columns:repeat(2,1fr);gap:6px}
+  .eff-val{font-size:17px}
+  .eff-card{padding:10px 12px}
+  .floor-panel{padding:12px}
+  .floor-stats{display:none}
+  .floor-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #shopSVG{min-width:460px}
+  .legend-bar{gap:8px;font-size:10px}
+  .rp-tabs{position:sticky;top:0;background:var(--bg2);z-index:5}
+  .rp-tab{font-size:10.5px;padding:10px 4px}
+  .tc-bay-list{gap:4px}
+  .tc-bay-pill{font-size:10px;padding:3px 7px}
+  .er-trow-label{width:78px;font-size:10.5px}
+  .er-trow-val{font-size:10px;width:38px}
+  .tb-sub{display:none}
+}
+@media(max-width:480px){
+  .eff-strip{grid-template-columns:repeat(2,1fr);gap:5px}
+  .eff-val{font-size:15px}
+  .eff-label{font-size:9px}
+  .floor-panel{padding:10px}
+  #shopSVG{min-width:400px}
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-mark">SF</div>
+      <div class="logo-text">
+        <span class="logo-name">ShopFlow</span>
+        <span class="logo-sub">AI Shop Management</span>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="index.html">
+      <span class="nav-icon">⬡</span><span>Command Center</span>
+    </a>
+    <a class="nav-item active" href="shopfloor.html">
+      <span class="nav-icon">▦</span><span>Shop Floor Live</span>
+      <span class="new-badge">LIVE</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')">
+      <span class="nav-icon">⬜</span><span>Bay Management</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')">
+      <span class="nav-icon">◷</span><span>Appointments & Waitlist</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')">
+      <span class="nav-icon">↪</span><span>Walk-in Intake</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')">
+      <span class="nav-icon">◫</span><span>Work Orders</span>
+    </a>
+    <div class="nav-section-label">People</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','staffing')">
+      <span class="nav-icon">◎</span><span>Daily Staffing</span>
+    </a>
+    <a class="nav-item" href="techproductivity.html">
+      <span class="nav-icon">◈</span><span>Tech Productivity</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','roles')">
+      <span class="nav-icon">◈</span><span>Roles & Permissions</span>
+    </a>
+    <div class="nav-section-label">Shop</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','services')">
+      <span class="nav-icon">◆</span><span>Services & Inventory</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','notifications')">
+      <span class="nav-icon">◉</span><span>Notifications</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','hours')">
+      <span class="nav-icon">◑</span><span>Store Hours</span>
+    </a>
+    <div class="nav-section-label">Intelligence</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')">
+      <span class="nav-icon">◈</span><span>Analytics Dashboard</span>
+    </a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','ai')">
+      <span class="nav-icon">✦</span><span>AI Agents</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="store-info">
+      <div class="store-dot"></div>
+      <div>
+        <div class="store-name">ShopFlow Demo — Bentonville, AR</div>
+        <div class="store-status">8 Bays · Live</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div>
+      <div class="tb-title">Shop Floor — Live View</div>
+      <div class="tb-sub">8 Bays · Sat Apr 11 · Bentonville, AR</div>
+    </div>
+    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+  </div>
+  <div class="topbar-right">
+    <div class="clock-display" id="clock">--:--:--</div>
+    <button class="theme-btn" onclick="toggleTheme()">☀</button>
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JR</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main-content">
+<div class="page-inner">
+
+  <!-- ══ LEFT: FLOOR ══ -->
+  <div class="floor-panel">
+    <div class="eff-strip">
+      <div class="eff-card">
+        <div class="eff-label">On-time starts</div>
+        <div class="eff-val good">87%</div>
+        <div class="eff-sub good">5 of 6 on schedule</div>
+      </div>
+      <div class="eff-card">
+        <div class="eff-label">Book time accuracy</div>
+        <div class="eff-val warn">76%</div>
+        <div class="eff-sub warn">1 job over by 18 min</div>
+      </div>
+      <div class="eff-card">
+        <div class="eff-label">Promised-by met</div>
+        <div class="eff-val good">100%</div>
+        <div class="eff-sub good">All 4 completed on time</div>
+      </div>
+      <div class="eff-card">
+        <div class="eff-label">Bay utilization</div>
+        <div class="eff-val warn">75%</div>
+        <div class="eff-sub" style="color:var(--t2)">6 of 8 active</div>
+      </div>
+    </div>
+
+    <div class="floor-wrap">
+      <div class="floor-title-bar">
+        <div class="floor-name">SHOP FLOOR — OVERHEAD VIEW</div>
+        <div class="floor-stats">
+          <div class="fstat"><div class="fstat-dot" style="background:var(--red)"></div>Occupied</div>
+          <div class="fstat"><div class="fstat-dot" style="background:var(--amber)"></div>Parts wait</div>
+          <div class="fstat"><div class="fstat-dot" style="background:var(--green)"></div>Available</div>
+          <div class="fstat"><div class="fstat-dot" style="background:var(--t3)"></div>Turnover</div>
+          <div class="fstat"><div style="width:20px;height:1px;border-top:1.5px dashed var(--blue)"></div>Multi-bay tech</div>
+        </div>
+      </div>
+
+      <svg id="shopSVG" viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+        <rect width="760" height="520" fill="#0e1115"/>
+        <rect x="30" y="60" width="700" height="400" rx="4" fill="#111418"/>
+        <rect x="30" y="240" width="700" height="30" fill="#0f1218"/>
+        <line x1="30" y1="255" x2="730" y2="255" stroke="#f0b232" stroke-width="1.5" stroke-dasharray="18 8" opacity=".5"/>
+
+        <!-- Entry/Exit doors -->
+        <rect x="30" y="80" width="24" height="50" rx="3" fill="#1a2035" stroke="#4d8de8" stroke-width="1.5"/>
+        <text x="42" y="100" text-anchor="middle" fill="#4d8de8" font-size="7" font-family="DM Sans" font-weight="600">IN</text>
+        <polygon points="42,108 36,118 48,118" fill="#4d8de8" opacity=".8"/>
+        <rect x="30" y="330" width="24" height="50" rx="3" fill="#1a2035" stroke="#3ccf7e" stroke-width="1.5"/>
+        <text x="42" y="350" text-anchor="middle" fill="#3ccf7e" font-size="7" font-family="DM Sans" font-weight="600">OUT</text>
+        <polygon points="42,358 36,368 48,368" fill="#3ccf7e" opacity=".8"/>
+
+        <!-- Street label -->
+        <rect x="30" y="30" width="700" height="30" fill="#0b0d10"/>
+        <text x="380" y="20" text-anchor="middle" fill="#4a5068" font-size="9" font-family="Barlow Condensed" font-weight="600" letter-spacing="2">STREET — CUSTOMER APPROACH</text>
+        <rect x="62" y="30" width="74" height="10" rx="0" fill="#1a2a4a" opacity=".9"/>
+        <rect x="224" y="30" width="74" height="10" rx="0" fill="#2a1a1a" opacity=".9"/>
+        <rect x="386" y="30" width="74" height="10" rx="0" fill="#1a2a4a" opacity=".9"/>
+        <rect x="548" y="30" width="74" height="10" rx="0" fill="#2a1a1a" opacity=".9"/>
+
+        <!-- BAY 1 — In Progress (Rivera) -->
+        <g id="bay1" style="cursor:pointer" onclick="selectBay(1)">
+          <rect x="58" y="60" width="82" height="170" rx="4" fill="#141820" stroke="#4d8de8" stroke-width="1.5"/>
+          <text x="99" y="78" text-anchor="middle" fill="#4d8de8" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 1</text>
+          <g transform="translate(99,148) rotate(180)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#2a3a5a" stroke="#4d8de8" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#1e3060" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#1e3060" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <circle cx="82" cy="205" r="9" fill="#4d8de8"/>
+          <text x="82" y="208" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">JR</text>
+          <rect x="62" y="218" width="74" height="4" rx="2" fill="#1e2330"/>
+          <rect x="62" y="218" width="54" height="4" rx="2" fill="#4d8de8"/>
+          <text x="99" y="234" text-anchor="middle" fill="#8b90a8" font-size="8" font-family="DM Mono">00:22</text>
+        </g>
+
+        <!-- BAY 2 — Parts Waiting (Torres) -->
+        <g id="bay2" style="cursor:pointer" onclick="selectBay(2)">
+          <rect x="220" y="60" width="82" height="170" rx="4" fill="#141820" stroke="#f0b232" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <text x="261" y="78" text-anchor="middle" fill="#f0b232" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 2</text>
+          <g transform="translate(261,148) rotate(180)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#3a2a1a" stroke="#f0b232" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#2a1a0a" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#2a1a0a" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <rect x="242" y="192" width="38" height="14" rx="3" fill="rgba(240,178,50,.15)" stroke="rgba(240,178,50,.4)" stroke-width=".8"/>
+          <text x="261" y="202" text-anchor="middle" fill="#f0b232" font-size="7.5" font-family="DM Sans" font-weight="600">PARTS WAIT</text>
+          <circle cx="244" cy="218" r="9" fill="#e85d20"/>
+          <text x="244" y="221" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">MT</text>
+          <text x="261" y="234" text-anchor="middle" fill="#f0b232" font-size="8" font-family="DM Mono">01:05 ⚠</text>
+        </g>
+
+        <!-- BAY 3 — In Progress (Patel) -->
+        <g id="bay3" style="cursor:pointer" onclick="selectBay(3)">
+          <rect x="382" y="60" width="82" height="170" rx="4" fill="#141820" stroke="#4d8de8" stroke-width="1.5"/>
+          <text x="423" y="78" text-anchor="middle" fill="#4d8de8" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 3</text>
+          <g transform="translate(423,148) rotate(180)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#2a3a5a" stroke="#4d8de8" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#1e3060" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#1e3060" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <circle cx="406" cy="205" r="9" fill="#2d9e5a"/>
+          <text x="406" y="208" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">AP</text>
+          <rect x="386" y="218" width="74" height="4" rx="2" fill="#1e2330"/>
+          <rect x="386" y="218" width="44" height="4" rx="2" fill="#4d8de8"/>
+          <text x="423" y="234" text-anchor="middle" fill="#8b90a8" font-size="8" font-family="DM Mono">00:48</text>
+        </g>
+
+        <!-- BAY 4 — Staged/Available (Torres next) -->
+        <g id="bay4" style="cursor:pointer" onclick="selectBay(4)">
+          <rect x="544" y="60" width="82" height="170" rx="4" fill="#0f130e" stroke="#3ccf7e" stroke-width="1" stroke-dasharray="4 4"/>
+          <text x="585" y="78" text-anchor="middle" fill="#3ccf7e" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 4</text>
+          <g transform="translate(585,148) rotate(180)" opacity=".35">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#1a2a1a" stroke="#3ccf7e" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#102010" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#102010" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <rect x="556" y="192" width="58" height="14" rx="3" fill="rgba(60,207,126,.1)" stroke="rgba(60,207,126,.3)" stroke-width=".8"/>
+          <text x="585" y="202" text-anchor="middle" fill="#3ccf7e" font-size="7.5" font-family="DM Sans" font-weight="600">NEXT STAGED</text>
+          <circle cx="568" cy="218" r="9" fill="#e85d20" opacity=".6"/>
+          <text x="568" y="221" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">MT</text>
+          <text x="585" y="234" text-anchor="middle" fill="#3ccf7e" font-size="8" font-family="DM Sans">Ready</text>
+        </g>
+
+        <!-- CENTER AISLE -->
+        <text x="380" y="251" text-anchor="middle" fill="#f0b232" font-size="8" font-family="Barlow Condensed" font-weight="600" letter-spacing="3" opacity=".6">CENTER AISLE</text>
+        <rect x="130" y="246" width="16" height="10" rx="2" fill="#1e2330" stroke="#4a5068" stroke-width=".8"/>
+        <rect x="290" y="246" width="16" height="10" rx="2" fill="#1e2330" stroke="#4a5068" stroke-width=".8"/>
+        <rect x="450" y="246" width="16" height="10" rx="2" fill="#1e2330" stroke="#4a5068" stroke-width=".8"/>
+
+        <!-- BAY 5 — QC Check (Johnson) -->
+        <g id="bay5" style="cursor:pointer" onclick="selectBay(5)">
+          <rect x="58" y="275" width="82" height="170" rx="4" fill="#141820" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="99" y="430" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 5</text>
+          <g transform="translate(99,360)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#2a2040" stroke="#a78bfa" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#1a1030" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#1a1030" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <rect x="62" y="280" width="74" height="4" rx="2" fill="#1e2330"/>
+          <rect x="62" y="280" width="60" height="4" rx="2" fill="#a78bfa"/>
+          <circle cx="82" cy="293" r="9" fill="#1d7a5a"/>
+          <text x="82" y="296" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">SJ</text>
+          <text x="99" y="308" text-anchor="middle" fill="#8b90a8" font-size="8" font-family="DM Mono">01:15</text>
+        </g>
+
+        <!-- BAY 6 — In Progress (Rivera 2nd bay) -->
+        <g id="bay6" style="cursor:pointer" onclick="selectBay(6)">
+          <rect x="220" y="275" width="82" height="170" rx="4" fill="#141820" stroke="#4d8de8" stroke-width="1.5"/>
+          <rect x="224" y="279" width="74" height="14" rx="3" fill="rgba(77,141,232,.15)"/>
+          <text x="261" y="289" text-anchor="middle" fill="#4d8de8" font-size="7.5" font-family="DM Sans" font-weight="600">JR — ACTIVE BAY</text>
+          <text x="261" y="430" text-anchor="middle" fill="#4d8de8" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 6</text>
+          <g transform="translate(261,360)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#2a3a5a" stroke="#4d8de8" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#1e3060" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#1e3060" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <circle cx="244" cy="410" r="9" fill="#4d8de8"/>
+          <text x="244" y="413" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">JR</text>
+          <rect x="224" y="418" width="74" height="4" rx="2" fill="#1e2330"/>
+          <rect x="224" y="418" width="55" height="4" rx="2" fill="#4d8de8"/>
+          <text x="261" y="308" text-anchor="middle" fill="#8b90a8" font-size="8" font-family="DM Mono">00:31</text>
+        </g>
+
+        <!-- BAY 7 — Alignment (Kim) -->
+        <g id="bay7" style="cursor:pointer" onclick="selectBay(7)">
+          <rect x="382" y="275" width="82" height="170" rx="4" fill="#141820" stroke="#2dd4bf" stroke-width="1.5"/>
+          <text x="423" y="430" text-anchor="middle" fill="#2dd4bf" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 7</text>
+          <line x1="386" y1="380" x2="460" y2="380" stroke="#2dd4bf" stroke-width=".6" stroke-dasharray="3 3" opacity=".4"/>
+          <line x1="386" y1="390" x2="460" y2="390" stroke="#2dd4bf" stroke-width=".6" stroke-dasharray="3 3" opacity=".4"/>
+          <g transform="translate(423,360)">
+            <rect x="-22" y="-42" width="44" height="78" rx="6" fill="#1a2a30" stroke="#2dd4bf" stroke-width=".8"/>
+            <rect x="-16" y="-38" width="32" height="18" rx="3" fill="#0e2028" opacity=".9"/>
+            <rect x="-16" y="22" width="32" height="14" rx="3" fill="#0e2028" opacity=".7"/>
+            <rect x="-26" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="-32" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="-26" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+            <rect x="19" y="22" width="7" height="12" rx="2" fill="#0d1018"/>
+          </g>
+          <circle cx="406" cy="410" r="9" fill="#0e7a80"/>
+          <text x="406" y="413" text-anchor="middle" fill="#fff" font-size="7" font-family="DM Sans" font-weight="700">DK</text>
+          <rect x="386" y="418" width="74" height="4" rx="2" fill="#1e2330"/>
+          <rect x="386" y="418" width="48" height="4" rx="2" fill="#2dd4bf"/>
+          <rect x="410" y="279" width="50" height="12" rx="3" fill="rgba(45,212,191,.12)" stroke="rgba(45,212,191,.3)" stroke-width=".8"/>
+          <text x="435" y="288" text-anchor="middle" fill="#2dd4bf" font-size="7" font-family="DM Sans" font-weight="600">ALIGNMENT</text>
+          <text x="423" y="308" text-anchor="middle" fill="#8b90a8" font-size="8" font-family="DM Mono">00:44</text>
+        </g>
+
+        <!-- BAY 8 — Turnover -->
+        <g id="bay8" style="cursor:pointer" onclick="selectBay(8)">
+          <rect x="544" y="275" width="82" height="170" rx="4" fill="#0d0f14" stroke="#4a5068" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="585" y="430" text-anchor="middle" fill="#4a5068" font-size="11" font-family="Barlow Condensed" font-weight="700">BAY 8</text>
+          <text x="585" y="370" text-anchor="middle" fill="#4a5068" font-size="9" font-family="Barlow Condensed" font-weight="600">TURNOVER</text>
+          <text x="585" y="383" text-anchor="middle" fill="#4a5068" font-size="8" font-family="DM Sans">Cleaning</text>
+          <line x1="577" y1="395" x2="593" y2="410" stroke="#4a5068" stroke-width="2" stroke-linecap="round"/>
+          <rect x="569" y="408" width="16" height="5" rx="2" fill="#4a5068" opacity=".5"/>
+          <text x="585" y="308" text-anchor="middle" fill="#4a5068" font-size="8" font-family="DM Sans">Est. ready 15 min</text>
+        </g>
+
+        <!-- Rear exit -->
+        <rect x="30" y="460" width="700" height="30" fill="#0b0d10"/>
+        <text x="380" y="482" text-anchor="middle" fill="#4a5068" font-size="9" font-family="Barlow Condensed" font-weight="600" letter-spacing="2">REAR EXIT — CUSTOMER PICKUP</text>
+        <rect x="62" y="460" width="74" height="8" rx="0" fill="#1a2a1a" opacity=".8"/>
+        <rect x="224" y="460" width="74" height="8" rx="0" fill="#1a2a4a" opacity=".8"/>
+        <rect x="386" y="460" width="74" height="8" rx="0" fill="#1a2a1a" opacity=".8"/>
+        <rect x="548" y="460" width="74" height="8" rx="0" fill="#4a5068" opacity=".3"/>
+
+        <!-- Selection highlight -->
+        <rect id="selectHighlight" x="0" y="0" width="0" height="0" rx="4" fill="none" stroke="#fff" stroke-width="2" opacity=".4" pointer-events="none"/>
+
+        <!-- Multi-bay connection lines -->
+        <path d="M 99 230 Q 99 255 261 255 Q 261 275 261 275" fill="none" stroke="#4d8de8" stroke-width="1.5" stroke-dasharray="5 3" opacity=".5" pointer-events="none"/>
+        <circle cx="99" cy="230" r="3" fill="#4d8de8" opacity=".7"/>
+        <circle cx="261" cy="275" r="3" fill="#4d8de8" opacity=".7"/>
+        <path d="M 261 230 Q 261 242 423 242 Q 585 242 585 230" fill="none" stroke="#e85d20" stroke-width="1.5" stroke-dasharray="4 4" opacity=".4" pointer-events="none"/>
+        <circle cx="261" cy="230" r="3" fill="#e85d20" opacity=".7"/>
+        <circle cx="585" cy="230" r="3" fill="#e85d20" opacity=".7"/>
+
+        <text x="380" y="500" text-anchor="middle" fill="#1e2530" font-size="28" font-family="Barlow Condensed" font-weight="700" letter-spacing="3">FIRESTONE</text>
+      </svg>
+
+      <div class="bay-tooltip" id="bayTooltip">
+        <div class="tt-bay" id="ttBay">—</div>
+        <div id="ttBody"></div>
+      </div>
+    </div>
+
+    <div class="legend-bar">
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--blue)"></div>In progress</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--amber)"></div>Parts waiting</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--purple)"></div>QC check</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--green)"></div>Available / staged</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--teal)"></div>Alignment rack</div>
+      <div class="leg-item"><div class="leg-swatch" style="background:var(--t3)"></div>Turnover</div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <div class="right-panel">
+    <div class="rp-tabs">
+      <div class="rp-tab active" onclick="showRPTab('techs',this)">Technicians</div>
+      <div class="rp-tab" onclick="showRPTab('efficiency',this)">Efficiency</div>
+      <div class="rp-tab" onclick="showRPTab('workorders',this)">Work Orders</div>
+    </div>
+    <div class="rp-content">
+
+      <!-- TECHS TAB -->
+      <div class="rp-section active" id="tab-techs">
+        <div class="tech-card">
+          <div class="tc-header">
+            <div class="tc-avatar" style="background:#4d8de8">JR</div>
+            <div><div class="tc-name">J. Rivera</div><div class="tc-role">Lead Technician</div></div>
+            <div class="tc-ratio good">1.31×</div>
+          </div>
+          <div class="tc-bay-label">Active bays — working 2 simultaneously</div>
+          <div class="tc-bay-list">
+            <div class="tc-bay-pill pill-active" onclick="selectBay(1)"><span class="pill-dot"></span>Bay 1 · Oil Change</div>
+            <div class="tc-bay-pill pill-active" onclick="selectBay(6)"><span class="pill-dot"></span>Bay 6 · Brakes</div>
+          </div>
+          <div style="font-size:10.5px;color:var(--t2);line-height:1.5;padding:6px 8px;background:rgba(77,141,232,.05);border-radius:6px;border:1px solid rgba(77,141,232,.15)">Pivoted to Bay 6 brakes while Bay 1 oil drains — zero idle time. Typical lead-tech multi-bay efficiency pattern.</div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:93%;background:#4d8de8"></div></div>
+        </div>
+
+        <div class="tech-card" style="border-color:rgba(240,96,96,.25)">
+          <div class="tc-header">
+            <div class="tc-avatar" style="background:#e85d20">MT</div>
+            <div><div class="tc-name">M. Torres</div><div class="tc-role">Journeyman</div></div>
+            <div class="tc-ratio bad">0.68×</div>
+          </div>
+          <div class="tc-bay-label">3-bay assignment (wait → work → next)</div>
+          <div class="tc-bay-list">
+            <div class="tc-bay-pill pill-waiting" onclick="selectBay(2)"><span class="pill-dot"></span>Bay 2 · Parts wait</div>
+            <div class="tc-bay-pill pill-active" onclick="selectBay(4)"><span class="pill-dot"></span>Bay 4 · Next staged</div>
+          </div>
+          <div style="font-size:10.5px;color:var(--amber);line-height:1.5;padding:6px 8px;background:rgba(240,178,50,.05);border-radius:6px;border:1px solid rgba(240,178,50,.2)">⚠ Bay 2 stalled — PN-4402 ETA 2:30 PM. Bay 4 staged and ready. AI: move to Bay 4 now.</div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:49%;background:#f06060"></div></div>
+        </div>
+
+        <div class="tech-card">
+          <div class="tc-header">
+            <div class="tc-avatar" style="background:#2d9e5a">AP</div>
+            <div><div class="tc-name">A. Patel</div><div class="tc-role">Journeyman</div></div>
+            <div class="tc-ratio good">1.18×</div>
+          </div>
+          <div class="tc-bay-label">Active bays</div>
+          <div class="tc-bay-list">
+            <div class="tc-bay-pill pill-active" onclick="selectBay(3)"><span class="pill-dot"></span>Bay 3 · Brake Service</div>
+          </div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:84%;background:#3ccf7e"></div></div>
+        </div>
+
+        <div class="tech-card">
+          <div class="tc-header">
+            <div class="tc-avatar" style="background:#0e7a80">DK</div>
+            <div><div class="tc-name">D. Kim</div><div class="tc-role">Alignment Specialist</div></div>
+            <div class="tc-ratio" style="color:var(--blue)">1.05×</div>
+          </div>
+          <div class="tc-bay-label">Active bays</div>
+          <div class="tc-bay-list">
+            <div class="tc-bay-pill" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--teal)" onclick="selectBay(7)"><span class="pill-dot" style="background:var(--teal)"></span>Bay 7 · Alignment</div>
+          </div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:75%;background:#2dd4bf"></div></div>
+        </div>
+
+        <div class="tech-card">
+          <div class="tc-header">
+            <div class="tc-avatar" style="background:#1d7a5a">SJ</div>
+            <div><div class="tc-name">S. Johnson</div><div class="tc-role">Journeyman</div></div>
+            <div class="tc-ratio" style="color:var(--blue)">0.94×</div>
+          </div>
+          <div class="tc-bay-label">Active bays</div>
+          <div class="tc-bay-list">
+            <div class="tc-bay-pill" style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.25);color:var(--purple)" onclick="selectBay(5)"><span class="pill-dot" style="background:var(--purple)"></span>Bay 5 · QC Check</div>
+          </div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:67%;background:#a78bfa"></div></div>
+        </div>
+      </div>
+
+      <!-- EFFICIENCY TAB -->
+      <div class="rp-section" id="tab-efficiency">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:10px">Scheduled → Actual → Book time → Elapsed → Promised by</div>
+        <div class="eff-detail-list">
+
+          <div class="eff-row">
+            <div class="er-header">
+              <div><div class="er-bay">Bay 1 — 2022 Toyota Camry</div><div class="er-car">Oil Change · J. Rivera</div></div>
+              <div class="er-status s-inprog">In Progress</div>
+            </div>
+            <div class="er-timeline">
+              <div class="er-trow"><div class="er-trow-label">Scheduled start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8;opacity:.4"></div></div><div class="er-trow-val">9:00 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Actual start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#3ccf7e;opacity:.7"></div></div><div class="er-trow-val good">9:02 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Book time</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8"></div></div><div class="er-trow-val">30 min</div></div>
+              <div class="er-trow"><div class="er-trow-label">Elapsed</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:73%;background:#3ccf7e"></div></div><div class="er-trow-val good">22 min</div></div>
+            </div>
+            <div class="er-promised"><div class="er-prom-label">Promised by</div><div class="er-prom-val good">10:00 AM ✓</div></div>
+          </div>
+
+          <div class="eff-row" style="border-color:rgba(240,96,96,.3)">
+            <div class="er-header">
+              <div><div class="er-bay">Bay 2 — 2020 BMW 3-Series</div><div class="er-car">Full Inspection · M. Torres</div></div>
+              <div class="er-status s-over">Overdue</div>
+            </div>
+            <div class="er-timeline">
+              <div class="er-trow"><div class="er-trow-label">Scheduled start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8;opacity:.4"></div></div><div class="er-trow-val">8:00 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Actual start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#f0b232;opacity:.6"></div></div><div class="er-trow-val warn">8:12 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Book time</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8"></div></div><div class="er-trow-val">60 min</div></div>
+              <div class="er-trow"><div class="er-trow-label">Elapsed</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#f06060"></div></div><div class="er-trow-val bad">78 min ⚠</div></div>
+            </div>
+            <div class="er-promised"><div class="er-prom-label">Promised by</div><div class="er-prom-val bad">10:00 AM — AT RISK</div></div>
+          </div>
+
+          <div class="eff-row">
+            <div class="er-header">
+              <div><div class="er-bay">Bay 3 — 2023 Honda CR-V</div><div class="er-car">Brake Service · A. Patel</div></div>
+              <div class="er-status s-inprog">In Progress</div>
+            </div>
+            <div class="er-timeline">
+              <div class="er-trow"><div class="er-trow-label">Scheduled start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8;opacity:.4"></div></div><div class="er-trow-val">9:00 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Actual start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#3ccf7e;opacity:.7"></div></div><div class="er-trow-val good">9:00 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Book time</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#4d8de8"></div></div><div class="er-trow-val">75 min</div></div>
+              <div class="er-trow"><div class="er-trow-label">Elapsed</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:64%;background:#3ccf7e"></div></div><div class="er-trow-val good">48 min</div></div>
+            </div>
+            <div class="er-promised"><div class="er-prom-label">Promised by</div><div class="er-prom-val good">11:00 AM ✓</div></div>
+          </div>
+
+          <div class="eff-row">
+            <div class="er-header">
+              <div><div class="er-bay">Bay 7 — 2020 Ford F-150</div><div class="er-car">4-Wheel Alignment · D. Kim</div></div>
+              <div class="er-status s-inprog">In Progress</div>
+            </div>
+            <div class="er-timeline">
+              <div class="er-trow"><div class="er-trow-label">Scheduled start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#2dd4bf;opacity:.4"></div></div><div class="er-trow-val">9:15 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Actual start</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#3ccf7e;opacity:.7"></div></div><div class="er-trow-val good">9:15 AM</div></div>
+              <div class="er-trow"><div class="er-trow-label">Book time</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:100%;background:#2dd4bf"></div></div><div class="er-trow-val">90 min</div></div>
+              <div class="er-trow"><div class="er-trow-label">Elapsed</div><div class="er-bar-bg"><div class="er-bar-fill" style="width:49%;background:#2dd4bf"></div></div><div class="er-trow-val" style="color:var(--teal)">44 min</div></div>
+            </div>
+            <div class="er-promised"><div class="er-prom-label">Promised by</div><div class="er-prom-val good">11:30 AM ✓</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK ORDERS TAB -->
+      <div class="rp-section" id="tab-workorders">
+        <div class="wo-detail-list">
+          <div class="wo-detail-card"><div class="wod-top"><div class="wod-bay">B1</div><div class="wod-car">2022 Toyota Camry</div><div class="wod-status s-inprog">Active</div></div><div class="wod-svc">Oil Change · 30 min book</div><div class="wod-tech"><div class="wod-av" style="background:#4d8de8">JR</div>Rivera · 9:02 AM · Due 10:00</div><div class="progress-bar"><div class="progress-fill" style="width:73%;background:#4d8de8"></div></div></div>
+          <div class="wo-detail-card" style="border-color:rgba(240,96,96,.3)"><div class="wod-top"><div class="wod-bay">B2</div><div class="wod-car">2020 BMW 3-Series</div><div class="wod-status s-over">Overdue</div></div><div class="wod-svc">Full Inspection · Waiting PN-4402</div><div class="wod-tech"><div class="wod-av" style="background:#e85d20">MT</div>Torres · 8:12 AM · Due 10:00</div><div class="progress-bar"><div class="progress-fill" style="width:100%;background:#f06060"></div></div></div>
+          <div class="wo-detail-card"><div class="wod-top"><div class="wod-bay">B3</div><div class="wod-car">2023 Honda CR-V</div><div class="wod-status s-inprog">Active</div></div><div class="wod-svc">Brake Pads Front · 75 min book</div><div class="wod-tech"><div class="wod-av" style="background:#2d9e5a">AP</div>Patel · 9:00 AM · Due 11:00</div><div class="progress-bar"><div class="progress-fill" style="width:64%;background:#3ccf7e"></div></div></div>
+          <div class="wo-detail-card"><div class="wod-top"><div class="wod-bay">B5</div><div class="wod-car">2020 Chevy Silverado</div><div class="wod-status s-qc">QC</div></div><div class="wod-svc">Tire Rotation + Balance</div><div class="wod-tech"><div class="wod-av" style="background:#1d7a5a">SJ</div>Johnson · Done 9:58 · Due 10:30</div><div class="progress-bar"><div class="progress-fill" style="width:90%;background:#a78bfa"></div></div></div>
+          <div class="wo-detail-card"><div class="wod-top"><div class="wod-bay">B6</div><div class="wod-car">2021 Ford Explorer</div><div class="wod-status s-inprog">Active</div></div><div class="wod-svc">Brake Pads Front · 75 min book</div><div class="wod-tech"><div class="wod-av" style="background:#4d8de8">JR</div>Rivera · 9:28 AM · Due 11:00</div><div class="progress-bar"><div class="progress-fill" style="width:41%;background:#4d8de8"></div></div></div>
+          <div class="wo-detail-card"><div class="wod-top"><div class="wod-bay">B7</div><div class="wod-car">2020 Ford F-150</div><div class="wod-status s-inprog">Active</div></div><div class="wod-svc">4-Wheel Alignment · 90 min book</div><div class="wod-tech"><div class="wod-av" style="background:#0e7a80">DK</div>Kim · 9:15 AM · Due 11:30</div><div class="progress-bar"><div class="progress-fill" style="width:49%;background:#2dd4bf"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const BAY_DATA={1:{name:'Bay 1 — Chassis Lift',car:'2022 Toyota Camry',svc:'Oil Change',tech:'J. Rivera',status:'In Progress',elapsed:'22 min',book:'30 min',scheduled:'9:00 AM',actual:'9:02 AM',promised:'10:00 AM',promisedStatus:'On track'},2:{name:'Bay 2 — Drive-on Lift',car:'2020 BMW 3-Series',svc:'Full Inspection',tech:'M. Torres',status:'Parts Delay ⚠',elapsed:'78 min',book:'60 min',scheduled:'8:00 AM',actual:'8:12 AM',promised:'10:00 AM',promisedStatus:'AT RISK'},3:{name:'Bay 3 — Drive-on Lift',car:'2023 Honda CR-V',svc:'Brake Service',tech:'A. Patel',status:'In Progress',elapsed:'48 min',book:'75 min',scheduled:'9:00 AM',actual:'9:00 AM',promised:'11:00 AM',promisedStatus:'On track'},4:{name:'Bay 4 — Drive-on Lift',car:'Next: 2021 Ford Explorer',svc:'Oil Change (staged)',tech:'M. Torres (next)',status:'Staged',elapsed:'—',book:'30 min',scheduled:'10:00 AM',actual:'—',promised:'11:30 AM',promisedStatus:'Pending'},5:{name:'Bay 5 — Chassis Lift',car:'2020 Chevy Silverado',svc:'Tire Rotation + Balance',tech:'S. Johnson',status:'QC Check',elapsed:'75 min',book:'45 min',scheduled:'9:00 AM',actual:'9:02 AM',promised:'10:30 AM',promisedStatus:'On track'},6:{name:'Bay 6 — Chassis Lift',car:'2021 Ford Explorer',svc:'Brake Pads Front',tech:'J. Rivera',status:'In Progress',elapsed:'31 min',book:'75 min',scheduled:'9:25 AM',actual:'9:28 AM',promised:'11:00 AM',promisedStatus:'On track'},7:{name:'Bay 7 — Alignment Rack',car:'2020 Ford F-150',svc:'4-Wheel Alignment',tech:'D. Kim',status:'In Progress',elapsed:'44 min',book:'90 min',scheduled:'9:15 AM',actual:'9:15 AM',promised:'11:30 AM',promisedStatus:'On track'},8:{name:'Bay 8 — Drive-on Lift',car:'Empty',svc:'Turnover / Cleaning',tech:'—',status:'Turnover',elapsed:'—',book:'—',scheduled:'—',actual:'—',promised:'—',promisedStatus:'Ready ~15 min'}};
+
+function tick(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0')}
+setInterval(tick,1000);tick();
+
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark')}
+
+function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay'),h=document.getElementById('hamburger');const open=s.classList.contains('open');s.classList.toggle('open',!open);o.classList.toggle('active',!open);h.classList.toggle('open',!open)}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('active');document.getElementById('hamburger').classList.remove('open')}
+
+function showRPTab(id,btn){document.querySelectorAll('.rp-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.rp-section').forEach(s=>s.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+id).classList.add('active')}
+
+function selectBay(n){
+  const d=BAY_DATA[n];if(!d)return;
+  const rects={1:[58,60,82,170],2:[220,60,82,170],3:[382,60,82,170],4:[544,60,82,170],5:[58,275,82,170],6:[220,275,82,170],7:[382,275,82,170],8:[544,275,82,170]};
+  const hl=document.getElementById('selectHighlight');
+  if(rects[n]){hl.setAttribute('x',rects[n][0]-3);hl.setAttribute('y',rects[n][1]-3);hl.setAttribute('width',rects[n][2]+6);hl.setAttribute('height',rects[n][3]+6)}
+  const isRisk=d.promisedStatus==='AT RISK';
+  document.getElementById('ttBay').textContent=d.name;
+  document.getElementById('ttBody').innerHTML=`<div class="tt-row"><span class="tt-label">Vehicle</span><span class="tt-val">${d.car}</span></div><div class="tt-row"><span class="tt-label">Service</span><span class="tt-val">${d.svc}</span></div><div class="tt-row"><span class="tt-label">Tech</span><span class="tt-val">${d.tech}</span></div><div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" style="color:${d.status.includes('⚠')?'#f0b232':d.status==='Turnover'?'#4a5068':'#4d8de8'}">${d.status}</span></div><div style="border-top:1px solid rgba(255,255,255,.07);margin:6px 0"></div><div class="tt-row"><span class="tt-label">Scheduled</span><span class="tt-val">${d.scheduled}</span></div><div class="tt-row"><span class="tt-label">Actual start</span><span class="tt-val">${d.actual}</span></div><div class="tt-row"><span class="tt-label">Book time</span><span class="tt-val">${d.book}</span></div><div class="tt-row"><span class="tt-label">Elapsed</span><span class="tt-val" style="color:${d.elapsed!=='—'&&parseInt(d.elapsed)>(parseInt(d.book)||99)?'#f06060':'#3ccf7e'}">${d.elapsed}</span></div><div style="border-top:1px solid rgba(255,255,255,.07);margin:6px 0"></div><div class="tt-row"><span class="tt-label">Promised by</span><span class="tt-val">${d.promised}</span></div><div class="tt-row"><span class="tt-label">Status</span><span class="tt-val" style="color:${isRisk?'#f06060':'#3ccf7e'}">${d.promisedStatus}</span></div>`;
+  const svgEl=document.getElementById('shopSVG');
+  const svgRect=svgEl.getBoundingClientRect();
+  const bayX={1:58,2:220,3:382,4:544,5:58,6:220,7:382,8:544};
+  const bayY={1:60,2:60,3:60,4:60,5:275,6:275,7:275,8:275};
+  const scale=svgRect.width/760;
+  let tipX=(bayX[n]+90)*scale;
+  let tipY=(bayY[n]+20)*scale;
+  if(tipX+220>svgRect.width)tipX=(bayX[n]-10)*scale-215;
+  const tt=document.getElementById('bayTooltip');
+  tt.style.left=tipX+'px';tt.style.top=tipY+'px';tt.classList.add('visible');
+}
+document.addEventListener('click',e=>{if(!e.target.closest('[id^="bay"]')&&!e.target.closest('.tc-bay-pill')){document.getElementById('bayTooltip').classList.remove('visible');document.getElementById('selectHighlight').setAttribute('width','0')}});
+</script>
+</body>
+</html>

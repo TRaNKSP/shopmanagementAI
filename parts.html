@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopFlow — Parts & Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font-ui:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--font-cond:'Barlow Condensed',sans-serif}
+[data-theme="dark"]{--bg:#0b0d10;--bg2:#111418;--bg3:#181c24;--bg4:#1e2330;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--t1:#e8eaf0;--t2:#8b90a8;--t3:#4a5068;--blue:#4d8de8;--green:#3ccf7e;--amber:#f0b232;--red:#f06060;--purple:#a78bfa;--teal:#2dd4bf;--sidebar-bg:#0d0f12;--sidebar-border:rgba(255,255,255,0.05);--topbar-bg:rgba(13,15,18,0.95)}
+[data-theme="light"]{--bg:#f4f5f8;--bg2:#ffffff;--bg3:#f8f9fc;--bg4:#eef0f8;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--t1:#1a1d2e;--t2:#5a6075;--t3:#a8b0c8;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--teal:#0891b2;--sidebar-bg:#1a1d2e;--sidebar-border:rgba(255,255,255,0.07);--topbar-bg:rgba(244,245,248,0.95)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--t1);display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:238px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;transition:background .3s,transform .28s cubic-bezier(.4,0,.2,1)}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--sidebar-border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.logo-name{display:block;font-weight:600;font-size:14px;color:#fff}
+.logo-sub{display:block;font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.nav-section-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.55);transition:background .15s,color .15s;cursor:pointer;margin-bottom:1px;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--blue);color:#fff;font-weight:500}
+.nav-icon{font-size:13px;opacity:.6;width:16px;text-align:center}
+.new-badge{margin-left:auto;font-size:9px;background:rgba(60,207,126,.2);color:#3ccf7e;border-radius:4px;padding:1px 5px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--sidebar-border)}
+.store-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.store-name{font-size:11px;color:rgba(255,255,255,.6);font-weight:500}
+.store-status{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190}
+.sidebar-overlay.active{display:block}
+
+/* Topbar */
+.topbar{position:fixed;top:0;left:238px;right:0;height:52px;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:90}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-title{font-family:var(--font-cond);font-size:17px;font-weight:600;letter-spacing:.4px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--t2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:8px 6px;background:none;border:none;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:transform .25s,opacity .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Main */
+.main-content{margin-left:238px;padding-top:52px;flex:1}
+.page{padding:20px}
+
+/* KPI strip */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 15px}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.kpi-value{font-family:var(--font-mono);font-size:20px;font-weight:500;line-height:1}
+.kpi-sub{font-size:10.5px;margin-top:4px}
+.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}
+
+/* Search + filter bar */
+.search-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:9px 14px;font-size:13px;color:var(--t1);font-family:var(--font-ui);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--blue)}
+.filter-pill{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--bg2);color:var(--t2);cursor:pointer;font-family:var(--font-ui);transition:all .15s;white-space:nowrap}
+.filter-pill.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.filter-pill:hover:not(.active){border-color:var(--border2);color:var(--t1)}
+.btn-add{padding:8px 16px;border-radius:8px;background:var(--blue);border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-ui);white-space:nowrap;transition:opacity .15s}
+.btn-add:hover{opacity:.88}
+
+/* Two-col layout */
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:16px}
+
+/* Inventory table panel */
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2)}
+.ai-pill{font-size:10px;font-weight:600;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);border-radius:12px;padding:2px 9px}
+
+/* Parts table */
+.parts-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.parts-table{width:100%;border-collapse:collapse;min-width:560px}
+.parts-table th{text-align:left;padding:9px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg3)}
+.parts-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+.parts-table tr:last-child td{border-bottom:none}
+.parts-table tr:hover td{background:rgba(255,255,255,0.02)}
+.parts-table tr.row-danger td{background:rgba(240,96,96,0.03)}
+.parts-table tr.row-warn td{background:rgba(240,178,50,0.03)}
+
+/* Part name cell */
+.part-name{font-weight:500;color:var(--t1)}
+.part-sku{font-family:var(--font-mono);font-size:10.5px;color:var(--t3);margin-top:1px}
+
+/* Stock level indicator */
+.stock-bar-bg{width:60px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.stock-bar{height:100%;border-radius:3px}
+.stock-val{font-family:var(--font-mono);font-size:12px;font-weight:500;vertical-align:middle}
+
+/* Status badges */
+.inv-badge{font-size:10px;font-weight:700;border-radius:5px;padding:2px 8px;white-space:nowrap}
+.ib-ok{background:rgba(60,207,126,.12);color:var(--green)}
+.ib-low{background:rgba(240,178,50,.15);color:var(--amber)}
+.ib-critical{background:rgba(240,96,96,.15);color:var(--red)}
+.ib-ordered{background:rgba(77,141,232,.15);color:var(--blue)}
+
+/* Action buttons */
+.tbl-btn{padding:4px 10px;border-radius:5px;font-size:11px;font-family:var(--font-ui);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--t2);transition:all .15s}
+.tbl-btn:hover{background:var(--bg4);color:var(--t1)}
+.tbl-btn.order-btn{border-color:rgba(77,141,232,.3);color:var(--blue);background:rgba(77,141,232,.08)}
+.tbl-btn.order-btn:hover{background:rgba(77,141,232,.15)}
+
+/* Right panel — orders + alerts */
+.right-stack{display:flex;flex-direction:column;gap:14px}
+.r-panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.rp-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.rp-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2)}
+.rp-body{padding:12px 14px}
+.order-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:center}
+.order-row:last-child{border-bottom:none}
+.or-vendor{width:60px;flex-shrink:0}
+.vendor-badge{font-size:9.5px;font-weight:700;border-radius:4px;padding:2px 6px;text-align:center}
+.v-az{background:rgba(240,96,96,.15);color:var(--red)}
+.v-napa{background:rgba(60,207,126,.12);color:var(--green)}
+.v-oreilly{background:rgba(240,178,50,.15);color:var(--amber)}
+.or-info{flex:1}
+.or-part{color:var(--t1);font-weight:500;font-size:12px}
+.or-detail{color:var(--t3);font-size:11px;margin-top:1px}
+.or-status{text-align:right}
+.or-eta{font-family:var(--font-mono);font-size:11px;color:var(--blue)}
+.or-track{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* AI insights */
+.insight-row{padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5}
+.insight-row:last-child{border-bottom:none}
+.ir-title{color:var(--t1);font-weight:500;margin-bottom:2px}
+.ir-text{color:var(--t2)}
+
+/* Usage chart (CSS bars) */
+.usage-chart{display:flex;flex-direction:column;gap:6px;padding:12px 14px}
+.uc-row{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.uc-label{color:var(--t2);width:120px;flex-shrink:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uc-bar-bg{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.uc-bar{height:100%;border-radius:4px;background:var(--blue)}
+.uc-val{font-family:var(--font-mono);font-size:11px;color:var(--t2);width:28px;text-align:right;flex-shrink:0}
+
+/* Mobile */
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{left:0;padding:0 12px}
+  .main-content{margin-left:0}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .two-col{grid-template-columns:1fr}
+  .page{padding:14px}
+  .search-bar{gap:6px}
+  .filter-pill{padding:6px 10px;font-size:11px}
+}
+@media(max-width:480px){
+  .kpi-row{grid-template-columns:1fr 1fr;gap:6px}
+  .kpi-value{font-size:17px}
+  .page{padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="logo"><div class="logo-mark">SF</div><div><span class="logo-name">ShopFlow</span><span class="logo-sub">AI Shop Management</span></div></div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="index.html"><span class="nav-icon">⬡</span><span>Command Center</span></a>
+    <a class="nav-item" href="shopfloor.html"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="new-badge">LIVE</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments & Waitlist</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
+    <div class="nav-section-label">People</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','staffing')"><span class="nav-icon">◎</span><span>Daily Staffing</span></a>
+    <a class="nav-item" href="techproductivity.html"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <div class="nav-section-label">Shop</div>
+    <a class="nav-item active" href="parts.html"><span class="nav-icon">◆</span><span>Parts & Inventory</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','notifications')"><span class="nav-icon">◉</span><span>Notifications</span></a>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','hours')"><span class="nav-icon">◑</span><span>Store Hours</span></a>
+    <a class="nav-item" href="customer.html" target="_blank"><span class="nav-icon">◎</span><span>Customer View</span><span class="new-badge">NEW</span></a>
+    <div class="nav-section-label">Intelligence</div>
+    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
+    <a class="nav-item" href="multilocation.html"><span class="nav-icon">⬡</span><span>Multi-location</span><span class="new-badge">NEW</span></a>
+  </nav>
+  <div class="sidebar-footer"><div style="display:flex;align-items:center;gap:8px"><div class="store-dot"></div><div><div class="store-name">Bentonville, AR</div><div class="store-status">8 Bays · Live</div></div></div></div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="tb-title">Parts & Inventory</div>
+  </div>
+  <div class="topbar-right">
+    <span style="font-size:11px;color:var(--green);font-weight:600">● Auto-reorder active</span>
+    <button class="theme-btn" onclick="toggleTheme()">☀</button>
+  </div>
+</header>
+
+<div class="main-content"><div class="page">
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">Total SKUs</div><div class="kpi-value">284</div><div class="kpi-sub" style="color:var(--t2)">Across 12 categories</div></div>
+    <div class="kpi-card"><div class="kpi-label">Critical / low</div><div class="kpi-value bad">3</div><div class="kpi-sub bad">Needs attention now</div></div>
+    <div class="kpi-card"><div class="kpi-label">On order</div><div class="kpi-value" style="color:var(--blue)">7</div><div class="kpi-sub" style="color:var(--t2)">2 arriving today</div></div>
+    <div class="kpi-card"><div class="kpi-label">Monthly spend</div><div class="kpi-value good">$4,820</div><div class="kpi-sub good">↓ 8% vs last month</div></div>
+    <div class="kpi-card"><div class="kpi-label">Inventory value</div><div class="kpi-value">$18,240</div><div class="kpi-sub" style="color:var(--t2)">On-hand cost basis</div></div>
+  </div>
+
+  <!-- Search + filter -->
+  <div class="search-bar">
+    <input type="text" class="search-input" placeholder="Search parts, SKU, description..." id="searchInput" oninput="filterParts()">
+    <button class="filter-pill active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-pill" onclick="setFilter('critical',this)">Critical</button>
+    <button class="filter-pill" onclick="setFilter('low',this)">Low stock</button>
+    <button class="filter-pill" onclick="setFilter('ordered',this)">On order</button>
+    <button class="btn-add">+ Add part</button>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Parts table -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Inventory — <span id="partCount">22</span> parts</span>
+        <span class="ai-pill">✦ Auto-reorder on</span>
+      </div>
+      <div class="parts-table-wrap">
+        <table class="parts-table" id="partsTable">
+          <thead>
+            <tr>
+              <th>Part / SKU</th>
+              <th>Category</th>
+              <th>On hand</th>
+              <th>Reorder at</th>
+              <th>Vendor</th>
+              <th>Unit cost</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="partsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="right-stack">
+
+      <!-- Active orders -->
+      <div class="r-panel">
+        <div class="rp-head"><span class="rp-title">Active orders</span><span style="font-size:10.5px;color:var(--blue);font-weight:600">7 open</span></div>
+        <div class="rp-body">
+          <div class="order-row">
+            <div class="or-vendor"><div class="vendor-badge v-az">AutoZone</div></div>
+            <div class="or-info"><div class="or-part">Brake pads — rear</div><div class="or-detail">PN-4402 · Qty 12</div></div>
+            <div class="or-status"><div class="or-eta">2:30 PM</div><div class="or-track">Today</div></div>
+          </div>
+          <div class="order-row">
+            <div class="or-vendor"><div class="vendor-badge v-napa">NAPA</div></div>
+            <div class="or-info"><div class="or-part">Oil filter — Honda</div><div class="or-detail">PN-2210 · Qty 20</div></div>
+            <div class="or-status"><div class="or-eta">Tomorrow</div><div class="or-track">8 AM delivery</div></div>
+          </div>
+          <div class="order-row">
+            <div class="or-vendor"><div class="vendor-badge v-oreilly">O'Reilly</div></div>
+            <div class="or-info"><div class="or-part">Cabin air filter set</div><div class="or-detail">PN-3310 · Qty 10</div></div>
+            <div class="or-status"><div class="or-eta">Tomorrow</div><div class="or-track">Noon delivery</div></div>
+          </div>
+          <div class="order-row">
+            <div class="or-vendor"><div class="vendor-badge v-az">AutoZone</div></div>
+            <div class="or-info"><div class="or-part">Synthetic oil 5W-30</div><div class="or-detail">PN-1102 · 48 qt</div></div>
+            <div class="or-status"><div class="or-eta">Wed</div><div class="or-track">Bulk order</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI insights -->
+      <div class="r-panel">
+        <div class="rp-head"><span class="rp-title">AI reorder insights</span><span class="ai-pill">✦ AI</span></div>
+        <div class="rp-body" style="padding:12px 14px">
+          <div class="insight-row">
+            <div class="ir-title">Brake pad usage spike predicted</div>
+            <div class="ir-text">Weekend forecast: 12 brake jobs booked. Current stock (8 sets) may fall short by Saturday afternoon. Recommend ordering 8 additional sets today.</div>
+          </div>
+          <div class="insight-row">
+            <div class="ir-title">Oil filter consolidation opportunity</div>
+            <div class="ir-text">Three Honda-specific filters (PN-2210, 2212, 2215) have low usage. Consolidating to universal-fit PN-2200 would reduce SKU count and improve turn rate.</div>
+          </div>
+          <div class="insight-row">
+            <div class="ir-title">Seasonal demand signal</div>
+            <div class="ir-text">Wiper blade usage +40% in April historically. Pre-order 24 units now vs standard 10 to avoid mid-month stockout.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top usage -->
+      <div class="r-panel">
+        <div class="rp-head"><span class="rp-title">Top usage — this week</span></div>
+        <div class="usage-chart">
+          <div class="uc-row"><div class="uc-label">Synth oil 5W-30</div><div class="uc-bar-bg"><div class="uc-bar" style="width:90%"></div></div><div class="uc-val">36</div></div>
+          <div class="uc-row"><div class="uc-label">Oil filter Toyota</div><div class="uc-bar-bg"><div class="uc-bar" style="width:75%"></div></div><div class="uc-val">18</div></div>
+          <div class="uc-row"><div class="uc-label">Brake pads front</div><div class="uc-bar-bg"><div class="uc-bar" style="width:65%;background:var(--amber)"></div></div><div class="uc-val">14</div></div>
+          <div class="uc-row"><div class="uc-label">Tire rotation bolts</div><div class="uc-bar-bg"><div class="uc-bar" style="width:50%"></div></div><div class="uc-val">44</div></div>
+          <div class="uc-row"><div class="uc-label">Air filter universal</div><div class="uc-bar-bg"><div class="uc-bar" style="width:40%"></div></div><div class="uc-val">9</div></div>
+          <div class="uc-row"><div class="uc-label">Brake pads rear</div><div class="uc-bar-bg"><div class="uc-bar" style="width:30%;background:var(--red)"></div></div><div class="uc-val">6</div></div>
+          <div class="uc-row"><div class="uc-label">Wiper blade 22"</div><div class="uc-bar-bg"><div class="uc-bar" style="width:25%"></div></div><div class="uc-val">5</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div></div>
+
+<script>
+const PARTS = [
+  {sku:'PN-1102',name:'Synthetic oil 5W-30 (qt)',cat:'Fluids',qty:88,reorder:20,vendor:'AutoZone',cost:6.50,status:'ok'},
+  {sku:'PN-1104',name:'Conventional oil 5W-20 (qt)',cat:'Fluids',qty:44,reorder:16,vendor:'NAPA',cost:4.20,status:'ok'},
+  {sku:'PN-2201',name:'Oil filter — Toyota 2.5L',cat:'Filters',qty:42,reorder:10,vendor:'AutoZone',cost:7.80,status:'ok'},
+  {sku:'PN-2205',name:'Oil filter — Honda 1.5T',cat:'Filters',qty:28,reorder:10,vendor:'NAPA',cost:8.10,status:'ok'},
+  {sku:'PN-2210',name:'Oil filter — Honda Accord',cat:'Filters',qty:6,reorder:8,vendor:'NAPA',cost:9.20,status:'low'},
+  {sku:'PN-3301',name:'Air filter — universal',cat:'Filters',qty:24,reorder:8,vendor:'AutoZone',cost:12.40,status:'ok'},
+  {sku:'PN-3310',name:'Cabin air filter — Honda',cat:'Filters',qty:5,reorder:4,vendor:"O'Reilly",cost:14.80,status:'low'},
+  {sku:'PN-4401',name:'Brake pad set — front',cat:'Brakes',qty:8,reorder:6,vendor:'AutoZone',cost:28.50,status:'low'},
+  {sku:'PN-4402',name:'Brake pad set — rear',cat:'Brakes',qty:4,reorder:6,vendor:'AutoZone',cost:24.90,status:'critical'},
+  {sku:'PN-4410',name:'Brake rotor — front pair',cat:'Brakes',qty:6,reorder:4,vendor:'NAPA',cost:54.00,status:'ok'},
+  {sku:'PN-4415',name:'Brake caliper — single',cat:'Brakes',qty:2,reorder:2,vendor:'NAPA',cost:68.00,status:'critical'},
+  {sku:'PN-5501',name:'Wiper blade — 22"',cat:'Wipers',qty:30,reorder:10,vendor:"O'Reilly",cost:8.20,status:'ok'},
+  {sku:'PN-5505',name:'Wiper blade — 18"',cat:'Wipers',qty:18,reorder:8,vendor:"O'Reilly",cost:7.40,status:'ok'},
+  {sku:'PN-6601',name:'Battery — Group 24',cat:'Electrical',qty:4,reorder:3,vendor:'AutoZone',cost:92.00,status:'ok'},
+  {sku:'PN-6605',name:'Battery — Group 35',cat:'Electrical',qty:1,reorder:2,vendor:'AutoZone',cost:98.00,status:'critical'},
+  {sku:'PN-7701',name:'Transmission fluid (qt)',cat:'Fluids',qty:22,reorder:8,vendor:'NAPA',cost:11.20,status:'ok'},
+  {sku:'PN-7710',name:'Coolant 50/50 (gal)',cat:'Fluids',qty:16,reorder:6,vendor:"O'Reilly",cost:18.40,status:'ok'},
+  {sku:'PN-8801',name:'Tire valve stems (10-pk)',cat:'Tires',qty:12,reorder:4,vendor:'AutoZone',cost:5.80,status:'ok'},
+  {sku:'PN-8805',name:'Wheel balance weights',cat:'Tires',qty:8,reorder:4,vendor:'NAPA',cost:22.00,status:'ok'},
+  {sku:'PN-9901',name:'Alignment shim set',cat:'Alignment',qty:6,reorder:2,vendor:'NAPA',cost:34.00,status:'ok'},
+  {sku:'PN-9910',name:'Tie rod end — universal',cat:'Steering',qty:3,reorder:2,vendor:"O'Reilly",cost:45.00,status:'ok'},
+  {sku:'PN-1010',name:'Serpentine belt — 6-rib',cat:'Belts',qty:4,reorder:2,vendor:'AutoZone',cost:28.00,status:'ok'},
+];
+
+const VENDOR_COLORS = {'AutoZone':'v-az','NAPA':'v-napa',"O'Reilly":'v-oreilly'};
+let currentFilter = 'all';
+
+function renderParts(parts){
+  const tbody=document.getElementById('partsBody');
+  tbody.innerHTML=parts.map(p=>{
+    const maxQ=Math.max(p.qty,p.reorder*3);
+    const barPct=Math.min(100,Math.round((p.qty/maxQ)*100));
+    const barColor=p.status==='critical'?'#f06060':p.status==='low'?'#f0b232':'#3ccf7e';
+    const badge=p.status==='critical'?'<span class="inv-badge ib-critical">Critical</span>':p.status==='low'?'<span class="inv-badge ib-low">Low</span>':p.status==='ordered'?'<span class="inv-badge ib-ordered">On order</span>':'<span class="inv-badge ib-ok">OK</span>';
+    const rowClass=p.status==='critical'?'row-danger':p.status==='low'?'row-warn':'';
+    const vc=VENDOR_COLORS[p.vendor]||'v-napa';
+    return `<tr class="${rowClass}">
+      <td><div class="part-name">${p.name}</div><div class="part-sku">${p.sku}</div></td>
+      <td style="color:var(--t2);font-size:12px">${p.cat}</td>
+      <td>
+        <div class="stock-bar-bg"><div class="stock-bar" style="width:${barPct}%;background:${barColor}"></div></div>
+        <span class="stock-val" style="color:${barColor}">${p.qty}</span>
+      </td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--t3)">${p.reorder}</td>
+      <td><span class="vendor-badge ${vc}">${p.vendor}</span></td>
+      <td style="font-family:var(--font-mono);font-size:12px">$${p.cost.toFixed(2)}</td>
+      <td>${badge}</td>
+      <td style="white-space:nowrap">
+        ${p.status==='critical'||p.status==='low'?`<button class="tbl-btn order-btn" onclick="orderPart('${p.sku}','${p.name}')">Order now</button>`:`<button class="tbl-btn">Edit</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('partCount').textContent=parts.length;
+}
+
+function filterParts(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let filtered=PARTS.filter(p=>
+    (!q||(p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)))&&
+    (currentFilter==='all'||p.status===currentFilter)
+  );
+  renderParts(filtered);
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterParts();
+}
+
+function orderPart(sku,name){
+  alert(`Auto-ordering ${name} (${sku})...\nOrder placed with preferred vendor.\nConfirmation will be sent to parts@shopflow.demo`);
+}
+
+function toggleTheme(){const h=document.documentElement;h.getAttribute('data-theme')==='dark'?h.setAttribute('data-theme','light'):h.setAttribute('data-theme','dark')}
+function toggleSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay'),h=document.getElementById('hamburger');const open=s.classList.contains('open');s.classList.toggle('open',!open);o.classList.toggle('active',!open);h.classList.toggle('open',!open)}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('active');document.getElementById('hamburger').classList.remove('open')}
+
+renderParts(PARTS);
+</script>
+</body>
+</html>
