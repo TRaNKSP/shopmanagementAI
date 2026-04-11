@@ -90,9 +90,9 @@ button { font-family: var(--font-sans); cursor: pointer; }
   flex-direction: column;
   position: fixed;
   top: 0; left: 0; bottom: 0;
-  z-index: 100;
+  z-index: 200;
   overflow-y: auto;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.28s cubic-bezier(0.4,0,0.2,1);
 }
 
 .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--sidebar-border); }
@@ -155,6 +155,7 @@ button { font-family: var(--font-sans); cursor: pointer; }
   z-index: 90;
   transition: background 0.3s, border-color 0.3s;
 }
+.topbar-left { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .breadcrumb {
   font-family: var(--font-serif);
   font-size: 15px;
@@ -836,7 +837,44 @@ button { font-family: var(--font-sans); cursor: pointer; }
 .agent-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.6; }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE — TABLET
+   HAMBURGER — always in DOM, hidden desktop
+══════════════════════════════════════════ */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px 6px;
+  background: none;
+  border: none;
+  flex-shrink: 0;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Overlay — hidden by default */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 190;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLET (≤1200px)
 ══════════════════════════════════════════ */
 @media (max-width: 1200px) {
   .kpi-row { grid-template-columns: repeat(3, 1fr); }
@@ -847,175 +885,162 @@ button { font-family: var(--font-sans); cursor: pointer; }
 
 /* ══════════════════════════════════════════
    RESPONSIVE — MOBILE (≤768px)
+   KEY: sidebar starts OFF-SCREEN via transform
 ══════════════════════════════════════════ */
-
-/* Hamburger button — hidden on desktop */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px;
-  background: none;
-  border: none;
-  margin-right: 8px;
-}
-.hamburger span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: var(--text-primary);
-  border-radius: 2px;
-  transition: all 0.25s;
-}
-.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-/* Sidebar overlay for mobile */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 95;
-}
-.sidebar-overlay.active { display: block; }
-
 @media (max-width: 768px) {
-  /* Show hamburger */
-  .hamburger { display: flex; }
 
-  /* Sidebar slides in from left, hidden by default */
+  /* --- Sidebar: off-screen by default --- */
   .sidebar {
-    width: 260px;
     transform: translateX(-100%);
-    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    width: 270px;
     z-index: 200;
   }
-  .sidebar.open { transform: translateX(0); }
+  /* Sidebar slides in when .open is added by JS */
+  .sidebar.open {
+    transform: translateX(0);
+  }
 
-  /* Main content fills full width */
-  .main-content { margin-left: 0; }
-
-  /* Topbar spans full width */
+  /* --- Topbar: full width, left:0 --- */
   .topbar {
-    left: 0;
-    padding: 0 14px;
+    left: 0 !important;
+    right: 0;
+    padding: 0 12px;
   }
 
-  /* Screens get tighter padding */
-  .screen { padding: 16px 14px 48px; }
+  /* --- Main content: no left margin --- */
+  .main-content {
+    margin-left: 0 !important;
+  }
 
-  /* Screen hero stacks */
-  .screen-hero { grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
-  .screen-title { font-size: 22px; }
-  .impact-card { padding: 12px 14px; }
-  .impact-text { font-size: 11.5px; }
+  /* --- Show hamburger --- */
+  .hamburger { display: flex; }
 
-  /* KPI row: 2 columns on mobile */
-  .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
-  .kpi-value { font-size: 20px; }
+  /* --- Screen padding --- */
+  .screen { padding: 14px 12px 60px; }
 
-  /* All multi-col layouts stack */
-  .two-col { grid-template-columns: 1fr; gap: 12px; }
-  .three-col { grid-template-columns: 1fr; gap: 12px; }
-  .screen-hero { grid-template-columns: 1fr; }
-
-  /* Bay grids */
-  .mini-bay-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .mini-bay { font-size: 8px; }
-  .bay-full-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .bay-controls { flex-direction: column; gap: 8px; }
-  .filter-group { flex-wrap: wrap; }
-
-  /* Work order kanban: single column scroll */
-  .wo-board {
+  /* --- Screen hero: single column --- */
+  .screen-hero {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
+    margin-bottom: 14px;
   }
+  .screen-title { font-size: 21px; }
+  .screen-subtitle { font-size: 12px; }
+  .impact-card { padding: 12px; }
+  .impact-text { font-size: 11px; }
 
-  /* Appointments table: simplify columns */
+  /* --- KPI: 2 columns --- */
+  .kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .kpi-value { font-size: 19px; }
+  .kpi-label { font-size: 9.5px; }
+  .kpi-trend { font-size: 10px; }
+
+  /* --- All grids collapse to 1 col --- */
+  .two-col   { grid-template-columns: 1fr; gap: 10px; }
+  .three-col { grid-template-columns: 1fr; gap: 10px; }
+
+  /* --- Panels tighter --- */
+  .panel { padding: 12px; }
+  .panel-header { margin-bottom: 10px; }
+
+  /* --- Bay grid: 2 cols --- */
+  .mini-bay-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .bay-full-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .bay-controls { flex-direction: column; gap: 6px; }
+  .filter-group { flex-wrap: wrap; gap: 4px; }
+  .filter-btn { padding: 5px 10px; font-size: 11px; }
+
+  /* --- Work orders: 1 col kanban --- */
+  .wo-board { grid-template-columns: 1fr; gap: 10px; }
+
+  /* --- Appointments: card style rows --- */
   .appt-header-row { display: none; }
   .appt-full-row {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
     margin-bottom: 6px;
+    cursor: pointer;
   }
-  .appt-full-row .bay-tag,
-  .appt-full-row .status-badge { display: inline-block; }
+  .appt-full-row > * { flex-shrink: 0; }
 
-  /* Roles: 2 cols */
-  .roles-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .role-icon { width: 40px; height: 40px; font-size: 13px; }
+  /* --- Roles: 2 cols --- */
+  .roles-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .role-card { padding: 14px 10px; }
+  .role-icon { width: 38px; height: 38px; font-size: 12px; margin-bottom: 8px; }
+  .role-name { font-size: 12px; }
+  .role-access { font-size: 9.5px; }
 
-  /* AI agents: 1 col */
-  .ai-agent-grid { grid-template-columns: 1fr; }
+  /* --- AI agents: 1 col --- */
+  .ai-agent-grid,
   .ai-agent-grid-4 { grid-template-columns: 1fr; }
 
-  /* Staffing table: allow horizontal scroll */
-  .heatmap-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .data-table { font-size: 11px; }
-  .data-table th, .data-table td { padding: 7px 6px; }
-
-  /* Notification log: simplify */
-  .nl-row {
-    grid-template-columns: 36px 44px 1fr;
-    grid-template-rows: auto auto;
-  }
-  .nl-row .nl-to { grid-column: 3; font-size: 11px; }
-  .nl-row .nl-msg { grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); }
-  .nl-row .nl-status { display: none; }
-
-  /* Trigger list: stack */
-  .trigger-row { grid-template-columns: 1fr; gap: 3px; }
-  .trigger-event { font-size: 11.5px; }
-  .trigger-action { font-size: 11px; color: var(--text-muted); padding-left: 8px; border-left: 2px solid var(--border-mid); }
-
-  /* Analytics charts need min-height */
-  .revenue-chart { gap: 4px; }
-  .weekly-chart { gap: 6px; }
-
-  /* Form rows stack */
-  .form-row { grid-template-columns: 1fr; }
-
-  /* Panels */
-  .panel { padding: 14px; }
-
-  /* Hours */
-  .hours-row { gap: 8px; }
-  .day { width: 70px; font-size: 12px; }
-  .hours-time { font-size: 10.5px; width: 110px; }
-  .hours-rules { flex-direction: column; gap: 10px; }
-
-  /* Topbar right — hide time on small screens */
-  .time-display { display: none; }
-  .live-badge { font-size: 9px; }
-
-  /* Walk-in queue */
-  .queue-list .queue-row { flex-wrap: wrap; }
-
-  /* Staff recs */
-  .rec-item { flex-wrap: wrap; gap: 8px; }
-  .rec-item .btn-outline { width: 100%; }
-
-  /* Projection: scrollable */
+  /* --- Scrollable wide tables --- */
+  .heatmap-container,
   .projection-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { font-size: 11px; min-width: 500px; }
+  .data-table th, .data-table td { padding: 6px 5px; }
 
-  /* Topbar breadcrumb truncate */
-  .breadcrumb { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  /* --- Notification log --- */
+  .nl-row { grid-template-columns: 38px 44px 1fr 28px; }
+  .nl-msg { display: none; }
+
+  /* --- Trigger list --- */
+  .trigger-row { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
+  .trigger-action { font-size: 11px; color: var(--text-muted); padding-left: 6px; border-left: 2px solid var(--border-mid); }
+
+  /* --- Form inputs --- */
+  .form-row { grid-template-columns: 1fr; }
+  .form-input { font-size: 16px; } /* prevent iOS zoom on focus */
+
+  /* --- Hours --- */
+  .hours-row { gap: 6px; }
+  .day { width: 64px; font-size: 11.5px; }
+  .hours-time { font-size: 10px; width: 100px; }
+  .hours-rules { flex-direction: column; gap: 8px; }
+
+  /* --- Topbar right: hide clock --- */
+  .time-display { display: none; }
+
+  /* --- Breadcrumb --- */
+  .breadcrumb {
+    font-size: 13px;
+    max-width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* --- Staffing recs --- */
+  .rec-item { flex-wrap: wrap; }
+  .rec-item .btn-outline { margin-top: 4px; }
+
+  /* --- Charts --- */
+  .revenue-chart { gap: 3px; }
+  .weekly-chart { gap: 5px; }
+  .noshow-chart { gap: 5px; }
+
+  /* --- Waitlist --- */
+  .wait-row { flex-wrap: wrap; }
 }
 
-/* Extra small — phones < 380px */
+/* ══════════════════════════════════════════
+   EXTRA SMALL — phones < 380px
+══════════════════════════════════════════ */
 @media (max-width: 380px) {
-  .kpi-row { grid-template-columns: 1fr 1fr; }
-  .kpi-value { font-size: 18px; }
+  .screen { padding: 10px 10px 60px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .kpi-value { font-size: 17px; }
   .bay-full-grid { grid-template-columns: 1fr 1fr; }
   .roles-grid { grid-template-columns: 1fr 1fr; }
-  .screen { padding: 12px 10px 48px; }
-  .screen-title { font-size: 19px; }
+  .screen-title { font-size: 18px; }
+  .topbar-right gap { gap: 8px; }
+  .user-avatar { width: 26px; height: 26px; font-size: 10px; }
 }
