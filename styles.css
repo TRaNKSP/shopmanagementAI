@@ -68,6 +68,8 @@ body {
   color: var(--text-primary);
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
   transition: background 0.3s, color 0.3s;
 }
 a { text-decoration: none; color: inherit; cursor: pointer; }
@@ -904,12 +906,16 @@ button { font-family: var(--font-sans); cursor: pointer; }
   .topbar {
     left: 0 !important;
     right: 0;
+    width: 100% !important;
     padding: 0 12px;
   }
 
-  /* --- Main content: no left margin --- */
+  /* --- Main content: fill full width, no left offset --- */
   .main-content {
     margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   /* --- Show hamburger --- */
