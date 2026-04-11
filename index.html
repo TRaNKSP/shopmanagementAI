@@ -92,9 +92,15 @@
   </div>
 </aside>
 
+<!-- Sidebar overlay (mobile tap-to-close) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <!-- TOP BAR -->
 <header class="topbar">
-  <div class="topbar-left">
+  <div class="topbar-left" style="display:flex;align-items:center;gap:4px;">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
     <div class="breadcrumb" id="breadcrumb">Command Center</div>
   </div>
   <div class="topbar-right">

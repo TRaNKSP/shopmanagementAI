@@ -836,7 +836,7 @@ button { font-family: var(--font-sans); cursor: pointer; }
 .agent-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.6; }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET
 ══════════════════════════════════════════ */
 @media (max-width: 1200px) {
   .kpi-row { grid-template-columns: repeat(3, 1fr); }
@@ -844,14 +844,178 @@ button { font-family: var(--font-sans); cursor: pointer; }
   .roles-grid { grid-template-columns: repeat(3, 1fr); }
   .ai-agent-grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 900px) {
-  .sidebar { width: 200px; }
-  .main-content { margin-left: 200px; }
-  .topbar { left: 200px; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤768px)
+══════════════════════════════════════════ */
+
+/* Hamburger button — hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px;
+  background: none;
+  border: none;
+  margin-right: 8px;
+}
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 95;
+}
+.sidebar-overlay.active { display: block; }
+
+@media (max-width: 768px) {
+  /* Show hamburger */
+  .hamburger { display: flex; }
+
+  /* Sidebar slides in from left, hidden by default */
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    z-index: 200;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Main content fills full width */
+  .main-content { margin-left: 0; }
+
+  /* Topbar spans full width */
+  .topbar {
+    left: 0;
+    padding: 0 14px;
+  }
+
+  /* Screens get tighter padding */
+  .screen { padding: 16px 14px 48px; }
+
+  /* Screen hero stacks */
+  .screen-hero { grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+  .screen-title { font-size: 22px; }
+  .impact-card { padding: 12px 14px; }
+  .impact-text { font-size: 11.5px; }
+
+  /* KPI row: 2 columns on mobile */
+  .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+  .kpi-value { font-size: 20px; }
+
+  /* All multi-col layouts stack */
+  .two-col { grid-template-columns: 1fr; gap: 12px; }
+  .three-col { grid-template-columns: 1fr; gap: 12px; }
   .screen-hero { grid-template-columns: 1fr; }
-  .two-col { grid-template-columns: 1fr; }
-  .three-col { grid-template-columns: 1fr; }
-  .wo-board { grid-template-columns: 1fr 1fr; }
-  .ai-agent-grid { grid-template-columns: 1fr 1fr; }
-  .appt-header-row, .appt-full-row { grid-template-columns: 50px 1fr 0 1fr 0 80px; }
+
+  /* Bay grids */
+  .mini-bay-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .mini-bay { font-size: 8px; }
+  .bay-full-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .bay-controls { flex-direction: column; gap: 8px; }
+  .filter-group { flex-wrap: wrap; }
+
+  /* Work order kanban: single column scroll */
+  .wo-board {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Appointments table: simplify columns */
+  .appt-header-row { display: none; }
+  .appt-full-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .appt-full-row .bay-tag,
+  .appt-full-row .status-badge { display: inline-block; }
+
+  /* Roles: 2 cols */
+  .roles-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .role-icon { width: 40px; height: 40px; font-size: 13px; }
+
+  /* AI agents: 1 col */
+  .ai-agent-grid { grid-template-columns: 1fr; }
+  .ai-agent-grid-4 { grid-template-columns: 1fr; }
+
+  /* Staffing table: allow horizontal scroll */
+  .heatmap-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { font-size: 11px; }
+  .data-table th, .data-table td { padding: 7px 6px; }
+
+  /* Notification log: simplify */
+  .nl-row {
+    grid-template-columns: 36px 44px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .nl-row .nl-to { grid-column: 3; font-size: 11px; }
+  .nl-row .nl-msg { grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); }
+  .nl-row .nl-status { display: none; }
+
+  /* Trigger list: stack */
+  .trigger-row { grid-template-columns: 1fr; gap: 3px; }
+  .trigger-event { font-size: 11.5px; }
+  .trigger-action { font-size: 11px; color: var(--text-muted); padding-left: 8px; border-left: 2px solid var(--border-mid); }
+
+  /* Analytics charts need min-height */
+  .revenue-chart { gap: 4px; }
+  .weekly-chart { gap: 6px; }
+
+  /* Form rows stack */
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Panels */
+  .panel { padding: 14px; }
+
+  /* Hours */
+  .hours-row { gap: 8px; }
+  .day { width: 70px; font-size: 12px; }
+  .hours-time { font-size: 10.5px; width: 110px; }
+  .hours-rules { flex-direction: column; gap: 10px; }
+
+  /* Topbar right — hide time on small screens */
+  .time-display { display: none; }
+  .live-badge { font-size: 9px; }
+
+  /* Walk-in queue */
+  .queue-list .queue-row { flex-wrap: wrap; }
+
+  /* Staff recs */
+  .rec-item { flex-wrap: wrap; gap: 8px; }
+  .rec-item .btn-outline { width: 100%; }
+
+  /* Projection: scrollable */
+  .projection-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Topbar breadcrumb truncate */
+  .breadcrumb { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+}
+
+/* Extra small — phones < 380px */
+@media (max-width: 380px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .kpi-value { font-size: 18px; }
+  .bay-full-grid { grid-template-columns: 1fr 1fr; }
+  .roles-grid { grid-template-columns: 1fr 1fr; }
+  .screen { padding: 12px 10px 48px; }
+  .screen-title { font-size: 19px; }
 }

@@ -17,6 +17,29 @@ const SCREEN_TITLES = {
   ai:           'AI Agents'
 };
 
+// ── Mobile sidebar ──
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const hamburger = document.getElementById('hamburger');
+  const isOpen = sidebar.classList.contains('open');
+  if (isOpen) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    hamburger.classList.remove('open');
+  } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    hamburger.classList.add('open');
+  }
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
 // ── Screen navigation ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -26,6 +49,8 @@ function showScreen(id) {
   document.querySelectorAll('[data-screen="' + id + '"]').forEach(n => n.classList.add('active'));
   document.getElementById('breadcrumb').textContent = SCREEN_TITLES[id] || id;
   window.scrollTo(0, 0);
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth <= 768) closeSidebar();
 }
 
 // ── Theme toggle ──
