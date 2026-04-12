@@ -149,6 +149,7 @@
         </div>
       </div>
 
+      <div class="floor-svg-wrap">
       <svg id="shopSVG" viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
         <rect width="760" height="520" fill="#0e1115"/>
         <rect x="30" y="60" width="700" height="400" rx="4" fill="#111418"/>
@@ -355,6 +356,7 @@
 
         <text x="380" y="500" text-anchor="middle" fill="#1e2530" font-size="28" font-family="Barlow Condensed" font-weight="700" letter-spacing="3">FIRESTONE</text>
       </svg>
+      </div><!-- end floor-svg-wrap -->
 
       <div class="bay-tooltip" id="bayTooltip">
         <div class="tt-bay" id="ttBay">—</div>
@@ -567,5 +569,13 @@ function selectBay(n){
 }
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="bay"]')&&!e.target.closest('.tc-bay-pill')){document.getElementById('bayTooltip').classList.remove('visible');document.getElementById('selectHighlight').setAttribute('width','0')}});
 </script>
+  <!-- Mobile diagnostic banner - remove once mobile is confirmed working -->
+  <div class="mobile-diag" id="mobileDiag">
+    ✓ Build v4.12 deployed · Mobile-first CSS active · Tap to dismiss
+  </div>
+  <script>
+    var d=document.getElementById("mobileDiag");
+    if(d){d.addEventListener("click",function(){d.style.display="none";try{localStorage.setItem("diagDismissed","1")}catch(e){}});try{if(localStorage.getItem("diagDismissed")==="1")d.style.display="none";}catch(e){}}
+  </script>
 </body>
 </html>

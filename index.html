@@ -1018,5 +1018,13 @@
 </main>
 
 <script src="app.js"></script>
+  <!-- Mobile diagnostic banner - remove once mobile is confirmed working -->
+  <div class="mobile-diag" id="mobileDiag">
+    ✓ Build v4.12 deployed · Mobile-first CSS active · Tap to dismiss
+  </div>
+  <script>
+    var d=document.getElementById("mobileDiag");
+    if(d){d.addEventListener("click",function(){d.style.display="none";try{localStorage.setItem("diagDismissed","1")}catch(e){}});try{if(localStorage.getItem("diagDismissed")==="1")d.style.display="none";}catch(e){}}
+  </script>
 </body>
 </html>

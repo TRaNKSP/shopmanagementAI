@@ -571,7 +571,10 @@ button{font-family:var(--font-sans);cursor:pointer}
 .floor-stats{display:flex;gap:10px;flex-wrap:wrap}
 .fstat{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--t2)}
 .fstat-dot{width:8px;height:8px;border-radius:2px}
-#shopSVG{width:100%;display:block;min-width:420px}
+#shopSVG{width:100%;height:auto;display:block}
+/* On very small screens, allow horizontal scroll so bays don't get crushed */
+.floor-svg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.floor-svg-wrap #shopSVG{min-width:340px}
 .bay-tooltip{position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;min-width:200px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .bay-tooltip.visible{opacity:1}
 .tt-bay{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--t1);margin-bottom:7px;border-bottom:1px solid var(--border);padding-bottom:5px}
@@ -882,3 +885,26 @@ button{font-family:var(--font-sans);cursor:pointer}
 .demo-bar{width:100%;max-width:480px;display:flex;gap:4px;padding:10px 18px 0;flex-wrap:wrap}
 .demo-btn{flex:1;min-width:90px;padding:8px 9px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#8b90a8;cursor:pointer;font-family:var(--font-sans);transition:all .15s;text-align:center;-webkit-tap-highlight-color:transparent}
 .demo-btn.active{background:rgba(77,141,232,.15);border-color:rgba(77,141,232,.35);color:#4d8de8}
+
+/* ══════════════════════════════════════════
+   MOBILE DIAGNOSTIC BANNER
+   Visible ONLY on mobile (max-width 768px)
+   Confirms latest files are deployed
+══════════════════════════════════════════ */
+.mobile-diag{
+  display:none; /* hidden by default on desktop */
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:#f0b232;
+  color:#1a1000;
+  font-size:12px;
+  font-weight:600;
+  text-align:center;
+  padding:10px 14px;
+  z-index:9999;
+  letter-spacing:.02em;
+  line-height:1.4;
+}
+@media(max-width:768px){
+  .mobile-diag{display:block}
+}
