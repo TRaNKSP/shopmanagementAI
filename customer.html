@@ -2,140 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ShopFlow — Your Vehicle Status</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:15px;-webkit-text-size-adjust:100%}
-body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 60px}
 
-/* ── Header bar ── */
-.header{width:100%;max-width:480px;display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.07)}
-.shop-logo{display:flex;align-items:center;gap:9px}
-.shop-mark{width:32px;height:32px;background:#4d8de8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff}
-.shop-name{font-size:13px;font-weight:600;color:#e8eaf0}
-.shop-addr{font-size:10.5px;color:#8b90a8;margin-top:1px}
-.header-time{font-family:'DM Mono',monospace;font-size:11px;color:#8b90a8;text-align:right}
-.live-dot{display:inline-block;width:6px;height:6px;background:#3ccf7e;border-radius:50%;margin-right:4px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* ── Status hero ── */
-.status-hero{width:100%;max-width:480px;padding:28px 20px 24px;text-align:center}
-.vehicle-name{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:#e8eaf0;letter-spacing:-.3px;margin-bottom:4px}
-.vehicle-plate{font-family:'DM Mono',monospace;font-size:12px;color:#8b90a8;letter-spacing:.1em;margin-bottom:20px}
-
-/* ── Status ring ── */
-.status-ring-wrap{position:relative;width:140px;height:140px;margin:0 auto 20px}
-.status-ring-svg{width:140px;height:140px;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:8}
-.ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1),stroke .3s}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
-.ring-label{font-size:10px;color:#8b90a8;text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
-
-.status-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:8px}
-.status-in-progress{background:rgba(77,141,232,0.15);border:1px solid rgba(77,141,232,0.3);color:#4d8de8}
-.status-ready{background:rgba(60,207,126,0.15);border:1px solid rgba(60,207,126,0.3);color:#3ccf7e}
-.status-waiting{background:rgba(240,178,50,0.12);border:1px solid rgba(240,178,50,0.25);color:#f0b232}
-.status-done{background:rgba(60,207,126,0.1);border:1px solid rgba(60,207,126,0.2);color:#3ccf7e}
-.promised-time{font-size:13px;color:#8b90a8}
-.promised-time strong{color:#e8eaf0}
-
-/* ── Progress timeline ── */
-.timeline{width:100%;max-width:480px;padding:0 20px 24px}
-.tl-step{display:flex;gap:14px;padding-bottom:0;position:relative}
-.tl-step:not(:last-child)::after{content:'';position:absolute;left:17px;top:34px;bottom:0;width:2px;background:rgba(255,255,255,0.06);z-index:0}
-.tl-step.done::after{background:rgba(77,141,232,0.3)}
-.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:4px;z-index:1}
-.tl-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.tl-dot.done{background:rgba(77,141,232,0.2);border:2px solid #4d8de8}
-.tl-dot.active{background:rgba(77,141,232,0.15);border:2px solid #4d8de8;box-shadow:0 0 0 4px rgba(77,141,232,0.1);animation:activePulse 2s infinite}
-@keyframes activePulse{0%,100%{box-shadow:0 0 0 4px rgba(77,141,232,.1)}50%{box-shadow:0 0 0 8px rgba(77,141,232,.05)}}
-.tl-dot.pending{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1)}
-.tl-body{padding:6px 0 24px;flex:1}
-.tl-name{font-size:14px;font-weight:600;color:#e8eaf0;margin-bottom:3px}
-.tl-name.pending{color:#8b90a8;font-weight:400}
-.tl-detail{font-size:12px;color:#8b90a8;line-height:1.5}
-.tl-time{font-family:'DM Mono',monospace;font-size:11px;color:#4a5068;margin-top:3px}
-.tl-time.done-time{color:#4d8de8}
-.tl-time.active-time{color:#3ccf7e}
-
-/* ── Service details card ── */
-.card{width:100%;max-width:480px;margin:0 20px 16px;padding:16px 18px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:14px}
-.card-title{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#4a5068;margin-bottom:12px}
-.card.mx{margin-left:20px;margin-right:20px;width:calc(100% - 40px);max-width:440px}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px}
-.detail-row:last-child{border-bottom:none}
-.dr-label{color:#8b90a8}
-.dr-val{color:#e8eaf0;font-weight:500;text-align:right}
-.dr-val.green{color:#3ccf7e}
-.dr-val.amber{color:#f0b232}
-.service-line{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.service-line:last-child{border-bottom:none}
-.svc-icon{width:28px;height:28px;border-radius:7px;background:rgba(77,141,232,0.12);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.svc-info{flex:1}
-.svc-name{font-size:13px;color:#e8eaf0;font-weight:500}
-.svc-detail{font-size:11px;color:#8b90a8;margin-top:1px}
-.svc-price{font-family:'DM Mono',monospace;font-size:13px;color:#e8eaf0}
-
-/* ── Technician card ── */
-.tech-card{display:flex;align-items:center;gap:12px}
-.tech-av{width:42px;height:42px;border-radius:50%;background:#4d8de8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
-.tech-name{font-size:14px;font-weight:600;color:#e8eaf0}
-.tech-role{font-size:11.5px;color:#8b90a8;margin-top:2px}
-.tech-stars{color:#f0b232;font-size:13px;margin-top:3px;letter-spacing:1px}
-.tech-badge{margin-left:auto;font-size:10px;font-weight:600;background:rgba(77,141,232,0.15);color:#4d8de8;border:1px solid rgba(77,141,232,0.25);border-radius:5px;padding:3px 9px}
-
-/* ── Findings alert ── */
-.findings-card{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:14px 16px;background:rgba(240,178,50,0.06);border:1px solid rgba(240,178,50,0.2);border-radius:12px}
-.fc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.fc-icon{font-size:16px}
-.fc-title{font-size:12px;font-weight:600;color:#f0b232;text-transform:uppercase;letter-spacing:.06em}
-.finding-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(240,178,50,0.1);font-size:12.5px}
-.finding-item:last-child{border-bottom:none}
-.fi-dot{width:6px;height:6px;border-radius:50%;background:#f0b232;flex-shrink:0;margin-top:5px}
-.fi-text{color:#e8eaf0;line-height:1.5}
-.fi-text span{color:#8b90a8;font-size:11.5px;display:block;margin-top:2px}
-.approve-btns{display:flex;gap:8px;margin-top:12px}
-.btn-approve{flex:1;padding:10px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
-.btn-yes{background:#3ccf7e;color:#0a2010}
-.btn-no{background:rgba(255,255,255,0.08);color:#8b90a8;border:1px solid rgba(255,255,255,0.1)}
-.btn-yes:hover,.btn-no:hover{opacity:.85}
-
-/* ── Invoice preview ── */
-.invoice-total{display:flex;align-items:baseline;justify-content:space-between;padding:12px 0 0;margin-top:4px;border-top:1px solid rgba(255,255,255,0.08)}
-.inv-label{font-size:13px;color:#8b90a8}
-.inv-amount{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:#3ccf7e}
-
-/* ── Notification CTA ── */
-.notif-cta{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:14px 16px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:12px;display:flex;align-items:center;gap:12px}
-.nc-icon{width:36px;height:36px;border-radius:9px;background:rgba(60,207,126,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.nc-text{flex:1;font-size:12.5px;color:#8b90a8;line-height:1.5}
-.nc-text strong{color:#e8eaf0;display:block;margin-bottom:2px;font-size:13px}
-.nc-toggle{width:40px;height:24px;background:#4d8de8;border-radius:12px;position:relative;cursor:pointer;flex-shrink:0}
-.nc-toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:right .2s}
-
-/* ── Rate / Survey ── */
-.survey-card{width:calc(100% - 40px);max-width:440px;margin:0 20px 16px;padding:16px 18px;background:#141820;border:1px solid rgba(255,255,255,0.07);border-radius:14px;text-align:center}
-.survey-title{font-size:14px;font-weight:600;color:#e8eaf0;margin-bottom:4px}
-.survey-sub{font-size:12px;color:#8b90a8;margin-bottom:16px}
-.star-row{display:flex;justify-content:center;gap:10px}
-.star{font-size:32px;cursor:pointer;transition:transform .15s;color:#2a3040;line-height:1}
-.star:hover,.star.lit{color:#f0b232;transform:scale(1.15)}
-
-/* ── Footer ── */
-.page-footer{width:100%;max-width:480px;padding:16px 20px;text-align:center;font-size:11px;color:#4a5068;border-top:1px solid rgba(255,255,255,0.05)}
-
-/* ── Demo switcher ── */
-.demo-bar{width:100%;max-width:480px;display:flex;gap:4px;padding:12px 20px 0;flex-wrap:wrap}
-.demo-btn{flex:1;min-width:100px;padding:8px 10px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#8b90a8;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
-.demo-btn.active{background:rgba(77,141,232,0.15);border-color:rgba(77,141,232,0.35);color:#4d8de8}
-</style>
+<link rel="stylesheet" href="styles.css">
+<!-- Google Analytics G-6XJ6CNV95V -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6XJ6CNV95V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-6XJ6CNV95V");</script>
 </head>
-<body>
+<body class="customer-page">
 
 <!-- Demo state switcher (simulates different vehicle states) -->
 <div class="demo-bar">
@@ -146,16 +24,16 @@ body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-heigh
 </div>
 
 <!-- Header -->
-<div class="header">
-  <div class="shop-logo">
-    <div class="shop-mark">SF</div>
+<div class="cust-header">
+  <div class="cust-shop-logo">
+    <div class="cust-shop-mark">SF</div>
     <div>
-      <div class="shop-name">ShopFlow Auto Care</div>
-      <div class="shop-addr">Bentonville, AR · (479) 555-0100</div>
+      <div class="cust-shop-name">ShopFlow Auto Care</div>
+      <div class="cust-shop-addr">Bentonville, AR · (479) 555-0100</div>
     </div>
   </div>
-  <div class="header-time">
-    <div><span class="live-dot"></span>Live update</div>
+  <div class="cust-header-time">
+    <div><span class="cust-live-dot"></span>Live update</div>
     <div id="clockDisplay">--:--</div>
   </div>
 </div>
@@ -182,7 +60,7 @@ body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-heigh
 </div>
 
 <!-- Progress timeline -->
-<div class="timeline">
+<div class="cust-timeline">
   <div class="tl-step done">
     <div class="tl-left"><div class="tl-dot done">✓</div></div>
     <div class="tl-body">
@@ -226,8 +104,8 @@ body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-heigh
 </div>
 
 <!-- Service details -->
-<div class="card mx">
-  <div class="card-title">Services today</div>
+<div class="cust-card">
+  <div class="cust-card-title">Services today</div>
   <div class="service-line">
     <div class="svc-icon">🛢</div>
     <div class="svc-info">
@@ -277,16 +155,16 @@ body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-heigh
 </div>
 
 <!-- Technician -->
-<div class="card mx">
-  <div class="card-title">Your technician</div>
-  <div class="tech-card">
-    <div class="tech-av">JR</div>
+<div class="cust-card">
+  <div class="cust-card-title">Your technician</div>
+  <div class="tech-card-cust">
+    <div class="tech-av-cust">JR</div>
     <div>
-      <div class="tech-name">Jesse Rivera</div>
-      <div class="tech-role">Lead Technician · 8 yrs experience</div>
+      <div class="tech-name-cust">Jesse Rivera</div>
+      <div class="tech-role-cust">Lead Technician · 8 yrs experience</div>
       <div class="tech-stars">★★★★★</div>
     </div>
-    <div class="tech-badge">4.9 / 5</div>
+    <div class="tech-badge-cust">4.9 / 5</div>
   </div>
 </div>
 
@@ -313,7 +191,7 @@ body{font-family:'DM Sans',sans-serif;background:#0d0f14;color:#e8eaf0;min-heigh
   </div>
 </div>
 
-<div class="page-footer">
+<div class="cust-footer">
   ShopFlow Auto Care · Bentonville, AR<br>
   Questions? Call <a href="tel:4795550100" style="color:#4d8de8">(479) 555-0100</a>
 </div>
