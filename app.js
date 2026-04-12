@@ -109,9 +109,21 @@ function buildFullBayGrid(filterStatus = 'all', filterType = '') {
   grid.innerHTML = '';
   const filtered = BAYS.filter(b => {
     const statusOk = filterStatus === 'all' || b.status === filterStatus;
-    const typeOk = !filterType || b.type.toLowerCase().includes(filterType.toLowerCase());
+    // Fix: map type filter keys to actual type strings
+    const typeMap = {
+      'chassis':   'chassis lift',
+      'driveon':   'drive-on',
+      'alignment': 'alignment',
+      'tire':      'tire mount',
+      'lube':      'lube pit'
+    };
+    const typeOk = !filterType || b.type.toLowerCase().includes(typeMap[filterType] || filterType);
     return statusOk && typeOk;
   });
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--t3);font-size:13px">No bays match this filter</div>';
+    return;
+  }
   filtered.forEach(bay => {
     const card = document.createElement('div');
     card.className = 'bay-card ' + bay.status;
@@ -141,7 +153,7 @@ function filterBays(status, btn) {
 function filterBayType(type, btn) {
   if (window._bayFilterType === type) {
     window._bayFilterType = '';
-    if (btn) btn.classList.remove('active');
+    document.querySelectorAll('.filter-group:last-child .filter-btn').forEach(b => b.classList.remove('active'));
   } else {
     window._bayFilterType = type;
     document.querySelectorAll('.filter-group:last-child .filter-btn').forEach(b => b.classList.remove('active'));
@@ -150,28 +162,28 @@ function filterBayType(type, btn) {
   buildFullBayGrid(window._bayFilterStatus, window._bayFilterType);
 }
 
-// Build occupancy projection
+// Build occupancy projection — full day 7am to 8pm (14 hours)
 function buildProjection() {
   const grid = document.getElementById('projectionGrid');
   if (!grid) return;
-  const hours = ['Now','10:30','11:00','11:30','12:00','12:30'];
-  const bayRows = BAYS; // now 8 bays
+  const hours = ['7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p'];
+  const bayRows = BAYS;
   const statuses = {
-    'B1': ['occ','occ','avail','avail','avail','avail'],
-    'B2': ['occ','occ','occ','avail','avail','avail'],
-    'B3': ['occ','avail','avail','occ','occ','avail'],
-    'B4': ['res','occ','occ','avail','avail','avail'],
-    'B5': ['occ','occ','avail','avail','occ','occ'],
-    'B6': ['occ','avail','avail','occ','occ','occ'],
-    'B7': ['occ','occ','occ','avail','res','res'],
-    'B8': ['avail','avail','avail','occ','occ','occ'],
+    'B1': ['gray','occ','occ','occ','avail','occ','occ','avail','avail','avail','avail','gray','gray','gray'],
+    'B2': ['gray','occ','occ','occ','occ','occ','avail','avail','occ','occ','avail','gray','gray','gray'],
+    'B3': ['occ','occ','occ','avail','avail','occ','occ','occ','avail','occ','occ','avail','gray','gray'],
+    'B4': ['gray','gray','res','occ','occ','avail','avail','avail','occ','occ','occ','avail','gray','gray'],
+    'B5': ['occ','occ','occ','avail','avail','occ','occ','avail','avail','occ','occ','occ','avail','gray'],
+    'B6': ['gray','occ','avail','avail','occ','occ','occ','occ','avail','avail','occ','occ','gray','gray'],
+    'B7': ['gray','gray','occ','occ','occ','occ','avail','res','res','occ','occ','avail','gray','gray'],
+    'B8': ['gray','gray','gray','avail','avail','avail','occ','occ','avail','avail','occ','occ','occ','gray'],
   };
   let html = '<table class="proj-table"><thead><tr><th>Bay</th>';
   hours.forEach(h => { html += `<th>${h}</th>`; });
   html += '</tr></thead><tbody>';
   bayRows.forEach(bay => {
-    html += `<tr><td>${bay.id} — ${bay.type}</td>`;
-    const row = statuses[bay.id] || Array(6).fill('avail');
+    html += `<tr><td>${bay.id} — ${bay.type.replace(' Lift','').replace(' Rack','')}</td>`;
+    const row = statuses[bay.id] || Array(14).fill('avail');
     row.forEach(s => { html += `<td><div class="proj-cell ${s}"></div></td>`; });
     html += '</tr>';
   });
@@ -180,30 +192,95 @@ function buildProjection() {
 }
 
 // ══════════════════════════════════════════
-//  STAFFING HEATMAP
+//  STAFFING HEATMAP — skill-level shading
 // ══════════════════════════════════════════
 function buildHeatmap() {
   const container = document.getElementById('heatmap');
   if (!container) return;
-  const hours = ['7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm'];
+  const hours = ['7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm'];
+
+  // Each tech: name, tier (mta/mtb/mtc/mt), schedule (1=working, 0=off, w=warn, r=red)
   const techs = [
-    { name:'J. Rivera (Lead)', data:['green','green','green','green','green','green','green','green','green','gray','gray','gray','gray'] },
-    { name:'A. Patel (Journey)', data:['green','green','green','green','green','green','green','green','green','gray','gray','gray','gray'] },
-    { name:'E. Adams (Tire)', data:['green','green','green','green','amber','amber','amber','gray','gray','gray','gray','gray','gray'] },
-    { name:'D. Kim (Alignment)', data:['gray','green','green','green','green','green','green','green','green','green','gray','gray','gray'] },
-    { name:'S. Johnson (Journey)', data:['gray','gray','green','green','green','green','green','green','green','green','green','gray','gray'] },
-    { name:'T. Williams (Lube)', data:['gray','gray','gray','green','green','green','green','green','green','green','green','green','gray'] },
-    { name:'M. Torres (Journey)', data:['gray','gray','gray','gray','red','red','amber','amber','amber','green','green','green','green'] },
+    { name:'J. Rivera', tier:'mta', label:'MT-A',
+      data:[0,'w','on','on','on','on','on','on','on',0,0,0,0,0] },
+    { name:'A. Patel',  tier:'mta', label:'MT-A',
+      data:[0,'w','on','on','on','on','on','on','on',0,0,0,0,0] },
+    { name:'E. Adams',  tier:'mtc', label:'MT-C',
+      data:[0,'w','on','on','warn','warn','warn',0,0,0,0,0,0,0] },
+    { name:'D. Kim',    tier:'mtb', label:'MT-B',
+      data:[0,0,'on','on','on','on','on','on','on','on',0,0,0,0] },
+    { name:'S. Johnson',tier:'mtb', label:'MT-B',
+      data:[0,0,0,'on','on','on','on','on','on','on','on',0,0,0] },
+    { name:'T. Williams',tier:'mtc',label:'MT-C',
+      data:[0,0,0,0,'on','on','on','on','on','on','on','on',0,0] },
+    { name:'M. Torres', tier:'mt',  label:'MT',
+      data:[0,0,0,0,'red','red','warn','warn','warn','on','on','on','on',0] },
   ];
-  let html = '<table class="heatmap-table"><thead><tr><th style="text-align:left">Technician</th>';
+
+  // Capacity per hour: count techs working
+  const capacity = hours.map((_, hi) => {
+    const working = techs.filter(t => t.data[hi] === 'on' || t.data[hi] === 'warn').length;
+    const demand  = [0,1,3,4,5,5,4,4,3,3,2,1,1,0][hi]; // projected car demand
+    if (demand === 0) return 'closed';
+    if (working === 0) return 'under';
+    if (working < demand - 1) return 'under';
+    if (working >= demand) return 'over';
+    return 'at';
+  });
+
+  // Tier colors for working cells
+  const tierColor = { mta:'#3ccf7e', mtb:'#4d8de8', mtc:'#f0b232', mt:'#8b90a8' };
+  const tierBg    = { mta:'rgba(60,207,126,.22)', mtb:'rgba(77,141,232,.22)', mtc:'rgba(240,178,50,.22)', mt:'rgba(139,144,168,.15)' };
+
+  // Capacity header
+  const capLabel = { over:'Well covered', at:'At capacity', under:'Understaffed', closed:'Closed' };
+  const capBg    = { over:'rgba(60,207,126,.18)', at:'rgba(240,178,50,.18)', under:'rgba(240,96,96,.22)', closed:'rgba(255,255,255,.03)' };
+  const capTxt   = { over:'#3ccf7e', at:'#f0b232', under:'#f06060', closed:'#4a5068' };
+
+  let html = '<table class="heatmap-table"><thead>';
+  // Capacity row
+  html += '<tr><th style="text-align:left;font-size:9.5px;color:var(--t3)">Capacity →</th>';
+  capacity.forEach(cap => {
+    html += `<th><div style="height:16px;border-radius:3px;background:${capBg[cap]};color:${capTxt[cap]};font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700">${cap==='closed'?'—':cap==='over'?'✓':cap==='at'?'~':'!'}</div></th>`;
+  });
+  html += '</tr>';
+  // Tech header row
+  html += '<tr><th style="text-align:left">Technician</th>';
   hours.forEach(h => html += `<th>${h}</th>`);
   html += '</tr></thead><tbody>';
+
   techs.forEach(t => {
-    html += `<tr><td>${t.name}</td>`;
-    t.data.forEach(c => html += `<td><div class="hm-cell ${c}"></div></td>`);
+    const color = tierColor[t.tier];
+    const bg    = tierBg[t.tier];
+    html += `<tr><td><span style="font-weight:500">${t.name}</span> <span style="font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;background:${bg};color:${color}">${t.label}</span></td>`;
+    t.data.forEach(cell => {
+      if (!cell || cell === 0) {
+        html += `<td><div class="hm-cell gray"></div></td>`;
+      } else if (cell === 'on') {
+        html += `<td><div class="hm-cell" style="background:${bg};border:1px solid ${color}30"></div></td>`;
+      } else if (cell === 'warn') {
+        html += `<td><div class="hm-cell amber"></div></td>`;
+      } else if (cell === 'red') {
+        html += `<td><div class="hm-cell red"></div></td>`;
+      } else if (cell === 'w') {
+        // Warming up / arriving
+        html += `<td><div class="hm-cell" style="background:${bg};opacity:.4;border:1px dashed ${color}50"></div></td>`;
+      } else {
+        html += `<td><div class="hm-cell gray"></div></td>`;
+      }
+    });
     html += '</tr>';
   });
   html += '</tbody></table>';
+  html += `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:10.5px;color:var(--t2)">
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.22);border:1px solid #3ccf7e50;margin-right:4px"></span>MT-A (Advanced)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(77,141,232,.22);border:1px solid #4d8de850;margin-right:4px"></span>MT-B (Mid-level)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.22);border:1px solid #f0b23250;margin-right:4px"></span>MT-C (General)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(139,144,168,.15);margin-right:4px"></span>MT (Entry)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,96,96,.22);margin-right:4px"></span>Understaffed</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.18);margin-right:4px"></span>At capacity</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.18);margin-right:4px"></span>Well covered</span>
+  </div>`;
   container.innerHTML = html;
 }
 
@@ -310,26 +387,41 @@ function buildWeeklyChart() {
 // ══════════════════════════════════════════
 //  ROLE DETAIL MODAL (simple)
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  ROLE DETAIL MODAL
+// ══════════════════════════════════════════
 const ROLE_DETAILS = {
   customer: {
-    title: 'Customer view',
-    desc: 'Customers access their vehicle status via a unique SMS link — no account or login required. They see a clean, consumer-facing tracker with the current status stage (Waiting → In Progress → Ready), estimated completion time, and the final invoice when work is done. Post-visit, they receive a satisfaction survey link.'
+    title: 'Customer View',
+    desc: 'Customers receive a unique SMS link the moment their car is checked in — no account or login required. They see a clean status tracker with the current stage (Waiting → In Bay → Awaiting Approval → QC → Ready), estimated completion time, any pending approvals needed (with ability to approve or decline additional work from their phone), and the final invoice with a Pay link when service is complete. Post-visit, they receive a satisfaction survey.'
   },
-  tech: {
-    title: 'Technician view',
-    desc: 'Technicians see their personal queue for the day: which car, which bay, which service, what parts should be staged, and a timer running against book time. The AI work order documentation tool lets them dictate findings verbally. Push notifications fire when a new car is assigned, when it is checked in, and when parts are staged.'
+  mt_a: {
+    title: 'Maintenance Tech A — Highest Grade',
+    desc: 'MT-A is the most skilled, highest-paid technician in the shop. Full ASE Master certification. The manager routes the most complex and highest-value jobs here — engine diagnostics, A/C system repair, transmission service, timing belt, and any non-obvious troubleshooting (rattles, vibrations, intermittent issues). MT-A techs mentor others, review findings from junior techs, and can approve or escalate additional work recommendations. Expected book ratio: 1.2–1.4×. e.g. J. Rivera, A. Patel.'
+  },
+  mt_b: {
+    title: 'Maintenance Tech B — Advanced',
+    desc: 'MT-B techs handle the mid-complexity services that require certification but not full master-level skill. This includes brake jobs (front and rear), 4-wheel alignment, steering and suspension diagnosis, 150-point vehicle inspections, and wiper/cabin filter replacement. Actively working toward ASE certifications. Expected book ratio: 1.0–1.2×. e.g. D. Kim (Alignment), S. Johnson.'
+  },
+  mt_c: {
+    title: 'Maintenance Tech C — General Service',
+    desc: 'MT-C techs are competent, experienced general-service technicians. Primary work: tire mount & balance, tire rotation, oil changes (all types), battery test and replacement, air filter service, and basic vehicle checks. They can assist MT-B techs on brake jobs to accelerate throughput. Expected book ratio: 0.85–1.05×. e.g. T. Williams, E. Adams.'
+  },
+  mt: {
+    title: 'Maintenance Tech — Entry Level',
+    desc: 'The entry rung of the ladder. No prior certification required — just willingness to work and learn. Primary jobs: flat repair, tire changes, oil changes (supervised initially), and shop support. With in-shop mentorship from MT-A and MT-B techs, management support, and completion of online training courses, MTs build toward MT-C within 6–12 months. Expected book ratio: 0.7–0.9× as they build speed. e.g. M. Torres.'
   },
   advisor: {
-    title: 'Service advisor view',
-    desc: 'Service advisors see the full work order with customer communication history, upsell recommendations powered by the AI advisor engine (based on vehicle mileage and history), and payment status. They create and manage appointments and handle walk-in intake with AI bay suggestions.'
+    title: 'Service Advisor',
+    desc: 'Service advisors manage the customer relationship from intake to invoice. They see the full work order with customer communication history, vehicle service history, and AI-generated upsell recommendations based on mileage and prior service records. They create and manage appointments, handle walk-in intake with AI bay suggestions, review tech findings with customers, and process payments. Key metric: conversion rate on additional work recommendations.'
   },
   manager: {
-    title: 'Store manager view',
-    desc: 'The manager sees all open work orders across all 8 bays simultaneously, with AI alerts for any job running past book time, staffing coverage gaps, parts shortages, and revenue pacing. They have full access to analytics, staffing, and override any AI recommendation with one click.'
+    title: 'Store Manager',
+    desc: 'The manager sees all open work orders across all 8 bays simultaneously, with AI alerts for any job running past book time, staffing coverage gaps, parts shortages, and revenue pacing vs. budget and regional peers. Full access to analytics, staffing, tech performance, and the ability to override any AI recommendation. Receives escalations for customer approval-pending jobs that are holding a bay idle.'
   },
   parts: {
-    title: 'Parts associate view',
-    desc: 'Parts associates see the staging queue (which parts are needed for upcoming work orders), incoming reorder alerts, and the current inventory status. When the autonomous reorder agent fires, they receive a push notification with the PO details and expected delivery time.'
+    title: 'Parts Associate',
+    desc: 'Parts associates manage the staging queue — which parts are needed for upcoming work orders, incoming reorder alerts, and current inventory status. When the autonomous reorder agent fires, they receive a push notification with the PO details and expected delivery time. They also handle receiving, organized by bay-staging location so technicians can pull parts without searching.'
   }
 };
 

@@ -15,6 +15,7 @@
 </head>
 <body>
 
+
 <!-- Sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
@@ -388,7 +389,7 @@
         <div class="tech-card">
           <div class="tc-header">
             <div class="tc-avatar" style="background:#4d8de8">JR</div>
-            <div><div class="tc-name">J. Rivera</div><div class="tc-role">Lead Technician</div></div>
+            <div><div class="tc-name">J. Rivera</div><div class="tc-role">MT-A — MT-A</div></div>
             <div class="tc-ratio good">1.31×</div>
           </div>
           <div class="tc-bay-label">Active bays — working 2 simultaneously</div>
@@ -403,7 +404,7 @@
         <div class="tech-card" style="border-color:rgba(240,96,96,.25)">
           <div class="tc-header">
             <div class="tc-avatar" style="background:#e85d20">MT</div>
-            <div><div class="tc-name">M. Torres</div><div class="tc-role">Journeyman</div></div>
+            <div><div class="tc-name">M. Torres</div><div class="tc-role">MT-B</div></div>
             <div class="tc-ratio bad">0.68×</div>
           </div>
           <div class="tc-bay-label">3-bay assignment (wait → work → next)</div>
@@ -418,7 +419,7 @@
         <div class="tech-card">
           <div class="tc-header">
             <div class="tc-avatar" style="background:#2d9e5a">AP</div>
-            <div><div class="tc-name">A. Patel</div><div class="tc-role">Journeyman</div></div>
+            <div><div class="tc-name">A. Patel</div><div class="tc-role">MT-B</div></div>
             <div class="tc-ratio good">1.18×</div>
           </div>
           <div class="tc-bay-label">Active bays</div>
@@ -431,7 +432,7 @@
         <div class="tech-card">
           <div class="tc-header">
             <div class="tc-avatar" style="background:#0e7a80">DK</div>
-            <div><div class="tc-name">D. Kim</div><div class="tc-role">Alignment Specialist</div></div>
+            <div><div class="tc-name">D. Kim</div><div class="tc-role">MT-B — Alignment</div></div>
             <div class="tc-ratio" style="color:var(--blue)">1.05×</div>
           </div>
           <div class="tc-bay-label">Active bays</div>
@@ -444,7 +445,7 @@
         <div class="tech-card">
           <div class="tc-header">
             <div class="tc-avatar" style="background:#1d7a5a">SJ</div>
-            <div><div class="tc-name">S. Johnson</div><div class="tc-role">Journeyman</div></div>
+            <div><div class="tc-name">S. Johnson</div><div class="tc-role">MT-B</div></div>
             <div class="tc-ratio" style="color:var(--blue)">0.94×</div>
           </div>
           <div class="tc-bay-label">Active bays</div>
@@ -569,13 +570,5 @@ function selectBay(n){
 }
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="bay"]')&&!e.target.closest('.tc-bay-pill')){document.getElementById('bayTooltip').classList.remove('visible');document.getElementById('selectHighlight').setAttribute('width','0')}});
 </script>
-  <!-- Mobile diagnostic banner - remove once mobile is confirmed working -->
-  <div class="mobile-diag" id="mobileDiag">
-    ✓ Build v4.12 deployed · Mobile-first CSS active · Tap to dismiss
-  </div>
-  <script>
-    var d=document.getElementById("mobileDiag");
-    if(d){d.addEventListener("click",function(){d.style.display="none";try{localStorage.setItem("diagDismissed","1")}catch(e){}});try{if(localStorage.getItem("diagDismissed")==="1")d.style.display="none";}catch(e){}}
-  </script>
 </body>
 </html>

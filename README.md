@@ -1,52 +1,32 @@
-# ShopFlow AI — Shop Management System Prototype
+# ShopFlow AI — Shop Management System
 
-## Overview
-High-resolution clickable web prototype for ShopFlow, a state-of-the-art AI-powered
-shop management system for multi-bay automotive maintenance companies like Bridgestone or Midas.
-
-## How to Run
-1. Extract this zip file to any folder
-2. Open `index.html` in any modern web browser (Chrome, Edge, Firefox, Safari)
-3. No server required — all files are local HTML/CSS/JS
+## Live Demo
+https://tranksp.github.io/shopmanagementAI/
 
 ## Files
-- `index.html` — Main prototype with all 12 screens
-- `styles.css`  — Complete design system and component styles
-- `app.js`      — Navigation, bay data, charts, and interactive logic
-- `README.md`   — This file
+- `index.html` — Main app (12 screens)
+- `styles.css` — Mobile-first design system (single shared stylesheet)
+- `app.js` — Navigation, bay data, charts
+- `shopfloor.html` — Shop Floor Live View (SVG overhead)
+- `techproductivity.html` — Technician productivity charts
+- `parts.html` — Parts & Inventory management
+- `multilocation.html` — Multi-location network dashboard
+- `customer.html` — Customer vehicle status tracker
 
-## Screens Included
-1. **Command Center** — Real-time KPIs, bay overview, AI alerts, active work orders
-2. **Bay Management** — 20-bay live status board, type filtering, occupancy projection
-3. **Appointments & Waitlist** — Full booking lifecycle, no-show risk AI
-4. **Walk-in Intake** — Smart bay assignment, AI suggestion engine, queue management
-5. **Work Orders** — Kanban board with 4-stage progression (Waiting → In Bay → QC → Done)
-6. **Daily Staffing** — Coverage heatmap 7AM–8PM, AI staffing recommendations
-7. **Roles & Permissions** — 5 role cards (Customer, Tech, Advisor, Manager, Parts)
-8. **Services & Inventory** — Service catalog with bay/tech requirements, live inventory
-9. **Notifications Engine** — Event-driven log, trigger rule configuration
-10. **Store Hours** — Weekly hours, holiday calendar, multi-location management
-11. **Analytics Dashboard** — Revenue, utilization, tech productivity, service mix charts
-12. **AI Agents** — All 12 AI agents across 4 intelligence layers
+## Architecture
+- Mobile-first CSS: base = mobile, desktop added via min-width:769px
+- body { display:block } — prevents mobile viewport collapse
+- Sidebar hidden by default, shown on desktop via min-width media query
+- Google Analytics: G-6XJ6CNV95V
 
-## Design Features
-- Dark/light theme toggle (top right of header)
-- Live clock display
-- Clickable bay cards with status filtering by type and status
-- AI occupancy projection table for 20 bays
-- Interactive staffing heatmap (7AM–8PM)
-- CSS-drawn analytics charts (no external dependencies)
-- Fully responsive down to tablet width
+## Tech Tiers (lowest to highest)
+1. Maintenance Tech — oil change, tires, flat repair
+2. Maintenance Tech C — battery, filters, rotation
+3. Maintenance Tech B — brakes, alignment, inspection, steering
+4. Maintenance Tech A — A/C, engine diagnostic, transmission, timing belt
 
-## Technology
-- Pure HTML5, CSS3, JavaScript (ES6+)
-- Google Fonts: DM Sans, DM Mono, Fraunces
-- No frameworks, no build tools, no dependencies
-- Works offline after initial font load
+## 8 Bays
+B1: Chassis Lift | B2: Drive-on | B3: Drive-on | B4: Drive-on
+B5: Chassis Lift | B6: Chassis Lift | B7: Alignment Rack | B8: Drive-on
 
-## Key "Why This Matters" Differentiators
-Each screen includes an impact panel explaining how that module creates
-competitive advantage over legacy shop management systems.
-
----
-Built as a ShopFlow AI prototype · April 2026
+Built April 2026

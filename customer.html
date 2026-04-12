@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -14,6 +14,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-6XJ6CNV95V");</script>
 </head>
 <body class="customer-page">
+
 
 <!-- Demo state switcher (simulates different vehicle states) -->
 <div class="demo-bar">
@@ -38,6 +39,23 @@
   </div>
 </div>
 
+<!-- Assigned bay + tech info (Point 9) -->
+<div style="width:100%;max-width:480px;margin:0 auto;padding:0 18px 0">
+  <div style="background:rgba(77,141,232,.08);border:1px solid rgba(77,141,232,.2);border-radius:10px;padding:11px 14px;display:flex;gap:10px;flex-wrap:wrap">
+    <div style="flex:1;min-width:120px">
+      <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#4d8de8;margin-bottom:3px">Assigned Bay</div>
+      <div style="font-size:13px;font-weight:600;color:#e8eaf0">Bay 1 — Chassis Lift</div>
+    </div>
+    <div style="flex:1;min-width:120px">
+      <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#4d8de8;margin-bottom:3px">Technician</div>
+      <div style="font-size:13px;font-weight:600;color:#e8eaf0">J. Rivera <span style="font-size:10.5px;color:#3ccf7e;font-weight:700">MT-A</span></div>
+    </div>
+    <div style="flex:1;min-width:120px">
+      <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#3ccf7e;margin-bottom:3px">Ready for you by</div>
+      <div style="font-size:14px;font-weight:700;color:#3ccf7e" id="readyByTime">10:45 AM</div>
+    </div>
+  </div>
+</div>
 <!-- Status hero -->
 <div class="status-hero">
   <div class="vehicle-name" id="vehicleName">2022 Toyota Camry</div>
@@ -75,6 +93,14 @@
       <div class="tl-name">Bay assigned</div>
       <div class="tl-detail">Bay 1 — Chassis lift · Tech Rivera assigned</div>
       <div class="tl-time done-time">9:04 AM</div>
+    </div>
+  </div>
+  <div class="tl-step" id="step-approval" style="display:none">
+    <div class="tl-left"><div class="tl-dot active" id="dot-approval" style="background:rgba(240,178,50,.15);border:2px solid #f0b232;animation:activePulse 2s infinite">⚠</div></div>
+    <div class="tl-body">
+      <div class="tl-name" style="color:#f0b232">Tech recommendation — your input needed</div>
+      <div class="tl-detail" id="approvalDetail">Technician found an issue requiring your decision</div>
+      <div class="tl-time active-time" id="approvalTime">Bay is paused — awaiting your response</div>
     </div>
   </div>
   <div class="tl-step" id="step-service">
@@ -161,7 +187,7 @@
     <div class="tech-av-cust">JR</div>
     <div>
       <div class="tech-name-cust">Jesse Rivera</div>
-      <div class="tech-role-cust">Lead Technician · 8 yrs experience</div>
+      <div class="tech-role-cust">MT-A — Lead Technician · 8 yrs experience</div>
       <div class="tech-stars">★★★★★</div>
     </div>
     <div class="tech-badge-cust">4.9 / 5</div>
@@ -191,6 +217,21 @@
   </div>
 </div>
 
+<!-- Pay link card (shown when complete) (Point 10) -->
+<div class="cust-card" id="payCard" style="display:none;background:rgba(60,207,126,.07);border:1px solid rgba(60,207,126,.25)">
+  <div class="cust-card-title" style="color:#3ccf7e">Payment — your car is ready</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px">
+    <span style="color:#8b90a8">Full synthetic oil change</span><span style="color:#e8eaf0">$69</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px">
+    <span style="color:#8b90a8">Tire rotation</span><span style="color:#e8eaf0">$25</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;font-size:15px;font-weight:600">
+    <span style="color:#e8eaf0">Total due</span><span style="color:#3ccf7e;font-family:var(--font-mono)">$94</span>
+  </div>
+  <button onclick="payNow()" style="width:100%;margin-top:14px;padding:13px;border-radius:10px;border:none;background:#3ccf7e;color:#0a2010;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-sans)">Pay $94 — Pick up keys anytime ✓</button>
+  <div style="text-align:center;margin-top:8px;font-size:10.5px;color:#4a5068">Secure payment · Keys at front desk when done</div>
+</div>
 <div class="cust-footer">
   ShopFlow Auto Care · Bentonville, AR<br>
   Questions? Call <a href="tel:4795550100" style="color:#4d8de8">(479) 555-0100</a>
@@ -201,12 +242,12 @@
 function tick(){const n=new Date();document.getElementById('clockDisplay').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
 setInterval(tick,1000);tick();
 
-// States
+// States - updated for points 9, 10, 11
 const STATES = {
-  inprogress:{pct:50,ringColor:'#4d8de8',badgeClass:'status-in-progress',badgeText:'Service in progress',promised:'Ready by <strong>11:00 AM today</strong>',showFindings:false,showSurvey:false,serviceStep:'active',qcStep:'pending',readyStep:'pending'},
-  waitingapproval:{pct:65,ringColor:'#f0b232',badgeClass:'status-waiting',badgeText:'Awaiting your approval',promised:'Ready by <strong>11:30 AM</strong> after approval',showFindings:true,showSurvey:false,serviceStep:'active',qcStep:'pending',readyStep:'pending'},
-  ready:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-ready',badgeText:'Your car is ready!',promised:'Pick up at <strong>Bay 1 entrance</strong>',showFindings:false,showSurvey:false,serviceStep:'done',qcStep:'done',readyStep:'active'},
-  complete:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-done',badgeText:'Service complete — thank you!',promised:'Invoice sent to <strong>sarah@email.com</strong>',showFindings:false,showSurvey:true,serviceStep:'done',qcStep:'done',readyStep:'done'},
+  inprogress:{pct:50,ringColor:'#4d8de8',badgeClass:'status-in-progress',badgeText:'Service in progress',promised:'Ready by <strong>10:45 AM today</strong>',showFindings:false,showApproval:false,showSurvey:false,showPay:false,serviceStep:'active',qcStep:'pending',readyStep:'pending',readyByTime:'10:45 AM'},
+  waitingapproval:{pct:65,ringColor:'#f0b232',badgeClass:'status-waiting',badgeText:'⚠ Tech recommendation — your approval needed',promised:'Bay <strong>paused</strong> — ready after your response',showFindings:true,showApproval:true,showSurvey:false,showPay:false,serviceStep:'active',qcStep:'pending',readyStep:'pending',readyByTime:'11:15 AM (after approval)'},
+  ready:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-ready',badgeText:'Your car is ready for pickup!',promised:'Keys at <strong>front desk · Bay 1 entrance</strong>',showFindings:false,showApproval:false,showSurvey:false,showPay:true,serviceStep:'done',qcStep:'done',readyStep:'active',readyByTime:'Ready now ✓'},
+  complete:{pct:100,ringColor:'#3ccf7e',badgeClass:'status-done',badgeText:'Service complete — thank you!',promised:'Receipt sent to <strong>sarah@email.com</strong>',showFindings:false,showApproval:false,showSurvey:true,showPay:false,serviceStep:'done',qcStep:'done',readyStep:'done',readyByTime:'Complete ✓'},
 };
 
 const CIRCUMFERENCE = 2 * Math.PI * 58;
@@ -222,6 +263,18 @@ function setState(key, btn){
   document.getElementById('ringFill').style.stroke = s.ringColor;
   document.getElementById('ringPct').style.color = s.ringColor;
   document.getElementById('ringPct').textContent = s.pct + '%';
+
+  // Ready by time (Point 9)
+  const rbt = document.getElementById('readyByTime');
+  if(rbt) rbt.textContent = s.readyByTime;
+
+  // Show/hide approval step in timeline (Point 11)
+  const approvalStep = document.getElementById('step-approval');
+  if(approvalStep) approvalStep.style.display = s.showApproval ? 'flex' : 'none';
+
+  // Pay card (Point 10)
+  const payCard = document.getElementById('payCard');
+  if(payCard) payCard.style.display = s.showPay ? 'block' : 'none';
 
   // Badge
   const badge = document.getElementById('statusBadge');
@@ -268,7 +321,17 @@ function setStep(name, state){
 }
 
 function approveFinding(){
-  document.getElementById('findingsCard').innerHTML='<div style="text-align:center;padding:8px 0;color:#3ccf7e;font-weight:600;font-size:13px">✓ Approved — tech notified. Est. +20 min added.</div>';
+  document.getElementById('findingsCard').innerHTML='<div style="text-align:center;padding:8px 0;color:#3ccf7e;font-weight:600;font-size:13px">✓ Approved — tech notified. Est. +20 min added. Ready by 11:35 AM.</div>';
+  // Hide approval timeline step after approval
+  const approvalStep = document.getElementById('step-approval');
+  if(approvalStep) setTimeout(()=>{ approvalStep.style.display='none'; }, 1500);
+}
+
+function payNow(){
+  const payCard = document.getElementById('payCard');
+  if(payCard){
+    payCard.innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-size:32px;margin-bottom:8px">✓</div><div style="font-size:15px;font-weight:700;color:#3ccf7e;margin-bottom:4px">Payment received — $94</div><div style="font-size:12px;color:#8b90a8">Receipt sent to your phone. Keys are at the front desk — pick up anytime!</div></div>';
+  }
 }
 
 function toggleSMS(el){el.style.background=el.style.background==='rgb(60, 207, 126)'?'rgba(77,141,232,1)':'rgb(60,207,126)'}
@@ -289,13 +352,5 @@ document.addEventListener('DOMContentLoaded',()=>{
 document.getElementById('ringFill').setAttribute('stroke-dasharray', CIRCUMFERENCE);
 document.getElementById('ringFill').setAttribute('stroke-dashoffset', CIRCUMFERENCE * 0.5);
 </script>
-  <!-- Mobile diagnostic banner - remove once mobile is confirmed working -->
-  <div class="mobile-diag" id="mobileDiag">
-    ✓ Build v4.12 deployed · Mobile-first CSS active · Tap to dismiss
-  </div>
-  <script>
-    var d=document.getElementById("mobileDiag");
-    if(d){d.addEventListener("click",function(){d.style.display="none";try{localStorage.setItem("diagDismissed","1")}catch(e){}});try{if(localStorage.getItem("diagDismissed")==="1")d.style.display="none";}catch(e){}}
-  </script>
 </body>
 </html>

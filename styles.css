@@ -342,7 +342,7 @@ button{font-family:var(--font-sans);cursor:pointer}
 .form-row{display:flex;flex-direction:column;gap:12px}
 @media(min-width:600px){.form-row{flex-direction:row}}
 .form-group{display:flex;flex-direction:column;gap:5px;flex:1}
-.form-group label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2)}
+.form-group label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);min-height:32px;display:flex;align-items:flex-end;flex-wrap:wrap;gap:4px;padding-bottom:2px}
 .form-input{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;font-size:16px;color:var(--t1);font-family:var(--font-sans);outline:none;transition:border-color .15s;-webkit-appearance:none}
 .form-input:focus{border-color:var(--blue)}
 .form-actions{display:flex;flex-direction:column;gap:8px}
@@ -908,3 +908,62 @@ button{font-family:var(--font-sans);cursor:pointer}
 @media(max-width:768px){
   .mobile-diag{display:block}
 }
+
+/* ══════════════════════════════════════════
+   POINT 10 — PAID badge + pay action row
+══════════════════════════════════════════ */
+.paid-badge{font-size:9px;font-weight:700;background:rgba(60,207,126,.15);color:var(--green);border-radius:4px;padding:1px 6px;margin-left:6px;border:1px solid rgba(60,207,126,.25)}
+.wo-pay-action{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+.pay-pending{font-size:10.5px;color:var(--amber)}
+.btn-resend{font-size:10.5px;padding:3px 9px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--t2);cursor:pointer;font-family:var(--font-sans);-webkit-tap-highlight-color:transparent}
+.btn-resend:hover{background:var(--bg3);color:var(--t1)}
+
+/* ══════════════════════════════════════════
+   POINT 11 — Awaiting approval card (high-vis)
+══════════════════════════════════════════ */
+.wo-card.awaiting-approval{
+  border:2px solid #f0b232 !important;
+  background:rgba(240,178,50,.06);
+  box-shadow:0 0 0 3px rgba(240,178,50,.12);
+  animation:approvalPulse 2.5s infinite;
+}
+@keyframes approvalPulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(240,178,50,.12)}
+  50%{box-shadow:0 0 0 6px rgba(240,178,50,.06)}
+}
+.wo-approval-banner{
+  font-size:10px;font-weight:700;letter-spacing:.06em;
+  background:rgba(240,178,50,.2);color:#f0b232;
+  border-radius:5px;padding:4px 9px;margin-bottom:8px;
+  text-align:center;
+}
+.wo-approval-detail{
+  font-size:11px;color:var(--t2);line-height:1.5;
+  background:var(--bg3);border-radius:6px;padding:7px 9px;
+  margin-bottom:7px;border:1px solid var(--border);
+}
+.wo-approval-detail strong{color:var(--amber)}
+.approval-t{color:var(--amber) !important}
+
+/* ══════════════════════════════════════════
+   POINT 3 — Heatmap full-day scroll + capacity row
+══════════════════════════════════════════ */
+.heatmap-container{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.heatmap-table{width:100%;border-collapse:collapse;min-width:680px}
+.heatmap-table th:first-child{min-width:160px}
+
+/* ══════════════════════════════════════════
+   POINT 8 — Projection full day smaller cells
+══════════════════════════════════════════ */
+.proj-table td:first-child{font-size:9.5px;min-width:90px;white-space:nowrap}
+.proj-table th{font-size:9px;padding:3px 3px}
+.proj-table td{padding:2px 3px}
+.proj-cell{height:16px;border-radius:3px}
+
+/* ══════════════════════════════════════════
+   ROLES GRID — expanded for 7 cards
+══════════════════════════════════════════ */
+.roles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.roles-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.roles-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1200px){.roles-grid{grid-template-columns:repeat(7,1fr)}}

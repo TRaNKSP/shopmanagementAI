@@ -14,6 +14,7 @@
 </head>
 <body>
 
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -166,7 +167,7 @@
       <div class="kpi-card">
         <div class="kpi-label">Revenue today</div>
         <div class="kpi-value">$18,420</div>
-        <div class="kpi-trend up">↑ 12% vs last Sat</div>
+        <div class="kpi-trend up">↑ 12% vs last Sat</div><div class="kpi-trend up" style="margin-top:2px">↑ 8% vs budget</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Bay utilization</div>
@@ -175,7 +176,7 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Cars completed</div>
-        <div class="kpi-value">31</div>
+        <div class="kpi-value">18</div>
         <div class="kpi-trend up">6 in progress now</div>
       </div>
       <div class="kpi-card">
@@ -322,7 +323,7 @@
 
     <div class="panel" style="margin-top:24px">
       <div class="panel-header">
-        <span class="panel-title">Daily occupancy projection — forward 6 hours</span>
+        <span class="panel-title">Daily occupancy — full day 7 AM → 8 PM</span>
         <span class="ai-pill">✦ AI projection</span>
       </div>
       <div class="projection-grid" id="projectionGrid"></div>
@@ -453,23 +454,85 @@
               <label>Service requested</label>
               <select class="form-input">
                 <option>Oil Change — Full Synthetic</option>
+                <option>Flat Repair</option>
                 <option>Tire Rotation</option>
-                <option>Brake Inspection</option>
-                <option>Alignment Check</option>
-                <option>Battery Test</option>
+                <option>4 Tires + Alignment</option>
+                <option>Front Brake Job</option>
+                <option>Rear Brake Job</option>
+                <option>Vehicle Inspection (150-pt)</option>
+                <option>A/C Diagnosis &amp; Repair</option>
+                <option>Engine Diagnostic</option>
+                <option>Battery Test &amp; Replace</option>
               </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label style="display:flex;align-items:baseline;gap:5px;flex-wrap:wrap">
+                Preferred bay
+                <span style="color:var(--t3);font-size:10px;font-weight:400">(optional — AI will suggest if blank)</span>
+              </label>
+              <select class="form-input" id="preferredBay">
+                <option value="">— Let AI decide —</option>
+                <option>Bay 1 — Chassis Lift</option>
+                <option>Bay 2 — Drive-on</option>
+                <option>Bay 3 — Drive-on</option>
+                <option>Bay 4 — Drive-on (Available ✓)</option>
+                <option>Bay 5 — Chassis Lift</option>
+                <option>Bay 6 — Chassis Lift</option>
+                <option>Bay 7 — Alignment Rack</option>
+                <option>Bay 8 — Drive-on (Turnover)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:baseline;gap:5px;flex-wrap:wrap">
+                Preferred technician
+                <span style="color:var(--t3);font-size:10px;font-weight:400">(optional)</span>
+              </label>
+              <select class="form-input" id="preferredTech">
+                <option value="">— Let AI assign —</option>
+                <option>J. Rivera — MT-A (Available)</option>
+                <option>A. Patel — MT-A (In Bay 3)</option>
+                <option>D. Kim — MT-B (In Bay 7)</option>
+                <option>S. Johnson — MT-B (Available)</option>
+                <option>T. Williams — MT-C (Available)</option>
+                <option>M. Torres — MT (Available)</option>
+                <option>E. Adams — MT-C (Off at 3pm)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Customer requested from appointment booking (pre-populated) -->
+          <div class="form-row" style="margin-top:-4px">
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:6px">
+                Customer requested bay
+                <span style="font-size:9px;font-weight:700;background:rgba(77,141,232,.15);color:var(--blue);border-radius:3px;padding:1px 6px;letter-spacing:.05em">FROM APPT</span>
+              </label>
+              <input type="text" class="form-input" value="Bay 4 — Drive-on" readonly
+                style="background:rgba(77,141,232,.06);border-color:rgba(77,141,232,.25);color:var(--t2);cursor:default"
+                title="Customer specified this bay when booking the appointment">
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:6px">
+                Customer requested technician
+                <span style="font-size:9px;font-weight:700;background:rgba(77,141,232,.15);color:var(--blue);border-radius:3px;padding:1px 6px;letter-spacing:.05em">FROM APPT</span>
+              </label>
+              <input type="text" class="form-input" value="J. Rivera — MT-A" readonly
+                style="background:rgba(77,141,232,.06);border-color:rgba(77,141,232,.25);color:var(--t2);cursor:default"
+                title="Customer specified this technician when booking the appointment">
             </div>
           </div>
           <div class="ai-suggestion">
             <div class="ai-suggestion-header">✦ AI Bay Finder</div>
             <div class="ai-suggestion-body">
               <div class="suggestion-result">
-                <div class="sug-title">Best match: Bay 4 (Drive-on lift)</div>
-                <div class="sug-detail">Available now · Oil change capable · Parts staged · Est. 35 minutes</div>
+                <div class="sug-title">Best match: Bay 4 (Drive-on lift) · Tech: S. Johnson (MT-B)</div>
+                <div class="sug-detail">Available now · Oil change capable · Parts staged · <strong style="color:var(--green)">Ready for customer by 10:45 AM</strong></div>
               </div>
               <div class="suggestion-result secondary">
-                <div class="sug-title">Alternate: Bay 12 — free in 22 min</div>
-                <div class="sug-detail">Currently finishing tire rotation · Same capability</div>
+                <div class="sug-title">Alternate: Bay 8 — free in ~15 min · Tech: T. Williams (MT-C)</div>
+                <div class="sug-detail">Turnover completing · Same capability · <strong style="color:var(--amber)">Ready for customer by 11:10 AM</strong></div>
               </div>
               <div class="suggestion-result secondary">
                 <div class="sug-title">Waitlist option: Est. ready at 11:15 AM</div>
@@ -480,7 +543,7 @@
           <div class="form-actions">
             <button class="btn-primary">Assign Bay 4 — Start Now</button>
             <button class="btn-outline">Add to Waitlist</button>
-            <button class="btn-ghost">Book Appointment</button>
+            <button class="btn-outline">Book Appointment</button>
           </div>
         </div>
       </div>
@@ -563,10 +626,16 @@
       </div>
       <div class="wo-column">
         <div class="wo-col-header inbay-h">In Bay <span class="col-count">4</span></div>
-        <div class="wo-card inbay"><div class="wo-card-vehicle">2022 Toyota Camry</div><div class="wo-card-svc">Oil Change · Full Synthetic · Bay 1</div><div class="wo-card-meta"><span>J. Rivera · Tech A</span><span class="wo-timer">00:22</span></div></div>
-        <div class="wo-card inbay"><div class="wo-card-vehicle">2023 Honda CR-V</div><div class="wo-card-svc">Front Brake Job · Bay 3</div><div class="wo-card-meta"><span>A. Patel · Tech A</span><span class="wo-timer">00:48</span></div></div>
-        <div class="wo-card inbay"><div class="wo-card-vehicle">2020 F-150</div><div class="wo-card-svc">4-Wheel Alignment · Bay 7</div><div class="wo-card-meta"><span>D. Kim · Tech B</span><span class="wo-timer">00:31</span></div></div>
-        <div class="wo-card inbay over"><div class="wo-card-vehicle">2020 BMW 3 Series</div><div class="wo-card-svc">A/C Diagnosis & Repair · Bay 2</div><div class="wo-card-meta"><span>M. Torres · Tech A</span><span class="wo-timer over-t">01:12 ⚠</span></div></div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2022 Toyota Camry</div><div class="wo-card-svc">Oil Change · Full Synthetic · Bay 1</div><div class="wo-card-meta"><span>J. Rivera · MT-A</span><span class="wo-timer">00:22</span></div></div>
+        <div class="wo-card inbay awaiting-approval">
+          <div class="wo-approval-banner">⚠ AWAITING CUSTOMER APPROVAL — BAY IDLE</div>
+          <div class="wo-card-vehicle">2023 Honda CR-V</div>
+          <div class="wo-card-svc">Front Brake Job · Bay 3</div>
+          <div class="wo-approval-detail">Tech found: Rotors below spec (4.2mm, min 5.0mm). Recommend rotor replacement. <strong>+$210</strong> · Awaiting approval via SMS.</div>
+          <div class="wo-card-meta"><span>A. Patel · MT-A</span><span class="wo-timer approval-t">00:48 🔒</span></div>
+        </div>
+        <div class="wo-card inbay"><div class="wo-card-vehicle">2020 F-150</div><div class="wo-card-svc">4-Wheel Alignment · Bay 7</div><div class="wo-card-meta"><span>D. Kim · MT-B</span><span class="wo-timer">00:31</span></div></div>
+        <div class="wo-card inbay over"><div class="wo-card-vehicle">2020 BMW 3 Series</div><div class="wo-card-svc">A/C Diagnosis & Repair · Bay 2</div><div class="wo-card-meta"><span>M. Torres · MT-A</span><span class="wo-timer over-t">01:12 ⚠</span></div></div>
       </div>
       <div class="wo-column">
         <div class="wo-col-header qc-h">QC / Ready <span class="col-count">2</span></div>
@@ -575,10 +644,28 @@
       </div>
       <div class="wo-column">
         <div class="wo-col-header done-h">Completed <span class="col-count">6</span></div>
-        <div class="wo-card done"><div class="wo-card-vehicle">2018 Honda Civic</div><div class="wo-card-svc">Oil Change · Maint. Tech</div><div class="wo-card-meta"><span>Tom Hansen</span><span class="wo-done">$49</span></div></div>
-        <div class="wo-card done"><div class="wo-card-vehicle">2022 Nissan Rogue</div><div class="wo-card-svc">Front Brake Job · Tech B</div><div class="wo-card-meta"><span>E. Adams</span><span class="wo-done">$280</span></div></div>
-        <div class="wo-card done"><div class="wo-card-vehicle">2017 Toyota RAV4</div><div class="wo-card-svc">4-Wheel Alignment · Tech B</div><div class="wo-card-meta"><span>D. Kim</span><span class="wo-done">$149</span></div></div>
-        <div class="wo-card done"><div class="wo-card-vehicle">2020 Ford Escape</div><div class="wo-card-svc">4 Tires + Alignment · Tech C</div><div class="wo-card-meta"><span>A. Patel</span><span class="wo-done">$680</span></div></div>
+        <div class="wo-card done paid">
+          <div class="wo-card-vehicle">2018 Honda Civic <span class="paid-badge">PAID ✓</span></div>
+          <div class="wo-card-svc">Oil Change · MT</div>
+          <div class="wo-card-meta"><span>Tom Hansen</span><span class="wo-done">$49</span></div>
+        </div>
+        <div class="wo-card done paid">
+          <div class="wo-card-vehicle">2022 Nissan Rogue <span class="paid-badge">PAID ✓</span></div>
+          <div class="wo-card-svc">Front Brake Job · MT-B</div>
+          <div class="wo-card-meta"><span>E. Adams</span><span class="wo-done">$280</span></div>
+        </div>
+        <div class="wo-card done">
+          <div class="wo-card-vehicle">2017 Toyota RAV4</div>
+          <div class="wo-card-svc">4-Wheel Alignment · MT-B</div>
+          <div class="wo-card-meta"><span>D. Kim</span><span class="wo-done">$149</span></div>
+          <div class="wo-pay-action"><span class="pay-pending">⏳ Pay link sent via SMS</span><button class="btn-resend" onclick="void(0)">Resend</button></div>
+        </div>
+        <div class="wo-card done">
+          <div class="wo-card-vehicle">2020 Ford Escape</div>
+          <div class="wo-card-svc">4 Tires + Alignment · MT-C</div>
+          <div class="wo-card-meta"><span>A. Patel</span><span class="wo-done">$680</span></div>
+          <div class="wo-pay-action"><span class="pay-pending">⏳ Awaiting payment</span><button class="btn-resend" onclick="void(0)">Send pay link</button></div>
+        </div>
       </div>
     </div>
   </div>
@@ -605,12 +692,7 @@
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Coverage heatmap — today</span><span class="ai-pill">✦ AI optimized</span></div>
         <div class="heatmap-container" id="heatmap"></div>
-        <div class="heatmap-legend">
-          <span class="hm-dot red"></span>Understaffed &nbsp;
-          <span class="hm-dot amber"></span>At capacity &nbsp;
-          <span class="hm-dot green"></span>Well covered &nbsp;
-          <span class="hm-dot gray"></span>Closed
-        </div>
+        <!-- Legend is now dynamically built by buildHeatmap() with skill-level colors -->
       </div>
     </div>
 
@@ -620,14 +702,14 @@
         <table class="data-table">
           <thead><tr><th>Tech</th><th>Role</th><th>Shift</th><th>Certification</th><th>Productivity</th></tr></thead>
           <tbody>
-            <tr><td>J. Rivera</td><td><span style="color:var(--accent-green);font-weight:600">Maint. Tech A</span></td><td>7am–4pm</td><td>All services · Full ASE</td><td class="high-p">1.31×</td></tr>
-            <tr><td>A. Patel</td><td><span style="color:var(--accent-green);font-weight:600">Maint. Tech A</span></td><td>7am–4pm</td><td>Brakes, A/C, Engine</td><td class="high-p">1.18×</td></tr>
-            <tr><td>D. Kim</td><td><span style="color:var(--accent-blue);font-weight:600">Maint. Tech B</span></td><td>8am–5pm</td><td>Alignment, Steering, Suspension</td><td class="mid-p">1.05×</td></tr>
-            <tr><td>S. Johnson</td><td><span style="color:var(--accent-blue);font-weight:600">Maint. Tech B</span></td><td>9am–6pm</td><td>Brakes, Tires, Oil</td><td class="mid-p">0.94×</td></tr>
-            <tr><td>T. Williams</td><td><span style="color:var(--accent-amber);font-weight:600">Maint. Tech C</span></td><td>10am–7pm</td><td>Tires, Oil, Rotation, Battery</td><td class="warn-p">0.81×</td></tr>
-            <tr><td>M. Torres</td><td><span style="color:var(--text-secondary);font-weight:500">Maint. Tech</span></td><td>11am–8pm</td><td>Oil change, Tires, Flat repair</td><td class="low-p">0.68×</td></tr>
-            <tr><td>E. Adams</td><td><span style="color:var(--accent-amber);font-weight:600">Maint. Tech C</span></td><td>7am–3pm</td><td>Tires, Mount & Balance</td><td class="high-p">1.22×</td></tr>
-            <tr><td>L. Cruz</td><td><span style="color:var(--text-secondary);font-weight:500">Parts Associate</span></td><td>7am–4pm</td><td>Parts staging, inventory</td><td>—</td></tr>
+            <tr><td>J. Rivera</td><td><span style="color:var(--green);font-weight:600">Maint. Tech A</span></td><td>7am–4pm</td><td>All services · Full ASE</td><td class="high-p">1.31×</td></tr>
+            <tr><td>A. Patel</td><td><span style="color:var(--green);font-weight:600">Maint. Tech A</span></td><td>7am–4pm</td><td>Brakes, A/C, Engine</td><td class="high-p">1.18×</td></tr>
+            <tr><td>D. Kim</td><td><span style="color:var(--blue);font-weight:600">Maint. Tech B</span></td><td>8am–5pm</td><td>Alignment, Steering, Suspension</td><td class="mid-p">1.05×</td></tr>
+            <tr><td>S. Johnson</td><td><span style="color:var(--blue);font-weight:600">Maint. Tech B</span></td><td>9am–6pm</td><td>Brakes, Tires, Oil</td><td class="mid-p">0.94×</td></tr>
+            <tr><td>T. Williams</td><td><span style="color:var(--amber);font-weight:600">Maint. Tech C</span></td><td>10am–7pm</td><td>Tires, Oil, Rotation, Battery</td><td class="warn-p">0.81×</td></tr>
+            <tr><td>M. Torres</td><td><span style="color:var(--t2);font-weight:500">Maint. Tech</span></td><td>11am–8pm</td><td>Oil change, Tires, Flat repair</td><td class="low-p">0.68×</td></tr>
+            <tr><td>E. Adams</td><td><span style="color:var(--amber);font-weight:600">Maint. Tech C</span></td><td>7am–3pm</td><td>Tires, Mount & Balance</td><td class="high-p">1.22×</td></tr>
+            <tr><td>L. Cruz</td><td><span style="color:var(--t2);font-weight:500">Parts Associate</span></td><td>7am–4pm</td><td>Parts staging, inventory</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
@@ -688,11 +770,29 @@
         <div class="role-access">Status tracking · Invoice · Survey</div>
         <div class="role-perms"><span class="perm yes">View status</span><span class="perm yes">Approve work</span><span class="perm no">Edit order</span><span class="perm no">Bay data</span></div>
       </div>
-      <div class="role-card" onclick="showRoleDetail('tech')">
-        <div class="role-icon tech-r">T</div>
-        <div class="role-name">Technician</div>
-        <div class="role-access">Work orders · Bay status · Parts</div>
-        <div class="role-perms"><span class="perm yes">Own queue</span><span class="perm yes">Log findings</span><span class="perm yes">Parts request</span><span class="perm no">Financials</span></div>
+      <div class="role-card" onclick="showRoleDetail('mt_a')">
+        <div class="role-icon" style="background:rgba(60,207,126,.18);color:var(--green);width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 10px;letter-spacing:-.3px">MT-A</div>
+        <div class="role-name">Maint. Tech A</div>
+        <div class="role-access">Highest grade · Full ASE certified<br><span style="font-size:10px;color:var(--green)">e.g. J. Rivera</span></div>
+        <div class="role-perms"><span class="perm yes">All repairs</span><span class="perm yes">Diagnose/troubleshoot</span><span class="perm yes">Mentor techs</span><span class="perm yes">Complex jobs</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('mt_b')">
+        <div class="role-icon" style="background:rgba(77,141,232,.18);color:var(--blue);width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 10px;letter-spacing:-.3px">MT-B</div>
+        <div class="role-name">Maint. Tech B</div>
+        <div class="role-access">Advanced repairs · ASE in progress<br><span style="font-size:10px;color:var(--blue)">e.g. D. Kim</span></div>
+        <div class="role-perms"><span class="perm yes">Brakes &amp; alignment</span><span class="perm yes">Steering &amp; suspension</span><span class="perm yes">150-pt inspection</span><span class="perm no">Engine/transmission</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('mt_c')">
+        <div class="role-icon" style="background:rgba(240,178,50,.18);color:var(--amber);width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 10px;letter-spacing:-.3px">MT-C</div>
+        <div class="role-name">Maint. Tech C</div>
+        <div class="role-access">General service · Building skills<br><span style="font-size:10px;color:var(--amber)">e.g. T. Williams</span></div>
+        <div class="role-perms"><span class="perm yes">Oil &amp; tires</span><span class="perm yes">Battery &amp; filters</span><span class="perm yes">Rotation &amp; balance</span><span class="perm no">Brakes/alignment</span></div>
+      </div>
+      <div class="role-card" onclick="showRoleDetail('mt')">
+        <div class="role-icon" style="background:rgba(255,255,255,.08);color:var(--t2);width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin:0 auto 10px;letter-spacing:-.3px">MT</div>
+        <div class="role-name">Maint. Tech</div>
+        <div class="role-access">Entry level · Learning on the job<br><span style="font-size:10px;color:var(--t3)">e.g. M. Torres</span></div>
+        <div class="role-perms"><span class="perm yes">Tires &amp; flat repair</span><span class="perm yes">Oil changes</span><span class="perm no">Brakes</span><span class="perm no">Diagnostics</span></div>
       </div>
       <div class="role-card" onclick="showRoleDetail('advisor')">
         <div class="role-icon advisor-r">SA</div>
@@ -739,25 +839,25 @@
         <table class="data-table">
           <thead><tr><th>Service / Repair Type</th><th>Bay type</th><th>Tech level required</th><th>Book time</th><th>Price</th></tr></thead>
           <tbody>
-            <tr><td>Oil Change — Conventional</td><td>Drive-on</td><td><span style="color:var(--text-secondary)">Maint. Tech</span></td><td>25 min</td><td>$39</td></tr>
-            <tr><td>Oil Change — Full Synthetic</td><td>Drive-on</td><td><span style="color:var(--text-secondary)">Maint. Tech</span></td><td>30 min</td><td>$69</td></tr>
-            <tr><td>Flat Repair</td><td>Tire mount bay</td><td><span style="color:var(--text-secondary)">Maint. Tech</span></td><td>20 min</td><td>$29</td></tr>
-            <tr><td>Tire Rotation</td><td>Chassis / Drive-on</td><td><span style="color:var(--text-secondary)">Maint. Tech</span></td><td>20 min</td><td>$25</td></tr>
-            <tr><td>Tire Mount & Balance (ea)</td><td>Tire mount bay</td><td><span style="color:var(--text-secondary)">Maint. Tech</span></td><td>15 min</td><td>$25</td></tr>
-            <tr><td>4 Tires + Alignment</td><td>Tire mount + Alignment</td><td><span style="color:var(--accent-amber)">Maint. Tech C</span></td><td>120 min</td><td>$549+</td></tr>
-            <tr><td>Battery Test & Replace</td><td>Drive-on</td><td><span style="color:var(--accent-amber)">Maint. Tech C</span></td><td>30 min</td><td>$40 + parts</td></tr>
-            <tr><td>Cabin / Engine Air Filter</td><td>Drive-on</td><td><span style="color:var(--accent-amber)">Maint. Tech C</span></td><td>15 min</td><td>$35 + parts</td></tr>
-            <tr><td>Vehicle Inspection (150-pt)</td><td>Chassis lift</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>90 min</td><td>$79</td></tr>
-            <tr><td>Front Brake Job</td><td>Chassis lift</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>75 min</td><td>$180</td></tr>
-            <tr><td>Rear Brake Job</td><td>Chassis lift</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>75 min</td><td>$180</td></tr>
-            <tr><td>Wheel Alignment — 2-wheel</td><td>Alignment rack</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>60 min</td><td>$99</td></tr>
-            <tr><td>Wheel Alignment — 4-wheel</td><td>Alignment rack</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>90 min</td><td>$149</td></tr>
-            <tr><td>Suspension & Steering Inspect</td><td>Chassis lift</td><td><span style="color:var(--accent-blue)">Maint. Tech B</span></td><td>60 min</td><td>$89</td></tr>
-            <tr><td>A/C Diagnosis & Recharge</td><td>Drive-on</td><td><span style="color:var(--accent-green)">Maint. Tech A</span></td><td>90 min</td><td>$149</td></tr>
-            <tr><td>A/C Full System Repair</td><td>Drive-on</td><td><span style="color:var(--accent-green)">Maint. Tech A</span></td><td>180 min</td><td>$350+</td></tr>
-            <tr><td>Engine Diagnostic (check engine)</td><td>Drive-on</td><td><span style="color:var(--accent-green)">Maint. Tech A</span></td><td>60 min</td><td>$99</td></tr>
-            <tr><td>Transmission Service</td><td>Chassis lift</td><td><span style="color:var(--accent-green)">Maint. Tech A</span></td><td>90 min</td><td>$159</td></tr>
-            <tr><td>Timing Belt / Chain Service</td><td>Chassis lift</td><td><span style="color:var(--accent-green)">Maint. Tech A</span></td><td>240 min</td><td>$650+</td></tr>
+            <tr><td>Oil Change — Conventional</td><td>Drive-on</td><td><span style="color:var(--t2)">Maint. Tech</span></td><td>25 min</td><td>$39</td></tr>
+            <tr><td>Oil Change — Full Synthetic</td><td>Drive-on</td><td><span style="color:var(--t2)">Maint. Tech</span></td><td>30 min</td><td>$69</td></tr>
+            <tr><td>Flat Repair</td><td>Tire mount bay</td><td><span style="color:var(--t2)">Maint. Tech</span></td><td>20 min</td><td>$29</td></tr>
+            <tr><td>Tire Rotation</td><td>Chassis / Drive-on</td><td><span style="color:var(--t2)">Maint. Tech</span></td><td>20 min</td><td>$25</td></tr>
+            <tr><td>Tire Mount & Balance (ea)</td><td>Tire mount bay</td><td><span style="color:var(--t2)">Maint. Tech</span></td><td>15 min</td><td>$25</td></tr>
+            <tr><td>4 Tires + Alignment</td><td>Tire mount + Alignment</td><td><span style="color:var(--amber)">Maint. Tech C</span></td><td>120 min</td><td>$549+</td></tr>
+            <tr><td>Battery Test & Replace</td><td>Drive-on</td><td><span style="color:var(--amber)">Maint. Tech C</span></td><td>30 min</td><td>$40 + parts</td></tr>
+            <tr><td>Cabin / Engine Air Filter</td><td>Drive-on</td><td><span style="color:var(--amber)">Maint. Tech C</span></td><td>15 min</td><td>$35 + parts</td></tr>
+            <tr><td>Vehicle Inspection (150-pt)</td><td>Chassis lift</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>90 min</td><td>$79</td></tr>
+            <tr><td>Front Brake Job</td><td>Chassis lift</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>75 min</td><td>$180</td></tr>
+            <tr><td>Rear Brake Job</td><td>Chassis lift</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>75 min</td><td>$180</td></tr>
+            <tr><td>Wheel Alignment — 2-wheel</td><td>Alignment rack</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>60 min</td><td>$99</td></tr>
+            <tr><td>Wheel Alignment — 4-wheel</td><td>Alignment rack</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>90 min</td><td>$149</td></tr>
+            <tr><td>Suspension & Steering Inspect</td><td>Chassis lift</td><td><span style="color:var(--blue)">Maint. Tech B</span></td><td>60 min</td><td>$89</td></tr>
+            <tr><td>A/C Diagnosis & Recharge</td><td>Drive-on</td><td><span style="color:var(--green)">Maint. Tech A</span></td><td>90 min</td><td>$149</td></tr>
+            <tr><td>A/C Full System Repair</td><td>Drive-on</td><td><span style="color:var(--green)">Maint. Tech A</span></td><td>180 min</td><td>$350+</td></tr>
+            <tr><td>Engine Diagnostic (check engine)</td><td>Drive-on</td><td><span style="color:var(--green)">Maint. Tech A</span></td><td>60 min</td><td>$99</td></tr>
+            <tr><td>Transmission Service</td><td>Chassis lift</td><td><span style="color:var(--green)">Maint. Tech A</span></td><td>90 min</td><td>$159</td></tr>
+            <tr><td>Timing Belt / Chain Service</td><td>Chassis lift</td><td><span style="color:var(--green)">Maint. Tech A</span></td><td>240 min</td><td>$650+</td></tr>
           </tbody>
         </table>
       </div>
@@ -874,10 +974,10 @@
         </div>
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
           <div class="panel-title" style="margin-bottom:10px">Multi-location management</div>
-          <div class="loc-item">Bentonville, AR · <span style="color:var(--accent-green)">Active</span></div>
-          <div class="loc-item">Fayetteville, AR · <span style="color:var(--accent-green)">Active</span></div>
-          <div class="loc-item">Rogers, AR · <span style="color:var(--accent-amber)">Setup pending</span></div>
-          <div class="loc-item">Springdale, AR · <span style="color:var(--accent-amber)">Setup pending</span></div>
+          <div class="loc-item">Bentonville, AR · <span style="color:var(--green)">Active</span></div>
+          <div class="loc-item">Fayetteville, AR · <span style="color:var(--green)">Active</span></div>
+          <div class="loc-item">Rogers, AR · <span style="color:var(--amber)">Setup pending</span></div>
+          <div class="loc-item">Springdale, AR · <span style="color:var(--amber)">Setup pending</span></div>
         </div>
       </div>
     </div>
@@ -902,7 +1002,7 @@
     </div>
 
     <div class="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">Revenue today</div><div class="kpi-value">$18,420</div><div class="kpi-trend up">↑ 12% vs last Sat</div></div>
+      <div class="kpi-card"><div class="kpi-label">Revenue today</div><div class="kpi-value">$18,420</div><div class="kpi-trend up">↑ 12% vs last Sat</div><div class="kpi-trend up" style="margin-top:2px">↑ 8% vs budget</div></div>
       <div class="kpi-card"><div class="kpi-label">Bay utilization</div><div class="kpi-value">74%</div><div class="kpi-trend warn">2 idle &gt;45 min</div></div>
       <div class="kpi-card"><div class="kpi-label">Cars completed</div><div class="kpi-value">31</div><div class="kpi-trend up">+4 vs target</div></div>
       <div class="kpi-card"><div class="kpi-label">Avg cycle time</div><div class="kpi-value">52 min</div><div class="kpi-trend dn">+7 min vs 45 target</div></div>
@@ -1018,13 +1118,5 @@
 </main>
 
 <script src="app.js"></script>
-  <!-- Mobile diagnostic banner - remove once mobile is confirmed working -->
-  <div class="mobile-diag" id="mobileDiag">
-    ✓ Build v4.12 deployed · Mobile-first CSS active · Tap to dismiss
-  </div>
-  <script>
-    var d=document.getElementById("mobileDiag");
-    if(d){d.addEventListener("click",function(){d.style.display="none";try{localStorage.setItem("diagDismissed","1")}catch(e){}});try{if(localStorage.getItem("diagDismissed")==="1")d.style.display="none";}catch(e){}}
-  </script>
 </body>
 </html>
