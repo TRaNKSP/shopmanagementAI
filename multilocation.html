@@ -21,22 +21,28 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header"><div class="logo"><div class="logo-mark">SF</div><div><span class="logo-name">ShopFlow</span><span class="logo-sub">AI Shop Management</span></div></div></div>
-  <nav class="sidebar-nav">
+      <nav class="sidebar-nav">
     <div class="nav-section-label">Operations</div>
-    <a class="nav-item" href="index.html"><span class="nav-icon">⬡</span><span>Command Center</span></a>
-    <a class="nav-item" href="shopfloor.html"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="new-badge">LIVE</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments & Waitlist</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none"><span class="nav-icon">⬡</span><span>Command Center</span></a>
+    <a class="nav-item "href="shopfloor.html" style="text-decoration:none"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="nav-badge">LIVE</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments &amp; Waitlist</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
     <div class="nav-section-label">People</div>
-    <a class="nav-item" href="techproductivity.html"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','staffing')"><span class="nav-icon">◎</span><span>Daily Staffing</span></a>
+    <a class="nav-item "href="techproductivity.html" style="text-decoration:none"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','roles')"><span class="nav-icon">◈</span><span>Roles &amp; Permissions</span></a>
     <div class="nav-section-label">Shop</div>
-    <a class="nav-item" href="parts.html"><span class="nav-icon">◆</span><span>Parts & Inventory</span></a>
-    <a class="nav-item" href="customer.html" target="_blank"><span class="nav-icon">◎</span><span>Customer View</span><span class="new-badge">NEW</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','services')"><span class="nav-icon">◆</span><span>Services &amp; Inventory</span></a>
+    <a class="nav-item "href="parts.html" style="text-decoration:none"><span class="nav-icon">◈</span><span>Parts &amp; Inventory</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="customer.html" style="text-decoration:none"><span class="nav-icon">◎</span><span>Customer View</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','notifications')"><span class="nav-icon">◉</span><span>Notifications</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','hours')"><span class="nav-icon">◑</span><span>Store Hours</span></a>
     <div class="nav-section-label">Intelligence</div>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
-    <a class="nav-item active" href="multilocation.html"><span class="nav-icon">⬡</span><span>Multi-location</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
+    <a class="nav-item active "href="multilocation.html" style="text-decoration:none"><span class="nav-icon">⬡</span><span>Multi-location</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','ai')"><span class="nav-icon">✦</span><span>AI Agents</span></a>
   </nav>
   <div class="sidebar-footer"><div style="display:flex;align-items:center;gap:8px"><div class="store-dot" style="display:inline-block"></div><div><div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:500">ShopFlow Network</div><div style="font-size:10px;color:rgba(255,255,255,.3)">8 Locations · National View</div></div></div></div>
 </aside>
@@ -202,9 +208,9 @@ function renderStores(){
       <div class="sc-metrics">
         <div class="sc-metric"><div class="sc-m-val good">$${Math.round(s.rev/1000)}k</div><div class="sc-m-label">Revenue</div></div>
         <div class="sc-metric"><div class="sc-m-val">${s.cars}</div><div class="sc-m-label">Cars</div></div>
-        <div class="sc-metric"><div class="sc-m-val" style="color:${s.util>=75?'var(--green)':s.util>=60?'var(--amber)':'var(--red)'}">${s.util}%</div><div class="sc-m-label">Util.</div></div>
+        <div class="sc-metric"><div class="sc-m-val" style="color:${s.util>=70?'var(--green)':s.util>=50?'var(--blue)':'var(--red)'}">${s.util}%</div><div class="sc-m-label">Util.</div></div>
       </div>
-      <div class="sc-bar"><div class="sc-bar-fill" style="width:${s.util}%;background:${s.util>=75?'var(--green)':s.util>=60?'var(--amber)':'var(--red)'}"></div></div>
+      <div class="sc-bar"><div class="sc-bar-fill" style="width:${s.util}%;background:${s.util>=70?'var(--green)':s.util>=50?'var(--blue)':'var(--red)'}"></div></div>
       <div class="sc-status">
         <div class="sc-dot" style="background:${s.status==='good'?'var(--green)':s.status==='warn'?'var(--amber)':'var(--red)'}"></div>
         <span style="color:var(--t2);font-size:11px">${s.statusText}</span>

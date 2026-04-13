@@ -244,15 +244,18 @@ button{font-family:var(--font-sans);cursor:pointer}
 .bay-full-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 @media(min-width:600px){.bay-full-grid{grid-template-columns:repeat(4,1fr)}}
 .bay-card{background:var(--panel-bg);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
-.bay-card.occupied{border-color:rgba(240,96,96,.3)}.bay-card.reserved{border-color:rgba(240,178,50,.3)}.bay-card.available{border-color:rgba(60,207,126,.22)}
+.bay-card.occupied{background:rgba(240,96,96,.06);border-color:rgba(240,96,96,.5)}
+.bay-card.reserved{background:rgba(240,178,50,.06);border-color:rgba(240,178,50,.5)}
+.bay-card.available{background:rgba(60,207,126,.06);border-color:rgba(60,207,126,.5)}
+.bay-card.turnover{border-color:rgba(255,255,255,.18)}
 .bay-id{font-family:var(--font-mono);font-size:10.5px;color:var(--t3);margin-bottom:3px}
 .bay-type{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px}
 .bay-cap{font-size:10px;color:var(--t3);margin-bottom:7px}
 .bay-status-tag{display:inline-block;font-size:9.5px;font-weight:600;border-radius:4px;padding:2px 7px;text-transform:uppercase}
-.bay-status-tag.occupied{background:rgba(240,96,96,.15);color:var(--red)}
-.bay-status-tag.reserved{background:rgba(240,178,50,.15);color:var(--amber)}
-.bay-status-tag.available{background:rgba(60,207,126,.12);color:var(--green)}
-.bay-status-tag.turnover{background:rgba(255,255,255,.05);color:var(--t3)}
+.bay-status-tag.occupied{background:rgba(240,96,96,.22);color:var(--red);font-weight:700}
+.bay-status-tag.reserved{background:rgba(240,178,50,.22);color:var(--amber);font-weight:700}
+.bay-status-tag.available{background:rgba(60,207,126,.2);color:var(--green);font-weight:700}
+.bay-status-tag.turnover{background:rgba(255,255,255,.08);color:var(--t2);font-weight:700}
 .bay-car{font-size:10.5px;color:var(--t2);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bay-tech{font-size:10px;color:var(--t3);margin-top:2px}
 

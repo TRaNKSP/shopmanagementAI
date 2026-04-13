@@ -80,7 +80,7 @@ const BAYS = [
   { id:'B1', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2022 Camry',        tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
   { id:'B2', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2020 BMW 3-Series', tech:'Torres',  services:['Oil','Tires','Brakes'] },
   { id:'B3', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2023 CR-V',         tech:'Patel',   services:['Oil','Tires','Brakes'] },
-  { id:'B4', type:'Drive-on Lift',  cap:'Class 1–3', status:'reserved',  car:'Next: Explorer',    tech:'Torres',  services:['Oil','Tires','Brakes'] },
+  { id:'B4', type:'Drive-on Lift',  cap:'Class 1–3', status:'available', car:'',                  tech:'',        services:['Oil','Tires','Brakes'] },
   { id:'B5', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2020 Silverado',    tech:'Johnson', services:['Oil','Brakes','Inspection'] },
   { id:'B6', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2021 Explorer',     tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
   { id:'B7', type:'Alignment Rack', cap:'Class 1–3', status:'occupied',  car:'2020 F-150',        tech:'Kim',     services:['Alignment','Inspection'] },
@@ -440,4 +440,14 @@ document.addEventListener('DOMContentLoaded', () => {
   buildProjection();
   buildHeatmap();
   buildAnalyticsCharts();
+
+  // ── Deep-link: if arriving from a standalone page that set sessionStorage goto ──
+  // e.g. clicking "Bay Management" from shopfloor.html sets goto='bays'
+  // then index.html loads and immediately navigates to the right screen
+  const goto = sessionStorage.getItem('goto');
+  if (goto) {
+    sessionStorage.removeItem('goto');
+    // Small delay so all screens are rendered before switching
+    setTimeout(() => showScreen(goto), 0);
+  }
 });

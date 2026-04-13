@@ -27,25 +27,28 @@
       <div><span class="logo-name">ShopFlow</span><span class="logo-sub">AI Shop Management</span></div>
     </div>
   </div>
-  <nav class="sidebar-nav">
+      <nav class="sidebar-nav">
     <div class="nav-section-label">Operations</div>
-    <a class="nav-item" href="index.html"><span class="nav-icon">⬡</span><span>Command Center</span></a>
-    <a class="nav-item" href="shopfloor.html"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="new-badge">LIVE</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments & Waitlist</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none"><span class="nav-icon">⬡</span><span>Command Center</span></a>
+    <a class="nav-item "href="shopfloor.html" style="text-decoration:none"><span class="nav-icon">▦</span><span>Shop Floor Live</span><span class="nav-badge">LIVE</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','bays')"><span class="nav-icon">⬜</span><span>Bay Management</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','appointments')"><span class="nav-icon">◷</span><span>Appointments &amp; Waitlist</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','walkins')"><span class="nav-icon">↪</span><span>Walk-in Intake</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','workorders')"><span class="nav-icon">◫</span><span>Work Orders</span></a>
     <div class="nav-section-label">People</div>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','staffing')"><span class="nav-icon">◎</span><span>Daily Staffing</span></a>
-    <a class="nav-item active" href="techproductivity.html"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','roles')"><span class="nav-icon">◈</span><span>Roles & Permissions</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','staffing')"><span class="nav-icon">◎</span><span>Daily Staffing</span></a>
+    <a class="nav-item active "href="techproductivity.html" style="text-decoration:none"><span class="nav-icon">◈</span><span>Tech Productivity</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','roles')"><span class="nav-icon">◈</span><span>Roles &amp; Permissions</span></a>
     <div class="nav-section-label">Shop</div>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','services')"><span class="nav-icon">◆</span><span>Services & Inventory</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','notifications')"><span class="nav-icon">◉</span><span>Notifications</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','hours')"><span class="nav-icon">◑</span><span>Store Hours</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','services')"><span class="nav-icon">◆</span><span>Services &amp; Inventory</span></a>
+    <a class="nav-item "href="parts.html" style="text-decoration:none"><span class="nav-icon">◈</span><span>Parts &amp; Inventory</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="customer.html" style="text-decoration:none"><span class="nav-icon">◎</span><span>Customer View</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','notifications')"><span class="nav-icon">◉</span><span>Notifications</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','hours')"><span class="nav-icon">◑</span><span>Store Hours</span></a>
     <div class="nav-section-label">Intelligence</div>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
-    <a class="nav-item" href="index.html" onclick="sessionStorage.setItem('goto','ai')"><span class="nav-icon">✦</span><span>AI Agents</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','analytics')"><span class="nav-icon">◈</span><span>Analytics Dashboard</span></a>
+    <a class="nav-item "href="multilocation.html" style="text-decoration:none"><span class="nav-icon">⬡</span><span>Multi-location</span><span class="nav-badge">NEW</span></a>
+    <a class="nav-item "href="index.html" style="text-decoration:none" onclick="sessionStorage.setItem('goto','ai')"><span class="nav-icon">✦</span><span>AI Agents</span></a>
   </nav>
   <div class="sidebar-footer">
     <div class="store-info">
@@ -266,7 +269,14 @@ function buildTechSelector(){
     btn.style.color=t.color;
     btn.style.borderColor=t.color;
     btn.innerHTML=`<div class="av" style="background:${t.bg}">${t.id}</div>${t.name}`;
-    btn.onclick=()=>{btn.classList.toggle('active');buildCharts()};
+    btn.onclick=()=>{
+    const wasActive = btn.classList.contains('active');
+    const activeCount = document.querySelectorAll('.tech-btn.active').length;
+    // Don't deselect if it's the last active tech
+    if(wasActive && activeCount === 1) return;
+    btn.classList.toggle('active');
+    buildCharts();
+  };
     el.appendChild(btn);
   });
 }
