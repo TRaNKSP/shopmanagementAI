@@ -65,7 +65,7 @@
     <div class="tb-title">Technician Productivity</div>
   </div>
   <div class="topbar-right">
-    <div style="font-size:11px;color:var(--t2)">Industry benchmarks included</div>
+    <div style="font-size:11px;color:var(--t2)">NWA regional benchmarks</div>
     <button class="theme-btn" onclick="toggleTheme()">☀</button>
     <div style="width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JR</div>
   </div>
@@ -132,7 +132,7 @@
     <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t2)">Benchmark comparison — your shop vs industry tiers</div>
     <div class="bench-grid">
       <div class="bench-card">
-        <div class="bench-label">Book hour ratio</div>
+        <div class="bench-label">Book hr ratio <span style="font-size:9px;color:var(--t3);font-weight:400">(billed hrs ÷ 8-hr shift)</span></div>
         <div class="bench-compare">
           <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:93%;background:#4d8de8"></div></div><span class="bench-val good">1.31×</span></div>
           <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:84%;background:#4d8de8"></div></div><span class="bench-val good">1.18×</span></div>
@@ -145,29 +145,29 @@
         </div>
       </div>
       <div class="bench-card">
-        <div class="bench-label">Cars per day (8-hr shift)</div>
+        <div class="bench-label">Cars per day (max 4/tech)</div>
         <div class="bench-compare">
-          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:90%;background:#4d8de8"></div></div><span class="bench-val good">9</span></div>
-          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:80%;background:#4d8de8"></div></div><span class="bench-val good">8</span></div>
-          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:85%;background:#4d8de8"></div></div><span class="bench-val good">8</span></div>
-          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">6</span></div>
-          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">6</span></div>
-          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:50%;background:#f0b232"></div></div><span class="bench-val warn">5</span></div>
-          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:40%;background:#f06060"></div></div><span class="bench-val bad">4</span></div>
-          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Regional avg (NWA)</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">6</span></div>
+          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:#4d8de8"></div></div><span class="bench-val good">4</span></div>
+          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:#3ccf7e"></div></div><span class="bench-val good">4</span></div>
+          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:#f0b232"></div></div><span class="bench-val good">4</span></div>
+          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:75%;background:#2dd4bf"></div></div><span class="bench-val" style="color:var(--t1)">3</span></div>
+          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:75%;background:#a78bfa"></div></div><span class="bench-val" style="color:var(--t1)">3</span></div>
+          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:75%;background:#fb923c"></div></div><span class="bench-val" style="color:var(--t1)">3</span></div>
+          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:50%;background:#f06060"></div></div><span class="bench-val warn">2</span></div>
+          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Shop total</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">23/day</span></div>
         </div>
       </div>
       <div class="bench-card">
         <div class="bench-label">Annual revenue per tech</div>
         <div class="bench-compare">
-          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:95%;background:#4d8de8"></div></div><span class="bench-val good">$342k</span></div>
-          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:82%;background:#4d8de8"></div></div><span class="bench-val good">$296k</span></div>
-          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:86%;background:#4d8de8"></div></div><span class="bench-val good">$310k</span></div>
-          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:70%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">$252k</span></div>
-          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:65%;background:#3ccf7e"></div></div><span class="bench-val" style="color:var(--green)">$234k</span></div>
-          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:52%;background:#f0b232"></div></div><span class="bench-val warn">$188k</span></div>
-          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:44%;background:#f06060"></div></div><span class="bench-val bad">$158k</span></div>
-          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Regional avg (NWA)</span><div class="bench-bar-bg"><div class="bench-bar" style="width:67%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">$240k</span></div>
+          <div class="bench-row"><span class="bench-name">J. Rivera</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:#4d8de8"></div></div><span class="bench-val good">$176k</span></div>
+          <div class="bench-row"><span class="bench-name">A. Patel</span><div class="bench-bar-bg"><div class="bench-bar" style="width:83%;background:#3ccf7e"></div></div><span class="bench-val good">$145k</span></div>
+          <div class="bench-row"><span class="bench-name">E. Adams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:65%;background:#2dd4bf"></div></div><span class="bench-val good">$115k</span></div>
+          <div class="bench-row"><span class="bench-name">D. Kim</span><div class="bench-bar-bg"><div class="bench-bar" style="width:69%;background:#a78bfa"></div></div><span class="bench-val" style="color:var(--t1)">$122k</span></div>
+          <div class="bench-row"><span class="bench-name">S. Johnson</span><div class="bench-bar-bg"><div class="bench-bar" style="width:60%;background:#f0b232"></div></div><span class="bench-val" style="color:var(--t1)">$105k</span></div>
+          <div class="bench-row"><span class="bench-name">T. Williams</span><div class="bench-bar-bg"><div class="bench-bar" style="width:42%;background:#fb923c"></div></div><span class="bench-val warn">$73k</span></div>
+          <div class="bench-row"><span class="bench-name">M. Torres</span><div class="bench-bar-bg"><div class="bench-bar" style="width:23%;background:#f06060"></div></div><span class="bench-val bad">$41k</span></div>
+          <div class="bench-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px"><span class="bench-name" style="color:var(--t3)">Regional avg (NWA)</span><div class="bench-bar-bg"><div class="bench-bar" style="width:68%;background:rgba(255,255,255,.15)"></div></div><span class="bench-val" style="color:var(--t3)">$110k</span></div>
         </div>
       </div>
     </div>
@@ -200,36 +200,37 @@ function toggleTheme(){const h=document.documentElement;h.getAttribute('data-the
 
 // ── Tech data ──
 const TECHS = [
-  { id:'JR', name:'J. Rivera',   role:'Lead Tech',       color:'#4d8de8', bg:'#4d8de8' },
-  { id:'AP', name:'A. Patel',    role:'MT-B',      color:'#3ccf7e', bg:'#2d9e5a' },
-  { id:'EA', name:'E. Adams',    role:'Tire Specialist', color:'#2dd4bf', bg:'#0e7a80' },
-  { id:'DK', name:'D. Kim',      role:'Alignment Spec.', color:'#a78bfa', bg:'#6d28d9' },
-  { id:'SJ', name:'S. Johnson',  role:'MT-B',      color:'#f0b232', bg:'#b45309' },
-  { id:'TW', name:'T. Williams', role:'Lube Tech',       color:'#fb923c', bg:'#c2410c' },
-  { id:'MT', name:'M. Torres',   role:'MT-B',      color:'#f06060', bg:'#b91c1c' },
+  { id:'JR', name:'J. Rivera',   role:'MT-A', color:'#4d8de8', bg:'#1a4a9e' },
+  { id:'AP', name:'A. Patel',    role:'MT-A', color:'#3ccf7e', bg:'#1a6640' },
+  { id:'EA', name:'E. Adams',    role:'MT-C', color:'#2dd4bf', bg:'#0e7a80' },
+  { id:'DK', name:'D. Kim',      role:'MT-B', color:'#a78bfa', bg:'#5b21b6' },
+  { id:'SJ', name:'S. Johnson',  role:'MT-B', color:'#f0b232', bg:'#92400e' },
+  { id:'TW', name:'T. Williams', role:'MT-C', color:'#fb923c', bg:'#9a3412' },
+  { id:'MT', name:'M. Torres',   role:'MT',   color:'#f06060', bg:'#991b1b' },
 ];
 
 // Data by range: [ratio, cars, revenue($), ontime%]
+// Day max: 4 cars/tech, shop max 28/day total
 const DATA = {
   day: {
-    JR:[1.31,9,740,96], AP:[1.18,8,620,100], EA:[1.22,8,580,98],
-    DK:[1.05,6,660,95], SJ:[0.94,6,480,88], TW:[0.81,5,310,82], MT:[0.68,4,280,71]
+    JR:[1.31,4,740,96], AP:[1.18,4,620,100], EA:[1.22,3,480,98],
+    DK:[1.05,3,510,95], SJ:[0.94,4,440,88],  TW:[0.81,3,310,82],  MT:[0.68,2,180,71]
   },
   week: {
-    JR:[1.28,44,3680,94], AP:[1.16,39,3100,97], EA:[1.20,40,2900,96],
-    DK:[1.03,28,3080,93], SJ:[0.92,29,2300,87], TW:[0.80,24,1480,80], MT:[0.71,20,1340,73]
+    JR:[1.28,19,3480,94], AP:[1.16,18,2920,97], EA:[1.20,14,2240,96],
+    DK:[1.03,14,2380,93], SJ:[0.92,18,2060,87], TW:[0.80,14,1440,80], MT:[0.71,9,820,73]
   },
   month: {
-    JR:[1.30,186,15400,95], AP:[1.17,168,12800,96], EA:[1.21,170,12200,97],
-    DK:[1.04,118,13000,93], SJ:[0.93,122,9600,88], TW:[0.81,100,6200,81], MT:[0.70,84,5700,74]
+    JR:[1.30,82,14760,95], AP:[1.17,76,12160,96], EA:[1.21,60,9600,97],
+    DK:[1.04,60,10200,93], SJ:[0.93,76,8800,88],  TW:[0.81,60,6120,81],  MT:[0.70,38,3420,74]
   },
   quarter: {
-    JR:[1.29,558,46000,95], AP:[1.16,504,38400,96], EA:[1.20,510,36600,97],
-    DK:[1.03,354,38800,93], SJ:[0.92,366,28900,88], TW:[0.80,300,18600,81], MT:[0.69,252,17100,73]
+    JR:[1.29,246,44280,95], AP:[1.16,228,36480,96], EA:[1.20,180,28800,97],
+    DK:[1.03,180,30600,93], SJ:[0.92,228,26400,88], TW:[0.80,180,18360,81], MT:[0.69,114,10260,73]
   },
   annual: {
-    JR:[1.31,2228,342000,96], AP:[1.18,2016,296000,97], EA:[1.22,2040,310000,97],
-    DK:[1.05,1416,252000,94], SJ:[0.94,1464,234000,89], TW:[0.81,1200,188000,82], MT:[0.68,1008,158000,74]
+    JR:[1.31,984,176400,96], AP:[1.18,912,145600,97], EA:[1.22,720,115200,97],
+    DK:[1.05,720,122400,94], SJ:[0.94,912,105600,89], TW:[0.81,720,73440,82],  MT:[0.68,456,41040,74]
   }
 };
 
@@ -252,7 +253,7 @@ const TREND_DATA = {
 };
 
 const RANGE_LABELS = { day:'today', week:'this week', month:'this month', quarter:'this quarter', annual:'this year' };
-const CARS_BENCH = { day:6, week:30, month:130, quarter:390, annual:1560 };
+const CARS_BENCH = { day:3, week:14, month:60, quarter:180, annual:720 }; // per-tech bench (avg of all tiers)
 const REV_BENCH_SUFFIX = { day:'$440', week:'$2,200', month:'$9,600', quarter:'$28,800', annual:'$240k' };
 
 let currentRange = 'day';
@@ -270,11 +271,23 @@ function buildTechSelector(){
     btn.style.borderColor=t.color;
     btn.innerHTML=`<div class="av" style="background:${t.bg}">${t.id}</div>${t.name}`;
     btn.onclick=()=>{
-    const wasActive = btn.classList.contains('active');
-    const activeCount = document.querySelectorAll('.tech-btn.active').length;
-    // Don't deselect if it's the last active tech
-    if(wasActive && activeCount === 1) return;
-    btn.classList.toggle('active');
+    const allBtns = document.querySelectorAll('.tech-btn');
+    const activeIds = getActiveTechs();
+    const allActive = activeIds.length === allBtns.length;
+    const thisSolo = activeIds.length === 1 && activeIds[0] === t.id;
+
+    if (allActive) {
+      // All selected → solo this tech
+      allBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    } else if (thisSolo) {
+      // Already soloing this tech → return to all
+      allBtns.forEach(b => b.classList.add('active'));
+    } else {
+      // Partial selection or different solo → solo this tech
+      allBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
     buildCharts();
   };
     el.appendChild(btn);
@@ -300,12 +313,48 @@ function buildKPIs(){
   const labels={day:['Today','Today','Today','Today','Today'],week:['This week','This week','This week','This week','This week'],month:['This month','This month','This month','This month','This month'],quarter:['This quarter','This quarter','This quarter','This quarter','This quarter'],annual:['This year','This year','This year','This year','This year']};
   const carsBench=CARS_BENCH[r];
 
+  // Always show FULL shop avg for ratio (never changes with solo selection)
+  const allVals = Object.values(DATA[r]);
+  const shopAvgRatio = (allVals.reduce((a,v)=>a+v[0],0)/allVals.length).toFixed(2);
+  const ratioLabel = active.length === TECHS.length ? 'Shop avg book hr ratio' : active.length === 1 ? `Book hr ratio — ${TECHS.find(t=>t.id===active[0])?.name||active[0]}` : 'Selected avg book hr ratio';
+  const showRatio = active.length === TECHS.length ? shopAvgRatio : avgRatio;
+  // Total cars = sum of ALL 7 techs (shop total, not filtered)
+  const allTotalCars = Object.values(DATA[r]).reduce((a,v)=>a+v[1],0);
+  const allTotalRev  = Object.values(DATA[r]).reduce((a,v)=>a+v[2],0);
+  // Bench: realistic shop target based on max 4 cars/tech × 7 techs × shop efficiency
+  const shopCarsBench = {day:24, week:115, month:492, quarter:1476, annual:5904}[r];
+
   document.getElementById('kpiRow').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Team avg ratio</div><div class="kpi-value ${parseFloat(avgRatio)>=1?'good':parseFloat(avgRatio)>=0.8?'warn':'bad'}">${avgRatio}×</div><div class="kpi-sub ${parseFloat(avgRatio)>=1?'good':'warn'}">Target: 1.0×+</div><div class="kpi-bench">Regional avg (NWA): 1.00×</div></div>
-    <div class="kpi-card"><div class="kpi-label">Total cars</div><div class="kpi-value good">${totalCars.toLocaleString()}</div><div class="kpi-sub" style="color:var(--t2)">Bench: ${(carsBench*active.length).toLocaleString()}</div><div class="kpi-bench">${active.length} techs active</div></div>
-    <div class="kpi-card"><div class="kpi-label">Labor revenue</div><div class="kpi-value good">$${totalRev.toLocaleString()}</div><div class="kpi-sub" style="color:var(--t2)">${labels[r][2]}</div><div class="kpi-bench">Labor at ~$110/hr</div></div>
-    <div class="kpi-card"><div class="kpi-label">On-time rate</div><div class="kpi-value ${avgOT>=90?'good':avgOT>=80?'warn':'bad'}">${avgOT}%</div><div class="kpi-sub ${avgOT>=90?'good':'warn'}">Target: 90%+</div><div class="kpi-bench">Promised-by met</div></div>
-    <div class="kpi-card"><div class="kpi-label">Top performer</div><div class="kpi-value" style="font-size:18px;color:${bestTech?.color||'var(--t1)'}">${bestTech?.name||'—'}</div><div class="kpi-sub good">${DATA[r][best]?.[0]}× ratio</div><div class="kpi-bench">${DATA[r][best]?.[1]} cars</div></div>
+    <div class="kpi-card">
+      <div class="kpi-label">${ratioLabel}</div>
+      <div class="kpi-value ${parseFloat(showRatio)>=1?'good':parseFloat(showRatio)>=0.8?'warn':'bad'}">${showRatio}×</div>
+      <div class="kpi-sub" style="color:var(--t3);font-size:10px">Billed hrs ÷ clocked hrs per tech</div>
+      <div class="kpi-bench">Regional avg (NWA): 1.00×</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Shop total cars</div>
+      <div class="kpi-value good">${allTotalCars.toLocaleString()}</div>
+      <div class="kpi-sub" style="color:var(--t2)">Target: ${shopCarsBench}/day</div>
+      <div class="kpi-bench">Max 4 cars/tech · 7 techs</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Shop labor revenue</div>
+      <div class="kpi-value good">$${allTotalRev.toLocaleString()}</div>
+      <div class="kpi-sub" style="color:var(--t2)">All 7 techs ${RANGE_LABELS[r]}</div>
+      <div class="kpi-bench">Labor at ~$110/hr avg</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">On-time rate</div>
+      <div class="kpi-value ${avgOT>=90?'good':avgOT>=80?'warn':'bad'}">${avgOT}%</div>
+      <div class="kpi-sub ${avgOT>=90?'good':'warn'}">Target: 90%+</div>
+      <div class="kpi-bench">Promised-by met</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Top performer</div>
+      <div class="kpi-value" style="font-size:18px;color:${bestTech?.color||'var(--t1)'}">${bestTech?.name||'—'}</div>
+      <div class="kpi-sub good">${DATA[r][best]?.[0]}× ratio</div>
+      <div class="kpi-bench">${DATA[r][best]?.[1]} cars ${RANGE_LABELS[r]}</div>
+    </div>
   `;
 }
 
@@ -323,7 +372,7 @@ function buildCharts(){
   buildTrendChart();
   buildTable();
   document.getElementById('mainChartTitle').textContent=`Book hour ratio — ${RANGE_LABELS[currentRange]}`;
-  document.getElementById('carsChartSub').textContent=`Per tech · industry avg ${CARS_BENCH[currentRange]} ${currentRange==='day'?'cars/day':currentRange==='week'?'cars/wk':currentRange==='month'?'cars/mo':currentRange==='quarter'?'cars/qtr':'cars/yr'}`;
+  document.getElementById('carsChartSub').textContent=`Per tech · regional avg ${CARS_BENCH[currentRange]} ${currentRange==='day'?'cars/day':currentRange==='week'?'cars/wk':currentRange==='month'?'cars/mo':currentRange==='quarter'?'cars/qtr':'cars/yr'}`;
   document.getElementById('tableRangeLabel').textContent=RANGE_LABELS[currentRange];
 }
 
@@ -424,20 +473,37 @@ function buildTable(){
     return {id,name:t?.name||id,role:t?.role||'—',color:t?.color||'#fff',bg:t?.bg||'#4d8de8',ratio,cars:v[1],rev:v[2],ot:v[3],grade,gradeColor,trend,trendClass,rank:i+1};
   }).sort((a,b)=>b.ratio-a.ratio).map((r,i)=>({...r,rank:i+1}));
 
+  const totalCarsT = rows.reduce((a,r)=>a+r.cars,0);
+  const totalRevT  = rows.reduce((a,r)=>a+r.rev,0);
+  const avgOTT     = Math.round(rows.reduce((a,r)=>a+r.ot,0)/rows.length);
+  const avgBilledT = (rows.reduce((a,r)=>a+(r.ratio*8),0)/rows.length).toFixed(1);
+  const shopAvgRatioT = (rows.reduce((a,r)=>a+r.ratio,0)/rows.length).toFixed(2);
+
+  const totalsRow = `<tr style="border-top:2px solid var(--border2);background:var(--bg3)">
+    <td colspan="2" style="font-weight:600;color:var(--t1);font-size:12px;padding:10px 12px">Shop totals / avg</td>
+    <td style="color:var(--t3);font-size:11px">7 techs</td>
+    <td style="font-family:var(--font-mono);font-weight:700;color:var(--t1)">${totalCarsT}</td>
+    <td><span style="font-family:var(--font-mono);font-weight:700;color:${parseFloat(shopAvgRatioT)>=1.0?'var(--green)':'var(--amber)'}">${shopAvgRatioT}×</span></td>
+    <td style="font-family:var(--font-mono);color:var(--t2)">${avgBilledT} hrs avg</td>
+    <td style="font-family:var(--font-mono);font-weight:700;color:var(--green)">$${totalRevT.toLocaleString()}</td>
+    <td><span style="font-weight:700;color:${avgOTT>=90?'var(--green)':'var(--amber)'}">${avgOTT}%</span></td>
+    <td colspan="2"></td>
+  </tr>`;
+
   document.getElementById('detailTableBody').innerHTML=rows.map(r=>`
     <tr>
       <td><div class="rank-badge" style="background:${r.rank===1?'#f0b232':r.rank===2?'#8b90a8':r.rank===3?'#cd7f32':'var(--bg4)'};color:${r.rank<=3?'#000':'var(--t2)'}">${r.rank}</div></td>
       <td style="display:flex;align-items:center;gap:8px;padding:10px 12px"><div style="width:28px;height:28px;border-radius:50%;background:${r.bg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${r.id}</div>${r.name}</td>
       <td style="color:var(--t2)">${r.role}</td>
-      <td style="font-family:var(--font-mono)">${r.cars.toLocaleString()}</td>
+      <td style="font-family:var(--font-mono)">${r.cars}</td>
       <td><span style="font-family:var(--font-mono);font-weight:600;color:${r.ratio>=1.0?'var(--green)':r.ratio>=0.8?'var(--amber)':'var(--red)'}">${r.ratio}×</span></td>
-      <td style="font-family:var(--font-mono)">${(r.cars*0.55).toFixed(0)} hrs</td>
+      <td style="font-family:var(--font-mono)">${(r.ratio*8).toFixed(1)} hrs</td>
       <td style="font-family:var(--font-mono);color:var(--green)">$${r.rev.toLocaleString()}</td>
       <td><span style="color:${r.ot>=90?'var(--green)':r.ot>=80?'var(--amber)':'var(--red)'};font-weight:600">${r.ot}%</span></td>
       <td class="${r.trendClass}" style="font-size:16px">${r.trend}</td>
       <td><span style="font-family:var(--font-cond);font-size:18px;font-weight:700;color:${r.gradeColor}">${r.grade}</span></td>
     </tr>
-  `).join('');
+  `).join('') + totalsRow;
 }
 
 function setRange(r,btn){

@@ -80,7 +80,7 @@ const BAYS = [
   { id:'B1', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2022 Camry',        tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
   { id:'B2', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2020 BMW 3-Series', tech:'Torres',  services:['Oil','Tires','Brakes'] },
   { id:'B3', type:'Drive-on Lift',  cap:'Class 1–3', status:'occupied',  car:'2023 CR-V',         tech:'Patel',   services:['Oil','Tires','Brakes'] },
-  { id:'B4', type:'Drive-on Lift',  cap:'Class 1–3', status:'available', car:'',                  tech:'',        services:['Oil','Tires','Brakes'] },
+  { id:'B4', type:'Drive-on Lift',  cap:'Class 1–3', status:'reserved',  car:'Next: Explorer',    tech:'',        services:['Oil','Tires','Brakes'] },
   { id:'B5', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2020 Silverado',    tech:'Johnson', services:['Oil','Brakes','Inspection'] },
   { id:'B6', type:'Chassis Lift',   cap:'Class 1–4', status:'occupied',  car:'2021 Explorer',     tech:'Rivera',  services:['Oil','Brakes','Inspection'] },
   { id:'B7', type:'Alignment Rack', cap:'Class 1–3', status:'occupied',  car:'2020 F-150',        tech:'Kim',     services:['Alignment','Inspection'] },
@@ -228,13 +228,13 @@ function buildHeatmap() {
     return 'at';
   });
 
-  // Tier colors for working cells
+  // Tier colors for working cells — brighter fills
   const tierColor = { mta:'#3ccf7e', mtb:'#4d8de8', mtc:'#f0b232', mt:'#8b90a8' };
-  const tierBg    = { mta:'rgba(60,207,126,.22)', mtb:'rgba(77,141,232,.22)', mtc:'rgba(240,178,50,.22)', mt:'rgba(139,144,168,.15)' };
+  const tierBg    = { mta:'rgba(60,207,126,.55)', mtb:'rgba(77,141,232,.5)', mtc:'rgba(240,178,50,.5)', mt:'rgba(139,144,168,.35)' };
 
   // Capacity header
   const capLabel = { over:'Well covered', at:'At capacity', under:'Understaffed', closed:'Closed' };
-  const capBg    = { over:'rgba(60,207,126,.18)', at:'rgba(240,178,50,.18)', under:'rgba(240,96,96,.22)', closed:'rgba(255,255,255,.03)' };
+  const capBg    = { over:'rgba(60,207,126,.45)', at:'rgba(240,178,50,.45)', under:'rgba(240,96,96,.5)', closed:'rgba(255,255,255,.04)' };
   const capTxt   = { over:'#3ccf7e', at:'#f0b232', under:'#f06060', closed:'#4a5068' };
 
   let html = '<table class="heatmap-table"><thead>';
@@ -273,13 +273,13 @@ function buildHeatmap() {
   });
   html += '</tbody></table>';
   html += `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:10.5px;color:var(--t2)">
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.22);border:1px solid #3ccf7e50;margin-right:4px"></span>MT-A (Advanced)</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(77,141,232,.22);border:1px solid #4d8de850;margin-right:4px"></span>MT-B (Mid-level)</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.22);border:1px solid #f0b23250;margin-right:4px"></span>MT-C (General)</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(139,144,168,.15);margin-right:4px"></span>MT (Entry)</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,96,96,.22);margin-right:4px"></span>Understaffed</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.18);margin-right:4px"></span>At capacity</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.18);margin-right:4px"></span>Well covered</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.55);border:1px solid #3ccf7e80;margin-right:4px"></span>MT-A (Advanced)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(77,141,232,.5);border:1px solid #4d8de880;margin-right:4px"></span>MT-B (Mid-level)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.5);border:1px solid #f0b23280;margin-right:4px"></span>MT-C (General)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(139,144,168,.35);margin-right:4px"></span>MT (Entry)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,96,96,.5);margin-right:4px"></span>Understaffed</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(240,178,50,.45);margin-right:4px"></span>At capacity</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgba(60,207,126,.45);margin-right:4px"></span>Well covered</span>
   </div>`;
   container.innerHTML = html;
 }

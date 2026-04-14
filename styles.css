@@ -406,7 +406,7 @@ button{font-family:var(--font-sans);cursor:pointer}
 .heatmap-table td{padding:2px 3px;border-bottom:1px solid var(--border)}
 .heatmap-table td:first-child{font-size:10.5px;color:var(--t2);white-space:nowrap;padding-right:8px;min-width:130px}
 .hm-cell{height:22px;border-radius:4px}
-.hm-cell.green{background:rgba(60,207,126,.18)}.hm-cell.amber{background:rgba(240,178,50,.22)}.hm-cell.red{background:rgba(240,96,96,.22)}.hm-cell.gray{background:rgba(255,255,255,.03)}
+.hm-cell.green{background:rgba(60,207,126,.5)}.hm-cell.amber{background:rgba(240,178,50,.5)}.hm-cell.red{background:rgba(240,96,96,.5)}.hm-cell.gray{background:rgba(255,255,255,.06)}
 .heatmap-legend{display:flex;gap:14px;margin-top:10px;font-size:10.5px;color:var(--t2);flex-wrap:wrap}
 .hm-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
 .hm-dot.red{background:rgba(240,96,96,.6)}.hm-dot.amber{background:rgba(240,178,50,.6)}.hm-dot.green{background:rgba(60,207,126,.5)}.hm-dot.gray{background:rgba(255,255,255,.1)}
@@ -548,7 +548,7 @@ button{font-family:var(--font-sans);cursor:pointer}
 .proj-table td{padding:3px 4px;border-bottom:1px solid var(--border)}
 .proj-table td:first-child{font-family:var(--font-mono);font-size:10px;color:var(--t2);white-space:nowrap;padding-right:9px}
 .proj-cell{height:20px;border-radius:4px}
-.proj-cell.occ{background:rgba(240,96,96,.22)}.proj-cell.res{background:rgba(240,178,50,.18)}.proj-cell.avail{background:rgba(60,207,126,.1)}
+.proj-cell.occ{background:rgba(210,60,60,.65)}.proj-cell.res{background:rgba(240,178,50,.65)}.proj-cell.avail{background:rgba(60,207,126,.45)}.proj-cell.gray{background:rgba(255,255,255,.04)}
 .projection-legend{margin-top:10px;font-size:10.5px;color:var(--t2);display:flex;gap:14px;flex-wrap:wrap}
 
 /* ══════════════════════════════════════════
@@ -962,6 +962,7 @@ button{font-family:var(--font-sans);cursor:pointer}
 .proj-table th{font-size:9px;padding:3px 3px}
 .proj-table td{padding:2px 3px}
 .proj-cell{height:16px;border-radius:3px}
+.proj-cell.occ{background:rgba(210,60,60,.65)}.proj-cell.res{background:rgba(240,178,50,.65)}.proj-cell.avail{background:rgba(60,207,126,.45)}
 
 /* ══════════════════════════════════════════
    ROLES GRID — expanded for 7 cards
